@@ -14,7 +14,380 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      compliance_flags: {
+        Row: {
+          created_at: string | null
+          id: string
+          product_id: string | null
+          reason: string | null
+          resolved: boolean | null
+          severity: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          product_id?: string | null
+          reason?: string | null
+          resolved?: boolean | null
+          severity?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          product_id?: string | null
+          reason?: string | null
+          resolved?: boolean | null
+          severity?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_flags_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_flags_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enrollments: {
+        Row: {
+          created_at: string | null
+          currency: Database["public"]["Enums"]["currency_code"] | null
+          deposit_amount: number | null
+          id: string
+          payment_intent_id: string | null
+          payment_provider:
+            | Database["public"]["Enums"]["payment_provider"]
+            | null
+          product_id: string | null
+          status: Database["public"]["Enums"]["enrollment_status"] | null
+          stripe_customer_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: Database["public"]["Enums"]["currency_code"] | null
+          deposit_amount?: number | null
+          id?: string
+          payment_intent_id?: string | null
+          payment_provider?:
+            | Database["public"]["Enums"]["payment_provider"]
+            | null
+          product_id?: string | null
+          status?: Database["public"]["Enums"]["enrollment_status"] | null
+          stripe_customer_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          currency?: Database["public"]["Enums"]["currency_code"] | null
+          deposit_amount?: number | null
+          id?: string
+          payment_intent_id?: string | null
+          payment_provider?:
+            | Database["public"]["Enums"]["payment_provider"]
+            | null
+          product_id?: string | null
+          status?: Database["public"]["Enums"]["enrollment_status"] | null
+          stripe_customer_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          created_at: string | null
+          event_type: string | null
+          id: string
+          payload: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_type?: string | null
+          id?: string
+          payload?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string | null
+          id?: string
+          payload?: Json | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          consent_marketing: boolean | null
+          country: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          interest: Database["public"]["Enums"]["visa_program_type"] | null
+          ip_address: string | null
+          name: string | null
+          phone: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          consent_marketing?: boolean | null
+          country?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          interest?: Database["public"]["Enums"]["visa_program_type"] | null
+          ip_address?: string | null
+          name?: string | null
+          phone?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          consent_marketing?: boolean | null
+          country?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          interest?: Database["public"]["Enums"]["visa_program_type"] | null
+          ip_address?: string | null
+          name?: string | null
+          phone?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          created_at: string | null
+          currency: Database["public"]["Enums"]["currency_code"] | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string | null
+          price: number | null
+          program: Database["public"]["Enums"]["visa_program_type"] | null
+          stripe_link: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: Database["public"]["Enums"]["currency_code"] | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string | null
+          price?: number | null
+          program?: Database["public"]["Enums"]["visa_program_type"] | null
+          stripe_link?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          currency?: Database["public"]["Enums"]["currency_code"] | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string | null
+          price?: number | null
+          program?: Database["public"]["Enums"]["visa_program_type"] | null
+          stripe_link?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          preferred_language: string | null
+          role: Database["public"]["Enums"]["user_role"] | null
+        }
+        Insert: {
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          preferred_language?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+        }
+        Update: {
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          preferred_language?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+        }
+        Relationships: []
+      }
+      status_history: {
+        Row: {
+          changed_by: string | null
+          created_at: string | null
+          enrollment_id: string | null
+          id: string
+          new_status: Database["public"]["Enums"]["enrollment_status"] | null
+          old_status: Database["public"]["Enums"]["enrollment_status"] | null
+          reason: string | null
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string | null
+          enrollment_id?: string | null
+          id?: string
+          new_status?: Database["public"]["Enums"]["enrollment_status"] | null
+          old_status?: Database["public"]["Enums"]["enrollment_status"] | null
+          reason?: string | null
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string | null
+          enrollment_id?: string | null
+          id?: string
+          new_status?: Database["public"]["Enums"]["enrollment_status"] | null
+          old_status?: Database["public"]["Enums"]["enrollment_status"] | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "status_history_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stripe_webhook_events: {
+        Row: {
+          id: string
+          processed_at: string | null
+          type: string | null
+        }
+        Insert: {
+          id: string
+          processed_at?: string | null
+          type?: string | null
+        }
+        Update: {
+          id?: string
+          processed_at?: string | null
+          type?: string | null
+        }
+        Relationships: []
+      }
+      visa_entries: {
+        Row: {
+          country: string | null
+          created_at: string | null
+          entry_date: string | null
+          exit_date: string | null
+          id: string
+          notes: string | null
+          port_of_entry: string | null
+          user_id: string | null
+          visa_type: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string | null
+          entry_date?: string | null
+          exit_date?: string | null
+          id?: string
+          notes?: string | null
+          port_of_entry?: string | null
+          user_id?: string | null
+          visa_type?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string | null
+          entry_date?: string | null
+          exit_date?: string | null
+          id?: string
+          notes?: string | null
+          port_of_entry?: string | null
+          user_id?: string | null
+          visa_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visa_entries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +396,31 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      currency_code: "THB" | "TRY" | "USD" | "EUR"
+      enrollment_status:
+        | "lead"
+        | "applicant"
+        | "pending_deposit"
+        | "deposit_paid"
+        | "doc_verification"
+        | "filing"
+        | "active_resident"
+        | "refund_pending"
+        | "refunded"
+        | "rejected"
+        | "archived"
+        | "compliance_alert"
+        | "cancelled"
+      payment_provider: "stripe" | "manual_transfer"
+      user_role: "admin" | "agent" | "client"
+      visa_program_type:
+        | "dtv"
+        | "wellness"
+        | "mice"
+        | "motor"
+        | "elite"
+        | "retirement"
+        | "education"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +547,34 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      currency_code: ["THB", "TRY", "USD", "EUR"],
+      enrollment_status: [
+        "lead",
+        "applicant",
+        "pending_deposit",
+        "deposit_paid",
+        "doc_verification",
+        "filing",
+        "active_resident",
+        "refund_pending",
+        "refunded",
+        "rejected",
+        "archived",
+        "compliance_alert",
+        "cancelled",
+      ],
+      payment_provider: ["stripe", "manual_transfer"],
+      user_role: ["admin", "agent", "client"],
+      visa_program_type: [
+        "dtv",
+        "wellness",
+        "mice",
+        "motor",
+        "elite",
+        "retirement",
+        "education",
+      ],
+    },
   },
 } as const
