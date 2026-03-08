@@ -1,24 +1,54 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Scale, Heart, Briefcase, Mountain, Calculator } from 'lucide-react';
+import { ArrowRight, Calculator } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SEOHead from '@/components/SEOHead';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import ConciergeButton from '@/components/ConciergeButton';
 import PlanBForm from '@/components/PlanBForm';
 
-const serviceCards = [
-  { icon: Scale, title: 'Digital Nomad Visa (DTV)', desc: '5-year multi-entry visa for remote professionals, freelancers, and founders.', to: '/residency/dtv-thailand' },
-  { icon: Heart, title: 'Wellness & Medical Visa', desc: 'Premium healthcare access and wellness-focused relocation to Thailand.', to: '/wellness/thailand-retreat' },
-  { icon: Briefcase, title: 'Corporate Retreats (MICE)', desc: 'Strategic business events, team retreats, and conference logistics.', to: '/corporate-retreats/mice-thailand' },
-  { icon: Mountain, title: 'Hà Giang Expedition', desc: 'Vietnam\'s most spectacular mountain road motorcycle journey.', to: '/expeditions/ha-giang-motor-expedition' },
+const serviceVerticals = [
+  {
+    numeral: 'I',
+    title: 'Sovereign Residency',
+    subtitle: 'Digital Nomad Visa Protocol',
+    desc: 'A structured 5-year multi-entry pathway for founders, remote professionals, and global citizens seeking long-term residency in the Kingdom of Thailand.',
+    to: '/residency/dtv-thailand',
+    image: '/images/service-residency.webp',
+  },
+  {
+    numeral: 'II',
+    title: 'Wellness & Renewal',
+    subtitle: 'Medical & Holistic Programmes',
+    desc: 'Premium healthcare access and traditional Thai healing integrated with luxury accommodation. Designed for those who seek renewal alongside relocation.',
+    to: '/wellness/thailand-retreat',
+    image: '/images/service-wellness.webp',
+    reverse: true,
+  },
+  {
+    numeral: 'III',
+    title: 'Strategic Retreats',
+    subtitle: 'MICE & Corporate Infrastructure',
+    desc: 'Bespoke business events, leadership retreats, and conference logistics for organisations operating across Southeast Asian markets.',
+    to: '/corporate-retreats/mice-thailand',
+    image: '/images/service-corporate.webp',
+  },
+  {
+    numeral: 'IV',
+    title: 'Private Expeditions',
+    subtitle: 'Hà Giang & Beyond',
+    desc: 'Vietnam\'s most spectacular mountain roads. A sovereign journey through the northern highlands — curated for founders, not tourists.',
+    to: '/expeditions/ha-giang-motor-expedition',
+    image: '/images/service-expeditions.webp',
+    reverse: true,
+  },
 ];
 
-const networkItems = [
-  { emoji: '⚖️', label: 'network.immigration' },
-  { emoji: '📊', label: 'network.tax' },
-  { emoji: '🏥', label: 'network.medical' },
-  { emoji: '🏨', label: 'network.resorts' },
+const networkPillars = [
+  'Immigration Counsel',
+  'Tax Advisory',
+  'Private Medical',
+  'Luxury Hospitality',
 ];
 
 export default function Index() {
@@ -33,168 +63,204 @@ export default function Index() {
       />
       <FocusedNavbar />
 
-      {/* === LAYER 1: HERO === */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* ═══ HERO ═══ */}
+      <section className="relative min-h-screen flex items-end pb-32 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/images/hero-home.webp')" }}
         />
-        <div className="absolute inset-0 bg-corporate-navy/70" />
-        <div className="relative z-10 container max-w-4xl text-center text-holistic px-4">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-heading font-bold tracking-tight leading-[1.05] mb-6">
-            {t('hero.title')}
-          </h1>
-          <p className="text-lg md:text-xl text-holistic/70 max-w-2xl mx-auto mb-10 font-body">
-            {t('hero.subtitle')}
-          </p>
-          <Button
-            size="lg"
-            onClick={() => document.getElementById('lead-form')?.scrollIntoView({ behavior: 'smooth' })}
-            className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-base md:text-lg px-10 py-6 h-auto hover:scale-[1.02] transition-all duration-500 ease-out"
-          >
-            {t('hero.cta')} <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-          <p className="mt-4 text-xs text-holistic/50 tracking-wider uppercase">
+        <div className="absolute inset-0 bg-gradient-to-t from-corporate-navy/80 via-corporate-navy/30 to-transparent" />
+        <div className="relative z-10 container max-w-5xl px-6">
+          <p className="text-xs tracking-[0.4em] uppercase text-holistic/60 mb-6 font-body">
             {t('hero.ctaSub')}
           </p>
+          <h1 className="text-6xl md:text-8xl lg:text-9xl font-heading font-normal tracking-tight leading-[0.95] text-holistic mb-8">
+            {t('hero.title')}
+          </h1>
+          <p className="text-lg md:text-xl text-holistic/70 max-w-xl font-body font-light leading-relaxed mb-12">
+            {t('hero.subtitle')}
+          </p>
+          <button
+            onClick={() => document.getElementById('lead-form')?.scrollIntoView({ behavior: 'smooth' })}
+            className="group inline-flex items-center gap-4 text-holistic font-body text-sm tracking-[0.2em] uppercase transition-all duration-500 ease-out hover:gap-6"
+          >
+            {t('hero.cta')}
+            <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1" />
+          </button>
         </div>
       </section>
 
-      {/* === LAYER 2: FOUNDER LETTER === */}
-      <section className="py-20 bg-card">
-        <div className="container max-w-3xl text-center">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-8">
+      {/* ═══ TRUSTED NETWORK ═══ */}
+      <section className="py-20 border-t border-border">
+        <div className="container max-w-5xl px-6">
+          <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-16 font-body">
+            {t('network.title')}
+          </p>
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-0">
+            {networkPillars.map((pillar, i) => (
+              <div key={pillar} className="flex items-center">
+                {i > 0 && (
+                  <div className="hidden md:block w-px h-8 bg-border mx-10" />
+                )}
+                <p className="font-heading text-xl md:text-2xl font-normal tracking-tight text-foreground py-3 md:py-0">
+                  {pillar}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ FOUNDER LETTER ═══ */}
+      <section className="py-32 border-t border-border">
+        <div className="container max-w-3xl px-6 text-center">
+          <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-12 font-body">
             {t('founderLetter.title')}
-          </h2>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 italic">
+          </p>
+          <p className="font-heading text-2xl md:text-3xl font-normal leading-relaxed text-foreground italic">
             "{t('founderLetter.text')}"
           </p>
-          <p className="font-heading text-lg text-secondary italic">{t('founderLetter.signature')}</p>
-          <p className="text-xs text-muted-foreground mt-1 tracking-wider uppercase">{t('founderLetter.role')}</p>
-        </div>
-      </section>
-
-      {/* === LAYER 3: TRUSTED NETWORK === */}
-      <section className="py-16">
-        <div className="container max-w-4xl">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-10 text-foreground">
-            {t('network.title')}
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {networkItems.map((item) => (
-              <div key={item.label} className="text-center p-6 rounded-lg border border-border bg-card hover:shadow-md hover:scale-[1.02] transition-all duration-500 ease-out">
-                <span className="text-3xl mb-3 block">{item.emoji}</span>
-                <p className="text-sm font-medium text-foreground">{t(item.label)}</p>
-              </div>
-            ))}
+          <div className="mt-12 border-t border-border pt-8 inline-block">
+            <p className="font-heading text-lg text-secondary italic">{t('founderLetter.signature')}</p>
+            <p className="text-xs text-muted-foreground mt-2 tracking-[0.3em] uppercase font-body">{t('founderLetter.role')}</p>
           </div>
         </div>
       </section>
 
-      {/* === LAYER 4: TRUST LAYER === */}
-      <section className="py-12 bg-corporate-navy">
-        <div className="container max-w-4xl text-center">
-          <p className="text-sm md:text-base text-holistic/80 tracking-wider font-medium">
-            {t('trust.headline')}
+      {/* ═══ TRUST LAYER ═══ */}
+      <section className="py-16 bg-corporate-navy">
+        <div className="container max-w-5xl px-6">
+          <div className="flex flex-wrap justify-center gap-x-10 gap-y-3">
+            {['Private & Confidential', 'Legal Framework Driven', 'Government Compliant', 'Trusted by Global Founders'].map((item, i) => (
+              <span key={i} className="text-xs tracking-[0.3em] uppercase text-holistic/50 font-body">
+                {item}
+              </span>
+            ))}
+          </div>
+          <p className="text-center mt-6 text-xs text-holistic/30 tracking-[0.4em] uppercase font-body">
+            {t('trust.subtitle')}
           </p>
-          <p className="text-xs text-holistic/50 mt-3 uppercase tracking-widest">{t('trust.subtitle')}</p>
         </div>
       </section>
 
-      {/* === LAYER 5: SERVICE VERTICALS === */}
-      <section className="py-20">
-        <div className="container">
-          <h2 className="text-3xl md:text-4xl font-heading font-bold text-center mb-4 text-foreground">
+      {/* ═══ SERVICE VERTICALS — EDITORIAL ═══ */}
+      <section className="border-t border-border">
+        <div className="container max-w-5xl px-6 pt-32 pb-12">
+          <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-4 font-body">
             {t('services.title')}
-          </h2>
-          <p className="text-muted-foreground text-center max-w-xl mx-auto mb-14 text-sm">
+          </p>
+          <p className="text-muted-foreground text-sm max-w-md font-body">
             {t('services.subtitle')}
           </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {serviceCards.map((card) => (
-              <Link
-                key={card.to}
-                to={card.to}
-                className="group p-6 rounded-lg border border-border bg-card hover:border-secondary/50 hover:shadow-lg hover:scale-[1.02] transition-all duration-500 ease-out"
-              >
-                <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center mb-4 group-hover:bg-secondary/20 transition-colors duration-300">
-                  <card.icon className="h-6 w-6 text-secondary" />
-                </div>
-                <h3 className="text-lg font-heading font-semibold text-foreground mb-2">{card.title}</h3>
-                <p className="text-sm text-muted-foreground mb-4">{card.desc}</p>
-                <span className="text-xs font-medium text-secondary flex items-center gap-1 group-hover:gap-2 transition-all duration-300">
-                  Learn More <ArrowRight className="h-3.5 w-3.5" />
+        </div>
+
+        {serviceVerticals.map((service) => (
+          <div
+            key={service.to}
+            className={`flex flex-col ${service.reverse ? 'md:flex-row-reverse' : 'md:flex-row'} min-h-[70vh]`}
+          >
+            {/* Image half */}
+            <div className="w-full md:w-1/2 relative overflow-hidden">
+              <img
+                src={service.image}
+                alt={service.title}
+                loading="lazy"
+                className="w-full h-full object-cover min-h-[400px] md:min-h-full"
+              />
+            </div>
+
+            {/* Content half */}
+            <div className="w-full md:w-1/2 bg-background flex items-center">
+              <div className="px-8 md:px-16 lg:px-24 py-20 md:py-0 max-w-lg">
+                <span className="font-heading text-6xl font-light text-border block mb-6">
+                  {service.numeral}
                 </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* === LAYER 6: CALCULATOR HOOK === */}
-      <section className="py-16 bg-card">
-        <div className="container max-w-4xl">
-          <div className="relative rounded-2xl border border-secondary/20 bg-corporate-navy p-10 md:p-14 text-center overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent" />
-            <div className="relative z-10">
-              <div className="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-6">
-                <Calculator className="h-7 w-7 text-secondary" />
+                <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-4 font-body">
+                  {service.subtitle}
+                </p>
+                <h3 className="font-heading text-3xl md:text-4xl font-normal tracking-tight text-foreground mb-6">
+                  {service.title}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-10 font-body">
+                  {service.desc}
+                </p>
+                <Link
+                  to={service.to}
+                  className="group inline-flex items-center gap-3 text-foreground font-body text-xs tracking-[0.2em] uppercase transition-all duration-500 ease-out hover:gap-5 border-b border-foreground/20 pb-1"
+                >
+                  Explore Protocol
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-500 group-hover:translate-x-1" />
+                </Link>
               </div>
-              <h2 className="text-2xl md:text-3xl font-heading font-bold text-holistic mb-4">
-                {t('calculator.title')}
-              </h2>
-              <p className="text-holistic/60 text-sm mb-8 max-w-lg mx-auto">
-                {t('calculator.subtitle')}
-              </p>
-              <Link to="/tools/dtv-visa-calculator">
-                <Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-base px-8">
-                  {t('calculator.cta')} <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
             </div>
           </div>
-        </div>
+        ))}
       </section>
 
-      {/* === LAYER 7: SOCIAL PROOF === */}
-      <section className="py-20">
-        <div className="container max-w-3xl text-center">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-6">
-            Why Plan B Asia?
+      {/* ═══ CALCULATOR HOOK ═══ */}
+      <section className="py-32 border-t border-border">
+        <div className="container max-w-4xl px-6 text-center">
+          <Calculator className="h-6 w-6 text-secondary mx-auto mb-8 stroke-[1]" />
+          <h2 className="font-heading text-3xl md:text-4xl font-normal tracking-tight text-foreground mb-6">
+            {t('calculator.title')}
           </h2>
-          <p className="text-muted-foreground leading-relaxed mb-8">
-            We are not a travel agency. We are a sovereign lifestyle architecture firm. Every engagement
-            begins with a strategic assessment of your personal, financial, and regulatory position.
-            From there, we design a mobility plan that protects your freedom, your family, and your future.
+          <p className="text-sm text-muted-foreground max-w-md mx-auto mb-10 font-body">
+            {t('calculator.subtitle')}
           </p>
-          <div className="grid grid-cols-3 gap-6">
+          <Link to="/tools/dtv-visa-calculator">
+            <Button
+              size="lg"
+              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto transition-all duration-500 ease-out hover:scale-[1.02]"
+            >
+              {t('calculator.cta')} <ArrowRight className="ml-3 h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* ═══ PHILOSOPHY ═══ */}
+      <section className="py-32 border-t border-border">
+        <div className="container max-w-3xl px-6">
+          <div className="grid md:grid-cols-2 gap-20">
             <div>
-              <p className="text-3xl font-heading font-bold text-secondary">18+</p>
-              <p className="text-xs text-muted-foreground mt-1">Client Countries</p>
+              <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-8 font-body">
+                Why Plan B Asia
+              </p>
+              <p className="text-sm text-muted-foreground leading-relaxed font-body">
+                We are not a travel agency. We are a sovereign lifestyle architecture firm. Every engagement
+                begins with a strategic assessment of your personal, financial, and regulatory position.
+                From there, we design a mobility plan that protects your freedom, your family, and your future.
+              </p>
             </div>
-            <div>
-              <p className="text-3xl font-heading font-bold text-secondary">100%</p>
-              <p className="text-xs text-muted-foreground mt-1">Legal Compliance</p>
-            </div>
-            <div>
-              <p className="text-3xl font-heading font-bold text-secondary">24h</p>
-              <p className="text-xs text-muted-foreground mt-1">Response Time</p>
+            <div className="flex flex-col justify-end gap-10">
+              {[
+                { value: '18+', label: 'Client Countries' },
+                { value: '100%', label: 'Legal Compliance' },
+                { value: '24h', label: 'Response Time' },
+              ].map((stat) => (
+                <div key={stat.label} className="border-t border-border pt-4">
+                  <p className="font-heading text-3xl font-normal text-secondary">{stat.value}</p>
+                  <p className="text-xs text-muted-foreground mt-1 tracking-[0.2em] uppercase font-body">{stat.label}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* === LAYER 8: LEAD CAPTURE === */}
+      {/* ═══ LEAD CAPTURE ═══ */}
       <PlanBForm />
 
-      {/* Footer */}
-      <footer className="py-12 bg-corporate-navy text-holistic">
-        <div className="container flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="text-sm text-holistic/50">© {new Date().getFullYear()} Atropox OÜ. All rights reserved.</span>
-          <div className="flex gap-6 text-sm text-holistic/50">
-            <a href="#" className="hover:text-holistic/80 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-holistic/80 transition-colors">Terms</a>
-            <a href="#" className="hover:text-holistic/80 transition-colors">Contact</a>
+      {/* ═══ FOOTER ═══ */}
+      <footer className="py-16 bg-corporate-navy border-t border-holistic/10">
+        <div className="container max-w-5xl px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+          <span className="text-xs text-holistic/40 tracking-[0.2em] uppercase font-body">
+            © {new Date().getFullYear()} Atropox OÜ
+          </span>
+          <div className="flex gap-10 text-xs text-holistic/40 tracking-[0.2em] uppercase font-body">
+            <a href="#" className="hover:text-holistic/70 transition-colors duration-500">Privacy</a>
+            <a href="#" className="hover:text-holistic/70 transition-colors duration-500">Terms</a>
+            <a href="#" className="hover:text-holistic/70 transition-colors duration-500">Contact</a>
           </div>
         </div>
       </footer>
