@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Scale, Heart, Briefcase, Mountain } from 'lucide-react';
+import { ArrowRight, Scale, Heart, Briefcase, Mountain, Calculator } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SEOHead from '@/components/SEOHead';
 import FocusedNavbar from '@/components/FocusedNavbar';
@@ -60,30 +60,34 @@ export default function Index() {
         </div>
       </section>
 
-      {/* === LAYER 2: TRUSTED NETWORK === */}
-      <section className="py-16 bg-card">
+      {/* === LAYER 2: FOUNDER LETTER === */}
+      <section className="py-20 bg-card">
+        <div className="container max-w-3xl text-center">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-8">
+            {t('founderLetter.title')}
+          </h2>
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 italic">
+            "{t('founderLetter.text')}"
+          </p>
+          <p className="font-heading text-lg text-secondary italic">{t('founderLetter.signature')}</p>
+          <p className="text-xs text-muted-foreground mt-1 tracking-wider uppercase">{t('founderLetter.role')}</p>
+        </div>
+      </section>
+
+      {/* === LAYER 3: TRUSTED NETWORK === */}
+      <section className="py-16">
         <div className="container max-w-4xl">
           <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-10 text-foreground">
             {t('network.title')}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {networkItems.map((item) => (
-              <div key={item.label} className="text-center p-6 rounded-lg border border-border bg-background hover:shadow-md hover:scale-[1.02] transition-all duration-500 ease-out">
+              <div key={item.label} className="text-center p-6 rounded-lg border border-border bg-card hover:shadow-md hover:scale-[1.02] transition-all duration-500 ease-out">
                 <span className="text-3xl mb-3 block">{item.emoji}</span>
                 <p className="text-sm font-medium text-foreground">{t(item.label)}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* === LAYER 3: FOUNDER STATEMENT === */}
-      <section className="py-20">
-        <div className="container max-w-3xl text-center">
-          <blockquote className="text-xl md:text-2xl font-heading italic text-foreground leading-relaxed mb-6">
-            "{t('founder.quote')}"
-          </blockquote>
-          <p className="text-sm text-muted-foreground tracking-wider uppercase">{t('founder.attribution')}</p>
         </div>
       </section>
 
@@ -127,8 +131,33 @@ export default function Index() {
         </div>
       </section>
 
-      {/* === LAYER 6: SOCIAL PROOF / PHILOSOPHY === */}
-      <section className="py-20 bg-card">
+      {/* === LAYER 6: CALCULATOR HOOK === */}
+      <section className="py-16 bg-card">
+        <div className="container max-w-4xl">
+          <div className="relative rounded-2xl border border-secondary/20 bg-corporate-navy p-10 md:p-14 text-center overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent" />
+            <div className="relative z-10">
+              <div className="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-6">
+                <Calculator className="h-7 w-7 text-secondary" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-heading font-bold text-holistic mb-4">
+                {t('calculator.title')}
+              </h2>
+              <p className="text-holistic/60 text-sm mb-8 max-w-lg mx-auto">
+                {t('calculator.subtitle')}
+              </p>
+              <Link to="/tools/dtv-visa-calculator">
+                <Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-base px-8">
+                  {t('calculator.cta')} <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* === LAYER 7: SOCIAL PROOF === */}
+      <section className="py-20">
         <div className="container max-w-3xl text-center">
           <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-6">
             Why Plan B Asia?
@@ -155,7 +184,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* === LAYER 7: LEAD CAPTURE === */}
+      {/* === LAYER 8: LEAD CAPTURE === */}
       <PlanBForm />
 
       {/* Footer */}

@@ -6,7 +6,8 @@ import FocusedNavbar from '@/components/FocusedNavbar';
 import ConciergeButton from '@/components/ConciergeButton';
 import PlanBForm from '@/components/PlanBForm';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ArrowRight, CheckCircle } from 'lucide-react';
 
 interface Package {
   id: string;
@@ -37,6 +38,68 @@ interface Service {
   packages: Package[];
 }
 
+const fallbacks: Record<string, Partial<Service>> = {
+  'dtv-thailand': {
+    title: 'Digital Nomad Visa (DTV) — Thailand',
+    subtitle: '5-year multi-entry visa for remote professionals, freelancers, and founders.',
+    pain_points: ['Complex immigration bureaucracy without local legal guidance', 'Risk of non-compliance with evolving Thai visa regulations', 'Lack of structured approval pathway for remote workers'],
+    value_propositions: ['Structured approval pathway with licensed immigration counsel', 'End-to-end document preparation and submission', 'Ongoing compliance monitoring and renewal support'],
+    process_steps: [{ step: 'Strategic Assessment', description: 'Evaluate eligibility, documentation, and optimal timing.' }, { step: 'Document Preparation', description: 'Compile and verify all required materials.' }, { step: 'Application Filing', description: 'Submit through verified government channels.' }, { step: 'Ongoing Support', description: 'Compliance monitoring and renewal management.' }],
+    trust_points: ['Licensed Legal Partners', 'Government Compliant', 'Structured Approval Pathway'],
+    packages: [
+      { id: 'fb-1', name: 'Document Audit', description: 'Comprehensive review of your current documentation and eligibility assessment.', price: 100, currency: 'EUR', features: ['Full document review', 'Eligibility assessment', 'Pathway recommendation'], is_stripe_enabled: false, stripe_payment_url: null, is_featured: false },
+      { id: 'fb-2', name: 'Sovereign Relocation Package', description: 'Complete DTV application management with legal counsel and compliance support.', price: 5000, currency: 'USD', features: ['Licensed immigration counsel', 'Full application management', 'Structured approval pathway', 'Post-arrival compliance', 'Tax advisory introduction'], is_stripe_enabled: false, stripe_payment_url: null, is_featured: true },
+    ],
+  },
+  'thailand-retreat': {
+    title: 'Wellness & Medical Visa — Thailand',
+    subtitle: 'Premium healthcare access and wellness-focused relocation.',
+    pain_points: ['Navigating Thailand\'s medical visa requirements without guidance', 'Finding verified, med-grade wellness practitioners', 'Coordinating healthcare logistics across borders'],
+    value_propositions: ['Master Guides & Practitioners in Traditional Thai Healing', 'Integrative Energy Alignment & Meditation Programs', 'Med-grade luxury wellness infrastructure'],
+    process_steps: [{ step: 'Wellness Assessment', description: 'Define your health goals and program requirements.' }, { step: 'Program Design', description: 'Curate a bespoke wellness itinerary with verified practitioners.' }, { step: 'Visa & Logistics', description: 'Manage medical visa application and facility coordination.' }, { step: 'Immersion', description: 'Begin your transformative wellness journey.' }],
+    trust_points: ['Verified Medical Partners', 'Premium Facilities', 'Confidential Care'],
+  },
+  'mice-thailand': {
+    title: 'Corporate Retreats (MICE) — Thailand',
+    subtitle: 'Strategic Infrastructure for Global Builders.',
+    pain_points: ['Finding premium venues that meet corporate security standards', 'Coordinating multi-national team logistics in Southeast Asia', 'Ensuring compliance with corporate travel policies'],
+    value_propositions: ['Vetted 5-star venue partnerships across Thailand', 'Full event logistics and concierge management', 'Corporate-grade security and confidentiality protocols'],
+    process_steps: [{ step: 'Briefing', description: 'Understand your objectives, team size, and requirements.' }, { step: 'Venue Curation', description: 'Present shortlisted premium venues with full costings.' }, { step: 'Logistics Management', description: 'Handle flights, transfers, accommodations, and activities.' }, { step: 'Execution', description: 'On-ground concierge support throughout your event.' }],
+    trust_points: ['Corporate-Grade Security', 'Premium Venues', 'Full Concierge'],
+  },
+  'ha-giang-motor-expedition': {
+    title: 'Hà Giang Motor Expedition — Vietnam',
+    subtitle: 'Bespoke Expeditions for Sovereign Founders.',
+    pain_points: ['Finding GS-segment motorcycle rentals for serious riders', 'Navigating cross-border routes without local intelligence', 'Generic backpacker tours that don\'t match founder-level expectations'],
+    value_propositions: ['GS-segment motorcycle fleet (BMW R1250GS, Honda Africa Twin)', 'Luxury cross-border route planning with local guides', 'Private lodging and curated culinary experiences along the route'],
+    process_steps: [{ step: 'Route Design', description: 'Customize your expedition route and difficulty level.' }, { step: 'Equipment', description: 'Select from our GS-segment motorcycle fleet with full gear.' }, { step: 'Expedition', description: 'Ride with experienced guides through Vietnam\'s most spectacular passes.' }, { step: 'Recovery', description: 'Post-expedition luxury accommodation and debrief.' }],
+    trust_points: ['Premium Motorcycles', 'Experienced Guides', 'Luxury Logistics'],
+  },
+};
+
+function ServiceSkeleton() {
+  return (
+    <div className="min-h-screen bg-background">
+      <FocusedNavbar />
+      <section className="pt-32 pb-20 md:pt-44 md:pb-28 bg-corporate-navy">
+        <div className="container max-w-4xl text-center space-y-4">
+          <Skeleton className="h-12 w-3/4 mx-auto bg-holistic/10" />
+          <Skeleton className="h-6 w-1/2 mx-auto bg-holistic/10" />
+          <Skeleton className="h-12 w-48 mx-auto bg-holistic/10 mt-6" />
+        </div>
+      </section>
+      <section className="py-20">
+        <div className="container max-w-3xl space-y-4">
+          <Skeleton className="h-8 w-48 mx-auto" />
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-16 w-full" />
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export default function ServicePage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
@@ -44,26 +107,37 @@ export default function ServicePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchService = async () => {
       const { data, error } = await supabase
         .from('services')
         .select('*, packages(*)')
         .eq('slug', slug!)
-        .single();
-      if (error || !data) { navigate('/*', { replace: true }); return; }
-      setService(data as unknown as Service);
+        .maybeSingle();
+
+      if (error) {
+        navigate('/*', { replace: true });
+        return;
+      }
+
+      if (data) {
+        setService(data as unknown as Service);
+      } else {
+        // Use fallback content
+        const fb = fallbacks[slug!];
+        if (fb) {
+          setService({ id: 'fallback', slug: slug!, seo_title: null, seo_description: null, schema_type: 'Service', cta_text: 'Begin Your Journey', packages: [], ...fb } as Service);
+        } else {
+          navigate('/*', { replace: true });
+          return;
+        }
+      }
       setLoading(false);
     };
-    fetch();
+    fetchService();
   }, [slug, navigate]);
 
-  if (loading || !service) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
+  if (loading) return <ServiceSkeleton />;
+  if (!service) return null;
 
   const scrollToForm = () => {
     document.getElementById('lead-form')?.scrollIntoView({ behavior: 'smooth' });
@@ -105,9 +179,7 @@ export default function ServicePage() {
       {service.pain_points && service.pain_points.length > 0 && (
         <section className="py-20 bg-card">
           <div className="container max-w-3xl">
-            <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-10 text-foreground">
-              The Challenge
-            </h2>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-10 text-foreground">The Challenge</h2>
             <div className="space-y-4">
               {service.pain_points.map((point, i) => (
                 <div key={i} className="flex gap-3 p-4 rounded-lg border border-border bg-background">
@@ -124,9 +196,7 @@ export default function ServicePage() {
       {service.value_propositions && service.value_propositions.length > 0 && (
         <section className="py-20">
           <div className="container max-w-3xl">
-            <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-10 text-foreground">
-              Our Solution
-            </h2>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-10 text-foreground">Our Solution</h2>
             <div className="space-y-4">
               {service.value_propositions.map((vp, i) => (
                 <div key={i} className="flex gap-3 p-4 rounded-lg border border-border bg-card">
@@ -143,9 +213,7 @@ export default function ServicePage() {
       {service.process_steps && (service.process_steps as { step: string; description: string }[]).length > 0 && (
         <section className="py-20 bg-card">
           <div className="container max-w-3xl">
-            <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-10 text-foreground">
-              The Process
-            </h2>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-10 text-foreground">The Process</h2>
             <div className="space-y-6">
               {(service.process_steps as { step: string; description: string }[]).map((ps, i) => (
                 <div key={i} className="flex gap-4">
@@ -167,9 +235,7 @@ export default function ServicePage() {
       {service.packages && service.packages.length > 0 && (
         <section className="py-20">
           <div className="container">
-            <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-10 text-foreground">
-              Packages
-            </h2>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-10 text-foreground">Packages</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
               {service.packages.map((pkg) => (
                 <div
@@ -187,7 +253,7 @@ export default function ServicePage() {
                   {pkg.description && <p className="text-sm text-muted-foreground mb-4">{pkg.description}</p>}
                   {pkg.price && (
                     <p className="text-2xl font-bold text-foreground mb-4">
-                      {pkg.currency === 'USD' ? '$' : pkg.currency}{pkg.price.toLocaleString()}
+                      {pkg.currency === 'USD' ? '$' : pkg.currency === 'EUR' ? '€' : pkg.currency}{pkg.price.toLocaleString()}
                     </p>
                   )}
                   {pkg.features && (
@@ -207,11 +273,7 @@ export default function ServicePage() {
                       </Button>
                     </a>
                   ) : (
-                    <Button
-                      onClick={scrollToForm}
-                      variant="outline"
-                      className="w-full hover:border-secondary/50"
-                    >
+                    <Button onClick={scrollToForm} variant="outline" className="w-full hover:border-secondary/50">
                       Request Consultation
                     </Button>
                   )}
@@ -237,10 +299,8 @@ export default function ServicePage() {
         </section>
       )}
 
-      {/* Lead Form */}
       <PlanBForm />
 
-      {/* Footer */}
       <footer className="py-12 bg-corporate-navy text-holistic">
         <div className="container flex flex-col md:flex-row items-center justify-between gap-4">
           <span className="text-sm text-holistic/50">© {new Date().getFullYear()} Atropox OÜ. All rights reserved.</span>
@@ -250,7 +310,6 @@ export default function ServicePage() {
           </div>
         </div>
       </footer>
-
       <ConciergeButton />
     </div>
   );
