@@ -1,121 +1,176 @@
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Globe, Shield, FileCheck, Wallet } from "lucide-react";
-import logoDark from "@/assets/Dark_Seffaf.png";
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Scale, Heart, Briefcase, Mountain } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import SEOHead from '@/components/SEOHead';
+import FocusedNavbar from '@/components/FocusedNavbar';
+import ConciergeButton from '@/components/ConciergeButton';
+import PlanBForm from '@/components/PlanBForm';
 
-const Index = () => {
+const serviceCards = [
+  { icon: Scale, title: 'Digital Nomad Visa (DTV)', desc: '5-year multi-entry visa for remote professionals, freelancers, and founders.', to: '/residency/dtv-thailand' },
+  { icon: Heart, title: 'Wellness & Medical Visa', desc: 'Premium healthcare access and wellness-focused relocation to Thailand.', to: '/wellness/thailand-retreat' },
+  { icon: Briefcase, title: 'Corporate Retreats (MICE)', desc: 'Strategic business events, team retreats, and conference logistics.', to: '/corporate-retreats/mice-thailand' },
+  { icon: Mountain, title: 'Hà Giang Expedition', desc: 'Vietnam\'s most spectacular mountain road motorcycle journey.', to: '/expeditions/ha-giang-motor-expedition' },
+];
+
+const networkItems = [
+  { emoji: '⚖️', label: 'network.immigration' },
+  { emoji: '📊', label: 'network.tax' },
+  { emoji: '🏥', label: 'network.medical' },
+  { emoji: '🏨', label: 'network.resorts' },
+];
+
+export default function Index() {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Nav */}
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b">
-        <div className="container flex items-center justify-between h-16">
-          <img src={logoDark} alt="Plan B Asia" className="h-10" />
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#programs" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Programs</a>
-            <a href="#services" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Services</a>
-            <a href="#about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">About</a>
-          </div>
-          <Button size="sm" className="bg-primary hover:bg-primary/90">
-            Get Started <ArrowRight className="ml-1 h-4 w-4" />
-          </Button>
-        </div>
-      </nav>
+      <SEOHead
+        title="Plan B Asia — Sovereign Mobility Architecture"
+        description="Architecting sovereign mobility for founders and global citizens. Visa programs, tax compliance, and strategic relocation in Southeast Asia."
+        schemaType="Organization"
+      />
+      <FocusedNavbar />
 
-      {/* Hero */}
-      <section className="pt-32 pb-20 md:pt-44 md:pb-32">
-        <div className="container max-w-4xl text-center">
-          <span className="inline-block px-4 py-1.5 mb-6 text-xs font-medium tracking-wider uppercase rounded-full bg-secondary/20 text-secondary">
-            Atropox OÜ — Expat Mobility OS
-          </span>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground leading-[1.1] mb-6">
-            Your Plan B<br />
-            <span className="text-secondary">Starts in Asia</span>
+      {/* === LAYER 1: HERO === */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/hero-home.webp')" }}
+        />
+        <div className="absolute inset-0 bg-corporate-navy/70" />
+        <div className="relative z-10 container max-w-4xl text-center text-holistic px-4">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-heading font-bold tracking-tight leading-[1.05] mb-6">
+            {t('hero.title')}
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            Holistic relocation, visa management, compliance monitoring, and fintech payments — all in one platform built for digital nomads, expats, and global citizens.
+          <p className="text-lg md:text-xl text-holistic/70 max-w-2xl mx-auto mb-10 font-body">
+            {t('hero.subtitle')}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8">
-              Explore Programs <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8">
-              Book a Consultation
-            </Button>
+          <Button
+            size="lg"
+            onClick={() => document.getElementById('lead-form')?.scrollIntoView({ behavior: 'smooth' })}
+            className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-base md:text-lg px-10 py-6 h-auto hover:scale-[1.02] transition-all duration-500 ease-out"
+          >
+            {t('hero.cta')} <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+          <p className="mt-4 text-xs text-holistic/50 tracking-wider uppercase">
+            {t('hero.ctaSub')}
+          </p>
+        </div>
+      </section>
+
+      {/* === LAYER 2: TRUSTED NETWORK === */}
+      <section className="py-16 bg-card">
+        <div className="container max-w-4xl">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold text-center mb-10 text-foreground">
+            {t('network.title')}
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {networkItems.map((item) => (
+              <div key={item.label} className="text-center p-6 rounded-lg border border-border bg-background hover:shadow-md hover:scale-[1.02] transition-all duration-500 ease-out">
+                <span className="text-3xl mb-3 block">{item.emoji}</span>
+                <p className="text-sm font-medium text-foreground">{t(item.label)}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section id="services" className="py-20 bg-card">
-        <div className="container">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-            The Expat Mobility OS
-          </h2>
-          <p className="text-muted-foreground text-center max-w-xl mx-auto mb-16">
-            Everything you need to relocate, stay compliant, and thrive abroad.
+      {/* === LAYER 3: FOUNDER STATEMENT === */}
+      <section className="py-20">
+        <div className="container max-w-3xl text-center">
+          <blockquote className="text-xl md:text-2xl font-heading italic text-foreground leading-relaxed mb-6">
+            "{t('founder.quote')}"
+          </blockquote>
+          <p className="text-sm text-muted-foreground tracking-wider uppercase">{t('founder.attribution')}</p>
+        </div>
+      </section>
+
+      {/* === LAYER 4: TRUST LAYER === */}
+      <section className="py-12 bg-corporate-navy">
+        <div className="container max-w-4xl text-center">
+          <p className="text-sm md:text-base text-holistic/80 tracking-wider font-medium">
+            {t('trust.headline')}
           </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: Globe, title: "Visa Programs", desc: "DTV, Elite, Wellness, MICE, Retirement — expert guidance for every pathway." },
-              { icon: Shield, title: "Compliance Monitoring", desc: "Automated 90-day alerts, entry/exit tracking, and document verification." },
-              { icon: FileCheck, title: "Document Management", desc: "Secure cloud storage with role-based access for all your critical files." },
-              { icon: Wallet, title: "Fintech Payments", desc: "Seamless Stripe integration with multi-currency support (THB, TRY, USD, EUR)." },
-            ].map((feature) => (
-              <div key={feature.title} className="group p-6 rounded-lg border bg-background hover:shadow-lg transition-all duration-300">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <feature.icon className="h-6 w-6 text-primary" />
+          <p className="text-xs text-holistic/50 mt-3 uppercase tracking-widest">{t('trust.subtitle')}</p>
+        </div>
+      </section>
+
+      {/* === LAYER 5: SERVICE VERTICALS === */}
+      <section className="py-20">
+        <div className="container">
+          <h2 className="text-3xl md:text-4xl font-heading font-bold text-center mb-4 text-foreground">
+            {t('services.title')}
+          </h2>
+          <p className="text-muted-foreground text-center max-w-xl mx-auto mb-14 text-sm">
+            {t('services.subtitle')}
+          </p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {serviceCards.map((card) => (
+              <Link
+                key={card.to}
+                to={card.to}
+                className="group p-6 rounded-lg border border-border bg-card hover:border-secondary/50 hover:shadow-lg hover:scale-[1.02] transition-all duration-500 ease-out"
+              >
+                <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center mb-4 group-hover:bg-secondary/20 transition-colors duration-300">
+                  <card.icon className="h-6 w-6 text-secondary" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.desc}</p>
-              </div>
+                <h3 className="text-lg font-heading font-semibold text-foreground mb-2">{card.title}</h3>
+                <p className="text-sm text-muted-foreground mb-4">{card.desc}</p>
+                <span className="text-xs font-medium text-secondary flex items-center gap-1 group-hover:gap-2 transition-all duration-300">
+                  Learn More <ArrowRight className="h-3.5 w-3.5" />
+                </span>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Programs */}
-      <section id="programs" className="py-20">
-        <div className="container">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-            Visa Programs
+      {/* === LAYER 6: SOCIAL PROOF / PHILOSOPHY === */}
+      <section className="py-20 bg-card">
+        <div className="container max-w-3xl text-center">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-6">
+            Why Plan B Asia?
           </h2>
-          <p className="text-muted-foreground text-center max-w-xl mx-auto mb-16">
-            Choose the program that fits your lifestyle and goals.
+          <p className="text-muted-foreground leading-relaxed mb-8">
+            We are not a travel agency. We are a sovereign lifestyle architecture firm. Every engagement
+            begins with a strategic assessment of your personal, financial, and regulatory position.
+            From there, we design a mobility plan that protects your freedom, your family, and your future.
           </p>
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {[
-              { name: "Digital Nomad (DTV)", desc: "5-year multi-entry visa for remote workers and freelancers.", tag: "Most Popular" },
-              { name: "Thailand Elite", desc: "Premium long-stay visa with VIP airport services and government concierge.", tag: "Premium" },
-              { name: "Wellness Visa", desc: "For those seeking medical or wellness-focused relocation.", tag: "New" },
-            ].map((program) => (
-              <div key={program.name} className="relative p-6 rounded-lg border bg-card hover:border-secondary/50 transition-colors">
-                <span className="absolute top-4 right-4 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-secondary/15 text-secondary">
-                  {program.tag}
-                </span>
-                <h3 className="text-lg font-semibold mb-2 pr-16">{program.name}</h3>
-                <p className="text-sm text-muted-foreground mb-4">{program.desc}</p>
-                <Button variant="outline" size="sm">Learn More</Button>
-              </div>
-            ))}
+          <div className="grid grid-cols-3 gap-6">
+            <div>
+              <p className="text-3xl font-heading font-bold text-secondary">18+</p>
+              <p className="text-xs text-muted-foreground mt-1">Client Countries</p>
+            </div>
+            <div>
+              <p className="text-3xl font-heading font-bold text-secondary">100%</p>
+              <p className="text-xs text-muted-foreground mt-1">Legal Compliance</p>
+            </div>
+            <div>
+              <p className="text-3xl font-heading font-bold text-secondary">24h</p>
+              <p className="text-xs text-muted-foreground mt-1">Response Time</p>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* === LAYER 7: LEAD CAPTURE === */}
+      <PlanBForm />
 
       {/* Footer */}
-      <footer className="py-12 bg-foreground text-primary-foreground">
+      <footer className="py-12 bg-corporate-navy text-holistic">
         <div className="container flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <img src={logoDark} alt="Plan B Asia" className="h-8 brightness-200" />
-            <span className="text-sm opacity-70">© {new Date().getFullYear()} Atropox OÜ. All rights reserved.</span>
-          </div>
-          <div className="flex gap-6 text-sm opacity-70">
-            <a href="#" className="hover:opacity-100 transition-opacity">Privacy</a>
-            <a href="#" className="hover:opacity-100 transition-opacity">Terms</a>
-            <a href="#" className="hover:opacity-100 transition-opacity">Contact</a>
+          <span className="text-sm text-holistic/50">© {new Date().getFullYear()} Atropox OÜ. All rights reserved.</span>
+          <div className="flex gap-6 text-sm text-holistic/50">
+            <a href="#" className="hover:text-holistic/80 transition-colors">Privacy</a>
+            <a href="#" className="hover:text-holistic/80 transition-colors">Terms</a>
+            <a href="#" className="hover:text-holistic/80 transition-colors">Contact</a>
           </div>
         </div>
       </footer>
+
+      <ConciergeButton />
     </div>
   );
-};
-
-export default Index;
+}
