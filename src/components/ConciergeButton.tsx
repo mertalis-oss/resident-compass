@@ -50,7 +50,7 @@ export default function ConciergeButton() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 p-3 rounded-lg border border-border hover:border-secondary/50 hover:bg-muted/50 transition-all duration-300"
               >
-                <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <span className="text-lg">✈️</span>
                 </div>
                 <div>
