@@ -393,6 +393,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_visa_status: {
+        Args: { p_user_id: string }
+        Returns: {
+          country: string
+          days_spent: number
+          tax_resident: boolean
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["user_role"]
