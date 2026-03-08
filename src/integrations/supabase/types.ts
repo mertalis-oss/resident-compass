@@ -225,6 +225,51 @@ export type Database = {
         }
         Relationships: []
       }
+      ledger_transactions: {
+        Row: {
+          amount_cents: number
+          created_at: string | null
+          enrollment_id: string | null
+          id: string
+          stripe_event_id: string
+          tx_type: Database["public"]["Enums"]["ledger_tx_type"]
+          user_id: string | null
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string | null
+          enrollment_id?: string | null
+          id?: string
+          stripe_event_id: string
+          tx_type: Database["public"]["Enums"]["ledger_tx_type"]
+          user_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string | null
+          enrollment_id?: string | null
+          id?: string
+          stripe_event_id?: string
+          tx_type?: Database["public"]["Enums"]["ledger_tx_type"]
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ledger_transactions_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ledger_transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           created_at: string | null
@@ -344,6 +389,69 @@ export type Database = {
         }
         Relationships: []
       }
+      stripe_webhook_failures: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          event_id: string
+          event_type: string | null
+          id: string
+          payload: Json | null
+          processing_time_ms: number | null
+          resolved: boolean | null
+          resolved_at: string | null
+          retry_count: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          event_id: string
+          event_type?: string | null
+          id?: string
+          payload?: Json | null
+          processing_time_ms?: number | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          retry_count?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          event_id?: string
+          event_type?: string | null
+          id?: string
+          payload?: Json | null
+          processing_time_ms?: number | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          retry_count?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      stripe_webhook_metrics: {
+        Row: {
+          event_type: string
+          failure_count: number | null
+          last_processed_at: string | null
+          success_count: number | null
+        }
+        Insert: {
+          event_type: string
+          failure_count?: number | null
+          last_processed_at?: string | null
+          success_count?: number | null
+        }
+        Update: {
+          event_type?: string
+          failure_count?: number | null
+          last_processed_at?: string | null
+          success_count?: number | null
+        }
+        Relationships: []
+      }
       visa_entries: {
         Row: {
           country: string | null
@@ -408,6 +516,19 @@ export type Database = {
         }
         Returns: boolean
       }
+      process_stripe_payment: {
+        Args: {
+          p_amount_cents: number
+          p_enrollment_id: string
+          p_event_id: string
+          p_event_type: string
+          p_expected_amount_cents: number
+          p_is_refund?: boolean
+          p_payment_intent: string
+          p_user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       currency_code: "THB" | "TRY" | "USD" | "EUR"
@@ -425,6 +546,7 @@ export type Database = {
         | "archived"
         | "compliance_alert"
         | "cancelled"
+      ledger_tx_type: "payment" | "refund"
       payment_provider: "stripe" | "manual_transfer"
       user_role: "admin" | "agent" | "client"
       visa_program_type:
@@ -578,6 +700,7 @@ export const Constants = {
         "compliance_alert",
         "cancelled",
       ],
+      ledger_tx_type: ["payment", "refund"],
       payment_provider: ["stripe", "manual_transfer"],
       user_role: ["admin", "agent", "client"],
       visa_program_type: [
