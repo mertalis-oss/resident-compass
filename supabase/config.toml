@@ -1,1 +1,4 @@
 project_id = "gjbuoyxwujpbaprcrnmg"
+
+[functions.replay-webhook]
+verify_jwt = false
