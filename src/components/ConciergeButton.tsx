@@ -8,7 +8,6 @@ export default function ConciergeButton() {
 
   return (
     <>
-      {/* Floating Button */}
       <button
         onClick={() => setOpen(!open)}
         className="fixed bottom-6 right-6 z-[60] h-14 px-5 rounded-full bg-secondary text-secondary-foreground shadow-xl flex items-center gap-2 hover:scale-[1.02] transition-all duration-500 ease-out"
@@ -18,7 +17,6 @@ export default function ConciergeButton() {
         <span className="text-sm font-medium hidden sm:inline">{t('concierge.label')}</span>
       </button>
 
-      {/* Modal */}
       {open && (
         <div className="fixed inset-0 z-[59] flex items-end sm:items-center justify-center p-4">
           <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
@@ -27,7 +25,7 @@ export default function ConciergeButton() {
               {t('concierge.label')}
             </h3>
             <p className="text-sm text-muted-foreground">
-              Connect with our concierge team directly via your preferred channel.
+              Discreet & confidential communication. Responds within 2 hours.
             </p>
             <div className="space-y-3">
               <a

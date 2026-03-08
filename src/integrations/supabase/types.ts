@@ -185,6 +185,7 @@ export type Database = {
       }
       leads: {
         Row: {
+          budget_range: string | null
           consent_marketing: boolean | null
           country: string | null
           created_at: string | null
@@ -192,13 +193,17 @@ export type Database = {
           id: string
           interest: Database["public"]["Enums"]["visa_program_type"] | null
           ip_address: string | null
+          mobility_score: number | null
           name: string | null
           phone: string | null
+          timeline: string | null
           utm_campaign: string | null
           utm_medium: string | null
           utm_source: string | null
+          whatsapp: string | null
         }
         Insert: {
+          budget_range?: string | null
           consent_marketing?: boolean | null
           country?: string | null
           created_at?: string | null
@@ -206,13 +211,17 @@ export type Database = {
           id?: string
           interest?: Database["public"]["Enums"]["visa_program_type"] | null
           ip_address?: string | null
+          mobility_score?: number | null
           name?: string | null
           phone?: string | null
+          timeline?: string | null
           utm_campaign?: string | null
           utm_medium?: string | null
           utm_source?: string | null
+          whatsapp?: string | null
         }
         Update: {
+          budget_range?: string | null
           consent_marketing?: boolean | null
           country?: string | null
           created_at?: string | null
@@ -220,11 +229,14 @@ export type Database = {
           id?: string
           interest?: Database["public"]["Enums"]["visa_program_type"] | null
           ip_address?: string | null
+          mobility_score?: number | null
           name?: string | null
           phone?: string | null
+          timeline?: string | null
           utm_campaign?: string | null
           utm_medium?: string | null
           utm_source?: string | null
+          whatsapp?: string | null
         }
         Relationships: []
       }
