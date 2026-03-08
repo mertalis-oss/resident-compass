@@ -14,6 +14,7 @@ const leadSchema = z.object({
   email: z.string().trim().email().max(255),
   country: z.string().trim().min(1).max(100),
   phone: z.string().trim().max(20).optional(),
+  whatsapp: z.string().trim().max(20).optional(),
   timeline: z.string().optional(),
   budget: z.string().optional(),
   scope: z.string().trim().max(1000).optional(),
@@ -24,7 +25,7 @@ export default function PlanBForm() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [utm, setUtm] = useState({ utm_source: '', utm_campaign: '', utm_medium: '' });
-  const [form, setForm] = useState({ name: '', email: '', country: '', phone: '', timeline: '', budget: '', scope: '' });
+  const [form, setForm] = useState({ name: '', email: '', country: '', phone: '', whatsapp: '', timeline: '', budget: '', scope: '' });
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -48,6 +49,9 @@ export default function PlanBForm() {
       email: form.email,
       country: form.country,
       phone: form.phone || null,
+      whatsapp: form.whatsapp || null,
+      timeline: form.timeline || null,
+      budget_range: form.budget || null,
       interest: null,
       consent_marketing: true,
       utm_source: utm.utm_source || null,
@@ -97,7 +101,7 @@ export default function PlanBForm() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="whatsapp">{t('form.whatsapp')}</Label>
-              <Input id="whatsapp" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} maxLength={20} />
+              <Input id="whatsapp" value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} maxLength={20} />
             </div>
           </div>
           <div className="grid md:grid-cols-2 gap-4">

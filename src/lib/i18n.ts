@@ -19,8 +19,19 @@ const resources = {
         quote: 'Mobility is no longer a lifestyle choice. It is a strategic necessity. In a world of shifting tax regimes and digital borders, your Plan B is your most important asset.',
         attribution: '— Plan B Asia Advisory',
       },
+      founderLetter: {
+        title: 'A Note from the Founder',
+        text: 'Mobility is no longer a lifestyle choice. It is a strategic necessity. We design structured pathways for global citizens seeking stability, renewal, and opportunity.',
+        signature: 'Serkan',
+        role: 'Founder, Plan B Asia',
+      },
       network: { title: 'Our Trusted Network', immigration: 'Immigration Lawyers', tax: 'Tax Advisors', medical: 'Private Medical Clinics', resorts: 'Luxury Resorts' },
       services: { title: 'Strategic Verticals', subtitle: 'Tailored programs for founders, families, and global citizens.' },
+      calculator: {
+        title: 'Calculate Your Visa Eligibility & Mobility Score',
+        subtitle: 'Discover your strategic position for Thailand\'s Digital Nomad Visa in under 60 seconds.',
+        cta: 'Start Free Assessment',
+      },
       form: {
         title: 'Begin Your Strategic Plan',
         name: 'Full Name', email: 'Email', country: 'Country of Residence', whatsapp: 'WhatsApp Number',
@@ -50,8 +61,19 @@ const resources = {
         quote: 'Mobilite artık bir yaşam tarzı tercihi değil. Stratejik bir zorunluluktur.',
         attribution: '— Plan B Asia Danışmanlık',
       },
+      founderLetter: {
+        title: 'Kurucudan Bir Not',
+        text: 'Mobilite artık bir yaşam tarzı tercihi değil. Stratejik bir zorunluluktur. İstikrar, yenilenme ve fırsat arayan küresel vatandaşlar için yapılandırılmış yollar tasarlıyoruz.',
+        signature: 'Serkan',
+        role: 'Kurucu, Plan B Asia',
+      },
       network: { title: 'Güvenilir Ağımız', immigration: 'Göçmenlik Avukatları', tax: 'Vergi Danışmanları', medical: 'Özel Tıp Klinikleri', resorts: 'Lüks Tatil Köyleri' },
       services: { title: 'Stratejik Dikey Alanlar', subtitle: 'Kurucular, aileler ve küresel vatandaşlar için özel programlar.' },
+      calculator: {
+        title: 'Vize Uygunluğunuzu ve Mobilite Puanınızı Hesaplayın',
+        subtitle: 'Tayland Dijital Göçebe Vizesi için stratejik konumunuzu 60 saniyede keşfedin.',
+        cta: 'Ücretsiz Değerlendirme Başlatın',
+      },
       form: {
         title: 'Stratejik Planınıza Başlayın',
         name: 'Ad Soyad', email: 'E-posta', country: 'İkamet Ülkesi', whatsapp: 'WhatsApp Numarası',
@@ -81,8 +103,19 @@ const resources = {
         quote: 'गतिशीलता अब जीवनशैली का विकल्प नहीं है। यह एक रणनीतिक आवश्यकता है।',
         attribution: '— Plan B Asia सलाहकार',
       },
+      founderLetter: {
+        title: 'संस्थापक से एक संदेश',
+        text: 'गतिशीलता अब जीवनशैली का विकल्प नहीं है। यह एक रणनीतिक आवश्यकता है। हम स्थिरता, नवीनीकरण और अवसर की तलाश में वैश्विक नागरिकों के लिए संरचित मार्ग डिज़ाइन करते हैं।',
+        signature: 'सरकान',
+        role: 'संस्थापक, Plan B Asia',
+      },
       network: { title: 'हमारा विश्वसनीय नेटवर्क', immigration: 'आव्रजन वकील', tax: 'कर सलाहकार', medical: 'निजी चिकित्सा क्लिनिक', resorts: 'लक्जरी रिसॉर्ट' },
       services: { title: 'रणनीतिक क्षेत्र', subtitle: 'संस्थापकों, परिवारों और वैश्विक नागरिकों के लिए कार्यक्रम।' },
+      calculator: {
+        title: 'अपनी वीज़ा पात्रता और गतिशीलता स्कोर की गणना करें',
+        subtitle: 'थाईलैंड के डिजिटल नोमैड वीज़ा के लिए अपनी रणनीतिक स्थिति 60 सेकंड में जानें।',
+        cta: 'मुफ्त मूल्यांकन शुरू करें',
+      },
       form: {
         title: 'अपनी रणनीतिक योजना शुरू करें',
         name: 'पूरा नाम', email: 'ईमेल', country: 'निवास का देश', whatsapp: 'WhatsApp नंबर',
