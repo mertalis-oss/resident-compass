@@ -273,6 +273,59 @@ export type Database = {
           },
         ]
       }
+      packages: {
+        Row: {
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          features: string[] | null
+          id: string
+          is_featured: boolean | null
+          is_stripe_enabled: boolean | null
+          name: string
+          price: number | null
+          service_id: string
+          sort_order: number | null
+          stripe_payment_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          features?: string[] | null
+          id?: string
+          is_featured?: boolean | null
+          is_stripe_enabled?: boolean | null
+          name: string
+          price?: number | null
+          service_id: string
+          sort_order?: number | null
+          stripe_payment_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          features?: string[] | null
+          id?: string
+          is_featured?: boolean | null
+          is_stripe_enabled?: boolean | null
+          name?: string
+          price?: number | null
+          service_id?: string
+          sort_order?: number | null
+          stripe_payment_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "packages_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           created_at: string | null
@@ -333,6 +386,66 @@ export type Database = {
           phone?: string | null
           preferred_language?: string | null
           role?: Database["public"]["Enums"]["user_role"] | null
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          created_at: string | null
+          cta_text: string | null
+          description: string | null
+          hero_image_url: string | null
+          id: string
+          is_active: boolean | null
+          pain_points: string[] | null
+          process_steps: Json | null
+          schema_type: string | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          sort_order: number | null
+          subtitle: string | null
+          title: string
+          trust_points: string[] | null
+          value_propositions: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          cta_text?: string | null
+          description?: string | null
+          hero_image_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          pain_points?: string[] | null
+          process_steps?: Json | null
+          schema_type?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          sort_order?: number | null
+          subtitle?: string | null
+          title: string
+          trust_points?: string[] | null
+          value_propositions?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          cta_text?: string | null
+          description?: string | null
+          hero_image_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          pain_points?: string[] | null
+          process_steps?: Json | null
+          schema_type?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          sort_order?: number | null
+          subtitle?: string | null
+          title?: string
+          trust_points?: string[] | null
+          value_propositions?: string[] | null
         }
         Relationships: []
       }
