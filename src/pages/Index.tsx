@@ -68,6 +68,8 @@ export default function Index() {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/images/hero-home.webp')" }}
+          role="img"
+          aria-label="Plan B Asia hero"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-corporate-navy/80 via-corporate-navy/30 to-transparent" />
         <div className="relative z-10 container max-w-5xl px-6">
