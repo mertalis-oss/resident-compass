@@ -9,7 +9,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ServicePage from "./pages/ServicePage";
-import VisaCalculator from "./pages/VisaCalculator";
+import MobilityAssessment from "./pages/MobilityAssessment";
 import Webhooks from "./pages/admin/system/Webhooks";
 import ProtectedRoute from "./components/ProtectedRoute";
 
