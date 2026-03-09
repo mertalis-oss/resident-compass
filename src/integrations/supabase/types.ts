@@ -196,6 +196,8 @@ export type Database = {
           mobility_score: number | null
           name: string | null
           phone: string | null
+          preferred_contact: string | null
+          program_scope: string | null
           timeline: string | null
           utm_campaign: string | null
           utm_medium: string | null
@@ -214,6 +216,8 @@ export type Database = {
           mobility_score?: number | null
           name?: string | null
           phone?: string | null
+          preferred_contact?: string | null
+          program_scope?: string | null
           timeline?: string | null
           utm_campaign?: string | null
           utm_medium?: string | null
@@ -232,6 +236,8 @@ export type Database = {
           mobility_score?: number | null
           name?: string | null
           phone?: string | null
+          preferred_contact?: string | null
+          program_scope?: string | null
           timeline?: string | null
           utm_campaign?: string | null
           utm_medium?: string | null
@@ -296,6 +302,7 @@ export type Database = {
           is_stripe_enabled: boolean | null
           name: string
           price: number | null
+          price_range: string | null
           service_id: string
           sort_order: number | null
           stripe_payment_url: string | null
@@ -310,6 +317,7 @@ export type Database = {
           is_stripe_enabled?: boolean | null
           name: string
           price?: number | null
+          price_range?: string | null
           service_id: string
           sort_order?: number | null
           stripe_payment_url?: string | null
@@ -324,6 +332,7 @@ export type Database = {
           is_stripe_enabled?: boolean | null
           name?: string
           price?: number | null
+          price_range?: string | null
           service_id?: string
           sort_order?: number | null
           stripe_payment_url?: string | null
@@ -417,6 +426,7 @@ export type Database = {
           slug: string
           sort_order: number | null
           subtitle: string | null
+          theme_color: string | null
           title: string
           trust_points: string[] | null
           value_propositions: string[] | null
@@ -436,6 +446,7 @@ export type Database = {
           slug: string
           sort_order?: number | null
           subtitle?: string | null
+          theme_color?: string | null
           title: string
           trust_points?: string[] | null
           value_propositions?: string[] | null
@@ -455,6 +466,7 @@ export type Database = {
           slug?: string
           sort_order?: number | null
           subtitle?: string | null
+          theme_color?: string | null
           title?: string
           trust_points?: string[] | null
           value_propositions?: string[] | null

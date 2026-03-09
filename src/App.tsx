@@ -9,7 +9,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ServicePage from "./pages/ServicePage";
-import VisaCalculator from "./pages/VisaCalculator";
+import MobilityAssessment from "./pages/MobilityAssessment";
 import Webhooks from "./pages/admin/system/Webhooks";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -37,7 +37,7 @@ const App = () => (
             <Route path="/wellness/:slug" element={<ServicePage />} />
             <Route path="/corporate-retreats/:slug" element={<ServicePage />} />
             <Route path="/expeditions/:slug" element={<ServicePage />} />
-            <Route path="/tools/dtv-visa-calculator" element={<VisaCalculator />} />
+            <Route path="/tools/dtv-visa-calculator" element={<MobilityAssessment />} />
             <Route path="/admin/system/webhooks" element={<Webhooks />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
