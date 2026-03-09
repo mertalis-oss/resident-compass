@@ -16,6 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import { trackEvent } from '@/lib/analytics';
 
 /* ── Data ── */
 
@@ -132,6 +133,7 @@ export default function MobilityAssessment() {
   const nextStep = () => {
     if (step === 4) {
       setShowResult(true);
+      trackEvent('mobility_assessment_completed', { score, nationality, income, workType, timeline });
     } else {
       setStep(step + 1);
     }
@@ -168,6 +170,7 @@ export default function MobilityAssessment() {
       toast.error('Something went wrong. Please try again.');
       return;
     }
+    trackEvent('lead_form_submit', { source: 'mobility_assessment', score });
     setSubmitted(true);
   };
 

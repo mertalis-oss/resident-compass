@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { z } from 'zod';
 import { toast } from 'sonner';
+import { trackEvent } from '@/lib/analytics';
 
 const leadSchema = z.object({
   name: z.string().trim().min(1).max(100),
@@ -63,6 +64,7 @@ export default function PlanBForm() {
       toast.error('Something went wrong. Please try again.');
       return;
     }
+    trackEvent('lead_form_submit', { source: 'plan_b_form', country: form.country });
     setSubmitted(true);
   };
 
