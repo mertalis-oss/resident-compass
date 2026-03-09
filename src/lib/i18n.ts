@@ -40,6 +40,15 @@ const resources = {
         submit: 'Submit Inquiry',
         success: 'Your inquiry has been received. Our concierge team will contact you shortly.',
       },
+      testimonials: {
+        title: 'Client Perspectives',
+        items: [
+          { quote: 'Plan B Asia transformed our relocation from a logistical nightmare into a structured, sovereign pathway. Their legal framework gave us complete confidence.', author: 'M.K.', role: 'Tech Founder, Berlin' },
+          { quote: 'The level of discretion and professionalism is unmatched. They understand the needs of global founders navigating complex tax environments.', author: 'A.R.', role: 'Serial Entrepreneur, Dubai' },
+          { quote: 'From visa strategy to wellness integration — they designed a complete lifestyle architecture for our family\'s move to Thailand.', author: 'S.L.', role: 'Portfolio Manager, London' },
+          { quote: 'Their corporate retreat infrastructure in Southeast Asia is world-class. Every detail was handled with precision and confidentiality.', author: 'J.W.', role: 'CEO, Singapore' },
+        ],
+      },
       concierge: { label: 'Speak with Concierge' },
       notFound: { message: 'The page you are looking for does not exist.', cta: 'Return to Strategic Overview' },
     },
@@ -82,6 +91,15 @@ const resources = {
         submit: 'Başvuru Gönder',
         success: 'Başvurunuz alınmıştır. Concierge ekibimiz en kısa sürede sizinle iletişime geçecektir.',
       },
+      testimonials: {
+        title: 'Müşteri Görüşleri',
+        items: [
+          { quote: 'Plan B Asia, yer değiştirme sürecimizi yapılandırılmış, egemen bir yola dönüştürdü.', author: 'M.K.', role: 'Teknoloji Kurucusu, Berlin' },
+          { quote: 'Gizlilik ve profesyonellik seviyesi benzersiz.', author: 'A.R.', role: 'Seri Girişimci, Dubai' },
+          { quote: 'Vize stratejisinden sağlık entegrasyonuna — ailemiz için eksiksiz bir yaşam mimarisi tasarladılar.', author: 'S.L.', role: 'Portföy Yöneticisi, Londra' },
+          { quote: 'Güneydoğu Asya\'daki kurumsal toplantı altyapıları dünya standartlarında.', author: 'J.W.', role: 'CEO, Singapur' },
+        ],
+      },
       concierge: { label: 'Concierge ile Konuşun' },
       notFound: { message: 'Aradığınız sayfa mevcut değil.', cta: 'Stratejik Genel Bakışa Dön' },
     },
@@ -123,6 +141,15 @@ const resources = {
         immediate: 'तत्काल', threeMonths: '3 महीने', sixMonths: '6 महीने',
         submit: 'पूछताछ भेजें',
         success: 'आपकी पूछताछ प्राप्त हो गई है। हमारी कंसीयज टीम शीघ्र ही संपर्क करेगी।',
+      },
+      testimonials: {
+        title: 'ग्राहक दृष्टिकोण',
+        items: [
+          { quote: 'Plan B Asia ने हमारे स्थानांतरण को एक संरचित, संप्रभु मार्ग में बदल दिया।', author: 'M.K.', role: 'टेक संस्थापक, बर्लिन' },
+          { quote: 'विवेक और व्यावसायिकता का स्तर अद्वितीय है।', author: 'A.R.', role: 'सीरियल उद्यमी, दुबई' },
+          { quote: 'वीज़ा रणनीति से लेकर कल्याण एकीकरण तक — उन्होंने हमारे परिवार के लिए पूर्ण जीवनशैली वास्तुकला डिज़ाइन की।', author: 'S.L.', role: 'पोर्टफोलियो मैनेजर, लंदन' },
+          { quote: 'दक्षिण पूर्व एशिया में उनका कॉर्पोरेट रिट्रीट बुनियादी ढांचा विश्व स्तरीय है।', author: 'J.W.', role: 'CEO, सिंगापुर' },
+        ],
       },
       concierge: { label: 'कंसीयज से बात करें' },
       notFound: { message: 'आप जो पृष्ठ खोज रहे हैं वह मौजूद नहीं है।', cta: 'रणनीतिक अवलोकन पर लौटें' },
