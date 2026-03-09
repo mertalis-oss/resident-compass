@@ -91,6 +91,15 @@ const resources = {
         submit: 'Başvuru Gönder',
         success: 'Başvurunuz alınmıştır. Concierge ekibimiz en kısa sürede sizinle iletişime geçecektir.',
       },
+      testimonials: {
+        title: 'Müşteri Görüşleri',
+        items: [
+          { quote: 'Plan B Asia, yer değiştirme sürecimizi yapılandırılmış, egemen bir yola dönüştürdü.', author: 'M.K.', role: 'Teknoloji Kurucusu, Berlin' },
+          { quote: 'Gizlilik ve profesyonellik seviyesi benzersiz.', author: 'A.R.', role: 'Seri Girişimci, Dubai' },
+          { quote: 'Vize stratejisinden sağlık entegrasyonuna — ailemiz için eksiksiz bir yaşam mimarisi tasarladılar.', author: 'S.L.', role: 'Portföy Yöneticisi, Londra' },
+          { quote: 'Güneydoğu Asya\'daki kurumsal toplantı altyapıları dünya standartlarında.', author: 'J.W.', role: 'CEO, Singapur' },
+        ],
+      },
       concierge: { label: 'Concierge ile Konuşun' },
       notFound: { message: 'Aradığınız sayfa mevcut değil.', cta: 'Stratejik Genel Bakışa Dön' },
     },
