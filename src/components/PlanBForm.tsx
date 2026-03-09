@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { z } from 'zod';
 import { toast } from 'sonner';
+import { trackEvent } from '@/lib/analytics';
 
 const leadSchema = z.object({
   name: z.string().trim().min(1).max(100),
