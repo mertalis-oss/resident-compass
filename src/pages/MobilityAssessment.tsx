@@ -170,6 +170,7 @@ export default function MobilityAssessment() {
       toast.error('Something went wrong. Please try again.');
       return;
     }
+    trackEvent('lead_form_submit', { source: 'mobility_assessment', score });
     setSubmitted(true);
   };
 
