@@ -16,6 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import { trackEvent } from '@/lib/analytics';
 
 /* ── Data ── */
 
