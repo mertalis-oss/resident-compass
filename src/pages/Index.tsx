@@ -167,6 +167,7 @@ export default function Index() {
                 src={service.image}
                 alt={service.title}
                 loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover min-h-[400px] md:min-h-full"
               />
             </div>

@@ -37,7 +37,7 @@ const App = () => (
             <Route path="/wellness/:slug" element={<ServicePage />} />
             <Route path="/corporate-retreats/:slug" element={<ServicePage />} />
             <Route path="/expeditions/:slug" element={<ServicePage />} />
-            <Route path="/tools/dtv-visa-calculator" element={<VisaCalculator />} />
+            <Route path="/tools/dtv-visa-calculator" element={<MobilityAssessment />} />
             <Route path="/admin/system/webhooks" element={<Webhooks />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
