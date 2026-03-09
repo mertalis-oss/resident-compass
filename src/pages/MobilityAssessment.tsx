@@ -133,6 +133,7 @@ export default function MobilityAssessment() {
   const nextStep = () => {
     if (step === 4) {
       setShowResult(true);
+      trackEvent('mobility_assessment_completed', { score, nationality, income, workType, timeline });
     } else {
       setStep(step + 1);
     }
