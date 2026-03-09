@@ -2,10 +2,12 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Calculator } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import SEOHead from '@/components/SEOHead';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import ConciergeButton from '@/components/ConciergeButton';
 import PlanBForm from '@/components/PlanBForm';
+import AnimatedSection from '@/components/AnimatedSection';
 
 const serviceVerticals = [
   {
@@ -37,7 +39,7 @@ const serviceVerticals = [
     numeral: 'IV',
     title: 'Private Expeditions',
     subtitle: 'Hà Giang & Beyond',
-    desc: 'Vietnam\'s most spectacular mountain roads. A sovereign journey through the northern highlands — curated for founders, not tourists.',
+    desc: "Vietnam's most spectacular mountain roads. A sovereign journey through the northern highlands — curated for founders, not tourists.",
     to: '/expeditions/ha-giang-motor-expedition',
     image: '/images/service-expeditions.webp',
     reverse: true,
@@ -53,6 +55,7 @@ const networkPillars = [
 
 export default function Index() {
   const { t } = useTranslation();
+  const testimonials = t('testimonials.items', { returnObjects: true }) as { quote: string; author: string; role: string }[];
 
   return (
     <div className="min-h-screen bg-background">
@@ -93,41 +96,45 @@ export default function Index() {
       </section>
 
       {/* ═══ TRUSTED NETWORK ═══ */}
-      <section className="py-20 border-t border-border">
-        <div className="container max-w-5xl px-6">
-          <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-16 font-body">
-            {t('network.title')}
-          </p>
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-0">
-            {networkPillars.map((pillar, i) => (
-              <div key={pillar} className="flex items-center">
-                {i > 0 && (
-                  <div className="hidden md:block w-px h-8 bg-border mx-10" />
-                )}
-                <p className="font-heading text-xl md:text-2xl font-normal tracking-tight text-foreground py-3 md:py-0">
-                  {pillar}
-                </p>
-              </div>
-            ))}
+      <AnimatedSection>
+        <section className="py-20 border-t border-border">
+          <div className="container max-w-5xl px-6">
+            <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-16 font-body">
+              {t('network.title')}
+            </p>
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-0">
+              {networkPillars.map((pillar, i) => (
+                <div key={pillar} className="flex items-center">
+                  {i > 0 && (
+                    <div className="hidden md:block w-px h-8 bg-border mx-10" />
+                  )}
+                  <p className="font-heading text-xl md:text-2xl font-normal tracking-tight text-foreground py-3 md:py-0">
+                    {pillar}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
 
       {/* ═══ FOUNDER LETTER ═══ */}
-      <section className="py-32 border-t border-border">
-        <div className="container max-w-3xl px-6 text-center">
-          <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-12 font-body">
-            {t('founderLetter.title')}
-          </p>
-          <p className="font-heading text-2xl md:text-3xl font-normal leading-relaxed text-foreground italic">
-            "{t('founderLetter.text')}"
-          </p>
-          <div className="mt-12 border-t border-border pt-8 inline-block">
-            <p className="font-heading text-lg text-secondary italic">{t('founderLetter.signature')}</p>
-            <p className="text-xs text-muted-foreground mt-2 tracking-[0.3em] uppercase font-body">{t('founderLetter.role')}</p>
+      <AnimatedSection>
+        <section className="py-32 border-t border-border">
+          <div className="container max-w-3xl px-6 text-center">
+            <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-12 font-body">
+              {t('founderLetter.title')}
+            </p>
+            <p className="font-heading text-2xl md:text-3xl font-normal leading-relaxed text-foreground italic">
+              &ldquo;{t('founderLetter.text')}&rdquo;
+            </p>
+            <div className="mt-12 border-t border-border pt-8 inline-block">
+              <p className="font-heading text-lg text-secondary italic">{t('founderLetter.signature')}</p>
+              <p className="text-xs text-muted-foreground mt-2 tracking-[0.3em] uppercase font-body">{t('founderLetter.role')}</p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
 
       {/* ═══ TRUST LAYER ═══ */}
       <section className="py-16 bg-corporate-navy">
@@ -147,109 +154,150 @@ export default function Index() {
 
       {/* ═══ SERVICE VERTICALS — EDITORIAL ═══ */}
       <section className="border-t border-border">
-        <div className="container max-w-5xl px-6 pt-32 pb-12">
-          <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-4 font-body">
-            {t('services.title')}
-          </p>
-          <p className="text-muted-foreground text-sm max-w-md font-body">
-            {t('services.subtitle')}
-          </p>
-        </div>
+        <AnimatedSection>
+          <div className="container max-w-5xl px-6 pt-32 pb-12">
+            <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-4 font-body">
+              {t('services.title')}
+            </p>
+            <p className="text-muted-foreground text-sm max-w-md font-body">
+              {t('services.subtitle')}
+            </p>
+          </div>
+        </AnimatedSection>
 
-        {serviceVerticals.map((service) => (
-          <div
-            key={service.to}
-            className={`flex flex-col ${service.reverse ? 'md:flex-row-reverse' : 'md:flex-row'} min-h-[70vh]`}
-          >
-            {/* Image half */}
-            <div className="w-full md:w-1/2 relative overflow-hidden">
-              <img
-                src={service.image}
-                alt={service.title}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover min-h-[400px] md:min-h-full"
-              />
-            </div>
-
-            {/* Content half */}
-            <div className="w-full md:w-1/2 bg-background flex items-center">
-              <div className="px-8 md:px-16 lg:px-24 py-20 md:py-0 max-w-lg">
-                <span className="font-heading text-6xl font-light text-border block mb-6">
-                  {service.numeral}
-                </span>
-                <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-4 font-body">
-                  {service.subtitle}
-                </p>
-                <h3 className="font-heading text-3xl md:text-4xl font-normal tracking-tight text-foreground mb-6">
-                  {service.title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-10 font-body">
-                  {service.desc}
-                </p>
-                <Link
-                  to={service.to}
-                  className="group inline-flex items-center gap-3 text-foreground font-body text-xs tracking-[0.2em] uppercase transition-all duration-500 ease-out hover:gap-5 border-b border-foreground/20 pb-1"
-                >
-                  Explore Protocol
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-500 group-hover:translate-x-1" />
-                </Link>
+        {serviceVerticals.map((service, idx) => (
+          <AnimatedSection key={service.to} delay={idx * 0.1}>
+            <div
+              className={`flex flex-col ${service.reverse ? 'md:flex-row-reverse' : 'md:flex-row'} min-h-[70vh]`}
+            >
+              <div className="w-full md:w-1/2 relative overflow-hidden">
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover min-h-[400px] md:min-h-full"
+                />
+              </div>
+              <div className="w-full md:w-1/2 bg-background flex items-center">
+                <div className="px-8 md:px-16 lg:px-24 py-20 md:py-0 max-w-lg">
+                  <span className="font-heading text-6xl font-light text-border block mb-6">
+                    {service.numeral}
+                  </span>
+                  <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-4 font-body">
+                    {service.subtitle}
+                  </p>
+                  <h3 className="font-heading text-3xl md:text-4xl font-normal tracking-tight text-foreground mb-6">
+                    {service.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-10 font-body">
+                    {service.desc}
+                  </p>
+                  <Link
+                    to={service.to}
+                    className="group inline-flex items-center gap-3 text-foreground font-body text-xs tracking-[0.2em] uppercase transition-all duration-500 ease-out hover:gap-5 border-b border-foreground/20 pb-1"
+                  >
+                    Explore Protocol
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-500 group-hover:translate-x-1" />
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
+          </AnimatedSection>
         ))}
       </section>
 
       {/* ═══ CALCULATOR HOOK ═══ */}
-      <section className="py-32 border-t border-border">
-        <div className="container max-w-4xl px-6 text-center">
-          <Calculator className="h-6 w-6 text-secondary mx-auto mb-8 stroke-[1]" />
-          <h2 className="font-heading text-3xl md:text-4xl font-normal tracking-tight text-foreground mb-6">
-            {t('calculator.title')}
-          </h2>
-          <p className="text-sm text-muted-foreground max-w-md mx-auto mb-10 font-body">
-            {t('calculator.subtitle')}
-          </p>
-          <Link to="/tools/dtv-visa-calculator">
-            <Button
-              size="lg"
-              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto transition-all duration-500 ease-out hover:scale-[1.02]"
+      <AnimatedSection>
+        <section className="py-32 border-t border-border">
+          <div className="container max-w-4xl px-6 text-center">
+            <Calculator className="h-6 w-6 text-secondary mx-auto mb-8 stroke-[1]" />
+            <h2 className="font-heading text-3xl md:text-4xl font-normal tracking-tight text-foreground mb-6">
+              {t('calculator.title')}
+            </h2>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto mb-10 font-body">
+              {t('calculator.subtitle')}
+            </p>
+            <Link to="/tools/dtv-visa-calculator">
+              <Button
+                size="lg"
+                className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto transition-all duration-500 ease-out hover:scale-[1.02]"
+              >
+                {t('calculator.cta')} <ArrowRight className="ml-3 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </section>
+      </AnimatedSection>
+
+      {/* ═══ TESTIMONIALS ═══ */}
+      <AnimatedSection>
+        <section className="py-32 border-t border-border">
+          <div className="container max-w-4xl px-6">
+            <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-16 text-center font-body">
+              {t('testimonials.title')}
+            </p>
+            <Carousel
+              opts={{ align: 'start', loop: true }}
+              className="w-full"
             >
-              {t('calculator.cta')} <ArrowRight className="ml-3 h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
-      </section>
+              <CarouselContent>
+                {Array.isArray(testimonials) && testimonials.map((item, i) => (
+                  <CarouselItem key={i} className="md:basis-1/2 lg:basis-1/2 pl-6">
+                    <div className="h-full p-8 md:p-10 border border-border rounded-lg bg-card/50 flex flex-col justify-between">
+                      <p className="font-heading text-lg md:text-xl font-normal leading-relaxed text-foreground italic mb-8">
+                        &ldquo;{item.quote}&rdquo;
+                      </p>
+                      <div className="border-t border-border pt-6">
+                        <p className="font-heading text-base text-secondary">{item.author}</p>
+                        <p className="text-xs text-muted-foreground mt-1 tracking-[0.2em] uppercase font-body">
+                          {item.role}
+                        </p>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="flex justify-center gap-4 mt-10">
+                <CarouselPrevious className="static translate-y-0 border-border hover:bg-muted" />
+                <CarouselNext className="static translate-y-0 border-border hover:bg-muted" />
+              </div>
+            </Carousel>
+          </div>
+        </section>
+      </AnimatedSection>
 
       {/* ═══ PHILOSOPHY ═══ */}
-      <section className="py-32 border-t border-border">
-        <div className="container max-w-3xl px-6">
-          <div className="grid md:grid-cols-2 gap-20">
-            <div>
-              <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-8 font-body">
-                Why Plan B Asia
-              </p>
-              <p className="text-sm text-muted-foreground leading-relaxed font-body">
-                We are not a travel agency. We are a sovereign lifestyle architecture firm. Every engagement
-                begins with a strategic assessment of your personal, financial, and regulatory position.
-                From there, we design a mobility plan that protects your freedom, your family, and your future.
-              </p>
-            </div>
-            <div className="flex flex-col justify-end gap-10">
-              {[
-                { value: '18+', label: 'Client Countries' },
-                { value: '100%', label: 'Legal Compliance' },
-                { value: '24h', label: 'Response Time' },
-              ].map((stat) => (
-                <div key={stat.label} className="border-t border-border pt-4">
-                  <p className="font-heading text-3xl font-normal text-secondary">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground mt-1 tracking-[0.2em] uppercase font-body">{stat.label}</p>
-                </div>
-              ))}
+      <AnimatedSection>
+        <section className="py-32 border-t border-border">
+          <div className="container max-w-3xl px-6">
+            <div className="grid md:grid-cols-2 gap-20">
+              <div>
+                <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-8 font-body">
+                  Why Plan B Asia
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed font-body">
+                  We are not a travel agency. We are a sovereign lifestyle architecture firm. Every engagement
+                  begins with a strategic assessment of your personal, financial, and regulatory position.
+                  From there, we design a mobility plan that protects your freedom, your family, and your future.
+                </p>
+              </div>
+              <div className="flex flex-col justify-end gap-10">
+                {[
+                  { value: '18+', label: 'Client Countries' },
+                  { value: '100%', label: 'Legal Compliance' },
+                  { value: '24h', label: 'Response Time' },
+                ].map((stat) => (
+                  <div key={stat.label} className="border-t border-border pt-4">
+                    <p className="font-heading text-3xl font-normal text-secondary">{stat.value}</p>
+                    <p className="text-xs text-muted-foreground mt-1 tracking-[0.2em] uppercase font-body">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
 
       {/* ═══ LEAD CAPTURE ═══ */}
       <PlanBForm />
