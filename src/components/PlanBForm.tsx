@@ -64,6 +64,7 @@ export default function PlanBForm() {
       toast.error('Something went wrong. Please try again.');
       return;
     }
+    trackEvent('lead_form_submit', { source: 'plan_b_form', country: form.country });
     setSubmitted(true);
   };
 
