@@ -153,17 +153,11 @@ export default function MobilityAssessment() {
     const { error } = await supabase.from('leads').insert({
       name: values.name,
       email: values.email,
-      whatsapp: values.whatsapp,
-      preferred_contact: values.preferredContact,
-      program_scope: 'Calculator Lead',
-      country: nationality,
-      timeline,
-      budget_range: income,
-      mobility_score: score,
-      consent_marketing: true,
-      utm_source: params.get('utm_source') || 'calculator',
-      utm_campaign: params.get('utm_campaign') || null,
-      utm_medium: params.get('utm_medium') || null,
+      customer_whatsapp: values.whatsapp || null,
+      source_domain: window.location.hostname,
+      created_from: params.get('utm_source') || 'calculator',
+      score,
+      quiz_answers: { nationality, income, workType, timeline },
     });
     setLoading(false);
     if (error) {
