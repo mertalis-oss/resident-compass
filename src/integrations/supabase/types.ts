@@ -185,66 +185,63 @@ export type Database = {
       }
       leads: {
         Row: {
-          budget_range: string | null
-          consent_marketing: boolean | null
-          country: string | null
           created_at: string | null
-          email: string | null
+          created_from: string | null
+          customer_whatsapp: string | null
+          email: string
           id: string
-          interest: Database["public"]["Enums"]["visa_program_type"] | null
-          ip_address: string | null
-          mobility_score: number | null
           name: string | null
-          phone: string | null
-          preferred_contact: string | null
-          program_scope: string | null
-          timeline: string | null
-          utm_campaign: string | null
-          utm_medium: string | null
-          utm_source: string | null
-          whatsapp: string | null
+          quiz_answers: Json | null
+          recommended_service_id: string | null
+          score: number | null
+          service_id: string | null
+          source_domain: string | null
+          status: Database["public"]["Enums"]["lead_status"] | null
         }
         Insert: {
-          budget_range?: string | null
-          consent_marketing?: boolean | null
-          country?: string | null
           created_at?: string | null
-          email?: string | null
+          created_from?: string | null
+          customer_whatsapp?: string | null
+          email: string
           id?: string
-          interest?: Database["public"]["Enums"]["visa_program_type"] | null
-          ip_address?: string | null
-          mobility_score?: number | null
           name?: string | null
-          phone?: string | null
-          preferred_contact?: string | null
-          program_scope?: string | null
-          timeline?: string | null
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-          whatsapp?: string | null
+          quiz_answers?: Json | null
+          recommended_service_id?: string | null
+          score?: number | null
+          service_id?: string | null
+          source_domain?: string | null
+          status?: Database["public"]["Enums"]["lead_status"] | null
         }
         Update: {
-          budget_range?: string | null
-          consent_marketing?: boolean | null
-          country?: string | null
           created_at?: string | null
-          email?: string | null
+          created_from?: string | null
+          customer_whatsapp?: string | null
+          email?: string
           id?: string
-          interest?: Database["public"]["Enums"]["visa_program_type"] | null
-          ip_address?: string | null
-          mobility_score?: number | null
           name?: string | null
-          phone?: string | null
-          preferred_contact?: string | null
-          program_scope?: string | null
-          timeline?: string | null
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-          whatsapp?: string | null
+          quiz_answers?: Json | null
+          recommended_service_id?: string | null
+          score?: number | null
+          service_id?: string | null
+          source_domain?: string | null
+          status?: Database["public"]["Enums"]["lead_status"] | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "leads_recommended_service_id_fkey"
+            columns: ["recommended_service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ledger_transactions: {
         Row: {
@@ -291,55 +288,82 @@ export type Database = {
           },
         ]
       }
-      packages: {
+      orders: {
         Row: {
+          amount: number | null
+          assigned_to: string | null
+          country: string | null
           created_at: string | null
           currency: string | null
-          description: string | null
-          features: string[] | null
+          customer_email: string
+          customer_name: string | null
+          customer_whatsapp: string | null
           id: string
-          is_featured: boolean | null
-          is_stripe_enabled: boolean | null
-          name: string
-          price: number | null
-          price_range: string | null
-          service_id: string
-          sort_order: number | null
-          stripe_payment_url: string | null
+          notes: string | null
+          paid_at: string | null
+          refund_status: Database["public"]["Enums"]["refund_status"] | null
+          service_id: string | null
+          service_title_snapshot: string | null
+          source_domain: string | null
+          status: Database["public"]["Enums"]["order_status"] | null
+          stripe_customer_id: string | null
+          stripe_payment_intent: string | null
+          stripe_session_id: string | null
+          updated_at: string | null
+          utm_campaign: string | null
+          utm_source: string | null
         }
         Insert: {
+          amount?: number | null
+          assigned_to?: string | null
+          country?: string | null
           created_at?: string | null
           currency?: string | null
-          description?: string | null
-          features?: string[] | null
+          customer_email: string
+          customer_name?: string | null
+          customer_whatsapp?: string | null
           id?: string
-          is_featured?: boolean | null
-          is_stripe_enabled?: boolean | null
-          name: string
-          price?: number | null
-          price_range?: string | null
-          service_id: string
-          sort_order?: number | null
-          stripe_payment_url?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          refund_status?: Database["public"]["Enums"]["refund_status"] | null
+          service_id?: string | null
+          service_title_snapshot?: string | null
+          source_domain?: string | null
+          status?: Database["public"]["Enums"]["order_status"] | null
+          stripe_customer_id?: string | null
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string | null
+          utm_campaign?: string | null
+          utm_source?: string | null
         }
         Update: {
+          amount?: number | null
+          assigned_to?: string | null
+          country?: string | null
           created_at?: string | null
           currency?: string | null
-          description?: string | null
-          features?: string[] | null
+          customer_email?: string
+          customer_name?: string | null
+          customer_whatsapp?: string | null
           id?: string
-          is_featured?: boolean | null
-          is_stripe_enabled?: boolean | null
-          name?: string
-          price?: number | null
-          price_range?: string | null
-          service_id?: string
-          sort_order?: number | null
-          stripe_payment_url?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          refund_status?: Database["public"]["Enums"]["refund_status"] | null
+          service_id?: string | null
+          service_title_snapshot?: string | null
+          source_domain?: string | null
+          status?: Database["public"]["Enums"]["order_status"] | null
+          stripe_customer_id?: string | null
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string | null
+          utm_campaign?: string | null
+          utm_source?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "packages_service_id_fkey"
+            foreignKeyName: "orders_service_id_fkey"
             columns: ["service_id"]
             isOneToOne: false
             referencedRelation: "services"
@@ -410,66 +434,126 @@ export type Database = {
         }
         Relationships: []
       }
-      services: {
+      service_bundles: {
         Row: {
-          created_at: string | null
-          cta_text: string | null
-          description: string | null
-          hero_image_url: string | null
+          bundle_id: string | null
           id: string
-          is_active: boolean | null
-          pain_points: string[] | null
-          process_steps: Json | null
-          schema_type: string | null
-          seo_description: string | null
-          seo_title: string | null
-          slug: string
-          sort_order: number | null
-          subtitle: string | null
-          theme_color: string | null
-          title: string
-          trust_points: string[] | null
-          value_propositions: string[] | null
+          is_mandatory: boolean | null
+          item_id: string | null
+          order_index: number | null
         }
         Insert: {
-          created_at?: string | null
-          cta_text?: string | null
-          description?: string | null
-          hero_image_url?: string | null
+          bundle_id?: string | null
           id?: string
-          is_active?: boolean | null
-          pain_points?: string[] | null
-          process_steps?: Json | null
-          schema_type?: string | null
-          seo_description?: string | null
-          seo_title?: string | null
-          slug: string
-          sort_order?: number | null
-          subtitle?: string | null
-          theme_color?: string | null
-          title: string
-          trust_points?: string[] | null
-          value_propositions?: string[] | null
+          is_mandatory?: boolean | null
+          item_id?: string | null
+          order_index?: number | null
         }
         Update: {
-          created_at?: string | null
-          cta_text?: string | null
-          description?: string | null
-          hero_image_url?: string | null
+          bundle_id?: string | null
           id?: string
+          is_mandatory?: boolean | null
+          item_id?: string | null
+          order_index?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_bundles_bundle_id_fkey"
+            columns: ["bundle_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_bundles_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          calendly_url: string | null
+          capacity: number | null
+          category: string | null
+          created_at: string | null
+          currency: string | null
+          delivery_time_days: number | null
+          description: string | null
+          faq: Json | null
+          features: Json | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          is_bundle: boolean | null
+          is_featured: boolean | null
+          location: string | null
+          order_index: number | null
+          price: number
+          seo_description: string | null
+          seo_title: string | null
+          short_description: string | null
+          slug: string
+          stripe_description: string | null
+          stripe_price_id: string
+          title: string
+          visible_on: Database["public"]["Enums"]["visibility_scope"] | null
+        }
+        Insert: {
+          calendly_url?: string | null
+          capacity?: number | null
+          category?: string | null
+          created_at?: string | null
+          currency?: string | null
+          delivery_time_days?: number | null
+          description?: string | null
+          faq?: Json | null
+          features?: Json | null
+          id?: string
+          image_url?: string | null
           is_active?: boolean | null
-          pain_points?: string[] | null
-          process_steps?: Json | null
-          schema_type?: string | null
+          is_bundle?: boolean | null
+          is_featured?: boolean | null
+          location?: string | null
+          order_index?: number | null
+          price: number
           seo_description?: string | null
           seo_title?: string | null
+          short_description?: string | null
+          slug: string
+          stripe_description?: string | null
+          stripe_price_id: string
+          title: string
+          visible_on?: Database["public"]["Enums"]["visibility_scope"] | null
+        }
+        Update: {
+          calendly_url?: string | null
+          capacity?: number | null
+          category?: string | null
+          created_at?: string | null
+          currency?: string | null
+          delivery_time_days?: number | null
+          description?: string | null
+          faq?: Json | null
+          features?: Json | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          is_bundle?: boolean | null
+          is_featured?: boolean | null
+          location?: string | null
+          order_index?: number | null
+          price?: number
+          seo_description?: string | null
+          seo_title?: string | null
+          short_description?: string | null
           slug?: string
-          sort_order?: number | null
-          subtitle?: string | null
-          theme_color?: string | null
+          stripe_description?: string | null
+          stripe_price_id?: string
           title?: string
-          trust_points?: string[] | null
-          value_propositions?: string[] | null
+          visible_on?: Database["public"]["Enums"]["visibility_scope"] | null
         }
         Relationships: []
       }
@@ -686,8 +770,16 @@ export type Database = {
         | "archived"
         | "compliance_alert"
         | "cancelled"
+      lead_status: "new" | "contacted" | "converted" | "lost"
       ledger_tx_type: "payment" | "refund"
+      order_status:
+        | "pending"
+        | "paid"
+        | "processing"
+        | "fulfilled"
+        | "cancelled"
       payment_provider: "stripe" | "manual_transfer"
+      refund_status: "none" | "requested" | "refunded" | "disputed"
       user_role: "admin" | "agent" | "client"
       visa_program_type:
         | "dtv"
@@ -697,6 +789,7 @@ export type Database = {
         | "elite"
         | "retirement"
         | "education"
+      visibility_scope: "tr" | "global" | "both"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -840,8 +933,11 @@ export const Constants = {
         "compliance_alert",
         "cancelled",
       ],
+      lead_status: ["new", "contacted", "converted", "lost"],
       ledger_tx_type: ["payment", "refund"],
+      order_status: ["pending", "paid", "processing", "fulfilled", "cancelled"],
       payment_provider: ["stripe", "manual_transfer"],
+      refund_status: ["none", "requested", "refunded", "disputed"],
       user_role: ["admin", "agent", "client"],
       visa_program_type: [
         "dtv",
@@ -852,6 +948,7 @@ export const Constants = {
         "retirement",
         "education",
       ],
+      visibility_scope: ["tr", "global", "both"],
     },
   },
 } as const
