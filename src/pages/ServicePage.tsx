@@ -101,10 +101,13 @@ export default function ServicePage() {
 
   useEffect(() => {
     const fetchService = async () => {
+      const scope = getDomainScope();
       const { data, error } = await supabase
         .from('services')
         .select('*')
         .eq('slug', slug!)
+        .eq('is_active', true)
+        .in('visible_on', [scope, 'both'])
         .maybeSingle();
 
       if (error) {
