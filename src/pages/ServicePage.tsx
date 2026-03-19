@@ -131,6 +131,15 @@ export default function ServicePage() {
     fetchService();
   }, [slug, navigate]);
 
+  // Track service view
+  useEffect(() => {
+    if (service && service.id !== 'fallback') {
+      trackPostHogEvent('service_view', { slug: service.slug, title: service.title });
+    }
+  }, [service]);
+    fetchService();
+  }, [slug, navigate]);
+
   if (loading) return <ServiceSkeleton />;
   if (!service) return null;
 
