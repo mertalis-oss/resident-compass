@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
+import { getDomainScope } from '@/hooks/useDomainScope';
+import { trackPostHogEvent } from '@/lib/posthog';
 import SEOHead from '@/components/SEOHead';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import ConciergeButton from '@/components/ConciergeButton';
@@ -99,10 +101,13 @@ export default function ServicePage() {
 
   useEffect(() => {
     const fetchService = async () => {
+      const scope = getDomainScope();
       const { data, error } = await supabase
         .from('services')
         .select('*')
         .eq('slug', slug!)
+        .eq('is_active', true)
+        .in('visible_on', [scope, 'both'])
         .maybeSingle();
 
       if (error) {
@@ -125,6 +130,13 @@ export default function ServicePage() {
     };
     fetchService();
   }, [slug, navigate]);
+
+  // Track service view
+  useEffect(() => {
+    if (service && service.id !== 'fallback') {
+      trackPostHogEvent('service_view', { slug: service.slug, title: service.title });
+    }
+  }, [service]);
 
   if (loading) return <ServiceSkeleton />;
   if (!service) return null;
@@ -256,8 +268,9 @@ export default function ServicePage() {
             © {new Date().getFullYear()} Atropox OÜ
           </span>
           <div className="flex gap-10 text-xs text-holistic/40 tracking-[0.2em] uppercase">
-            <a href="#" className="hover:text-holistic/70 transition-colors duration-500">{t('footer.privacy')}</a>
-            <a href="#" className="hover:text-holistic/70 transition-colors duration-500">{t('footer.terms')}</a>
+            <a href="/privacy-policy" className="hover:text-holistic/70 transition-colors duration-500">{t('footer.privacy')}</a>
+            <a href="/terms-of-service" className="hover:text-holistic/70 transition-colors duration-500">{t('footer.terms')}</a>
+            <a href="/refund-policy" className="hover:text-holistic/70 transition-colors duration-500">{t('footer.refund')}</a>
           </div>
         </div>
       </footer>

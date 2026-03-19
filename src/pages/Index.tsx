@@ -36,14 +36,14 @@ export default function Index() {
             © {new Date().getFullYear()} Atropox OÜ
           </span>
           <div className="flex gap-10 text-xs text-holistic/40 tracking-[0.2em] uppercase">
-            <a href="#" className="hover:text-holistic/70 transition-colors duration-500">
+            <a href="/privacy-policy" className="hover:text-holistic/70 transition-colors duration-500">
               {t('footer.privacy', { defaultValue: 'Privacy' })}
             </a>
-            <a href="#" className="hover:text-holistic/70 transition-colors duration-500">
+            <a href="/terms-of-service" className="hover:text-holistic/70 transition-colors duration-500">
               {t('footer.terms', { defaultValue: 'Terms' })}
             </a>
-            <a href="#" className="hover:text-holistic/70 transition-colors duration-500">
-              {t('footer.contact', { defaultValue: 'Contact' })}
+            <a href="/refund-policy" className="hover:text-holistic/70 transition-colors duration-500">
+              {t('footer.refund', { defaultValue: 'Refund Policy' })}
             </a>
           </div>
         </div>
