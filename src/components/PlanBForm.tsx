@@ -35,6 +35,7 @@ export default function PlanBForm({ serviceId }: PlanBFormProps) {
     }
     setLoading(true);
 
+    const utms = getStoredUtms();
     const params = new URLSearchParams(window.location.search);
 
     const { error } = await supabase.from('leads').insert({
@@ -42,7 +43,7 @@ export default function PlanBForm({ serviceId }: PlanBFormProps) {
       email: form.email,
       customer_whatsapp: form.customer_whatsapp || null,
       source_domain: window.location.hostname,
-      created_from: params.get('utm_source') || 'website',
+      created_from: utms.utm_source || params.get('utm_source') || 'website',
       service_id: serviceId || null,
     });
     setLoading(false);
@@ -51,6 +52,7 @@ export default function PlanBForm({ serviceId }: PlanBFormProps) {
       return;
     }
     trackEvent('lead_form_submit', { source: 'plan_b_form' });
+    trackPostHogEvent('lead_form_submit', { source: 'plan_b_form' });
     setSubmitted(true);
   };
 
