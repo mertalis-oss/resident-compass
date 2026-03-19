@@ -137,8 +137,6 @@ export default function ServicePage() {
       trackPostHogEvent('service_view', { slug: service.slug, title: service.title });
     }
   }, [service]);
-    fetchService();
-  }, [slug, navigate]);
 
   if (loading) return <ServiceSkeleton />;
   if (!service) return null;
