@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
+import { getDomainScope } from '@/hooks/useDomainScope';
+import { trackPostHogEvent } from '@/lib/posthog';
 import SEOHead from '@/components/SEOHead';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import ConciergeButton from '@/components/ConciergeButton';
