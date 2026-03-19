@@ -7,6 +7,8 @@ import { Label } from '@/components/ui/label';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
+import { trackPostHogEvent } from '@/lib/posthog';
+import { getStoredUtms } from '@/lib/utmStorage';
 
 const leadSchema = z.object({
   name: z.string().trim().min(1).max(100),

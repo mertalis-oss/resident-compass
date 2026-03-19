@@ -268,8 +268,9 @@ export default function ServicePage() {
             © {new Date().getFullYear()} Atropox OÜ
           </span>
           <div className="flex gap-10 text-xs text-holistic/40 tracking-[0.2em] uppercase">
-            <a href="#" className="hover:text-holistic/70 transition-colors duration-500">{t('footer.privacy')}</a>
-            <a href="#" className="hover:text-holistic/70 transition-colors duration-500">{t('footer.terms')}</a>
+            <a href="/privacy-policy" className="hover:text-holistic/70 transition-colors duration-500">{t('footer.privacy')}</a>
+            <a href="/terms-of-service" className="hover:text-holistic/70 transition-colors duration-500">{t('footer.terms')}</a>
+            <a href="/refund-policy" className="hover:text-holistic/70 transition-colors duration-500">{t('footer.refund')}</a>
           </div>
         </div>
       </footer>
