@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ServicePage from "./pages/ServicePage";
+import Success from "./pages/Success";
 import MobilityAssessment from "./pages/MobilityAssessment";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/wellness/:slug" element={<ServicePage />} />
             <Route path="/corporate-retreats/:slug" element={<ServicePage />} />
             <Route path="/expeditions/:slug" element={<ServicePage />} />
+            <Route path="/success" element={<Success />} />
             <Route path="/tools/dtv-visa-calculator" element={<MobilityAssessment />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
