@@ -1,19 +1,29 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { getDomainScope } from '@/hooks/useDomainScope';
 import { trackPostHogEvent } from '@/lib/posthog';
+import { getStoredUtms } from '@/lib/utmStorage';
 import SEOHead from '@/components/SEOHead';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import ConciergeButton from '@/components/ConciergeButton';
 import PlanBForm from '@/components/PlanBForm';
 import AnimatedSection from '@/components/AnimatedSection';
-import { Button } from '@/components/ui/button';
+import ServiceHero from '@/components/service/ServiceHero';
+import ServiceFeatures from '@/components/service/ServiceFeatures';
+import ServiceFAQ from '@/components/service/ServiceFAQ';
+import ServiceDeliveryInfo from '@/components/service/ServiceDeliveryInfo';
+import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
+import ServiceBundleItems from '@/components/service/ServiceBundleItems';
+import ServiceUpsell from '@/components/service/ServiceUpsell';
+import ServiceCheckout from '@/components/service/ServiceCheckout';
+import ServiceFallback from '@/components/service/ServiceFallback';
+import ServiceFooter from '@/components/service/ServiceFooter';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowRight, CheckCircle } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
-interface Service {
+export interface Service {
   id: string;
   slug: string;
   title: string;
@@ -35,47 +45,8 @@ interface Service {
   capacity: number | null;
   is_featured: boolean;
   is_active: boolean;
+  is_bundle: boolean | null;
 }
-
-const fallbacks: Record<string, Partial<Service>> = {
-  'dtv-thailand': {
-    title: 'Digital Nomad Visa (DTV) — Thailand',
-    short_description: '5-year multi-entry visa for remote professionals, freelancers, and founders.',
-    description: 'Complete DTV application management with legal counsel and compliance support.',
-    price: 5000,
-    currency: 'USD',
-    stripe_price_id: '',
-    features: [
-      { title: 'Licensed immigration counsel', description: 'Full legal representation' },
-      { title: 'Full application management', description: 'End-to-end document handling' },
-      { title: 'Post-arrival compliance', description: 'Ongoing monitoring and renewal support' },
-    ],
-  },
-  'thailand-retreat': {
-    title: 'Wellness & Medical Visa — Thailand',
-    short_description: 'Premium healthcare access and wellness-focused relocation.',
-    price: 3000,
-    currency: 'USD',
-    stripe_price_id: '',
-    features: [
-      { title: 'Master Guides & Practitioners', description: 'Traditional Thai healing experts' },
-      { title: 'Integrative Programs', description: 'Energy alignment & meditation' },
-      { title: 'Med-grade infrastructure', description: 'Luxury wellness facilities' },
-    ],
-  },
-  'ha-giang-motor-expedition': {
-    title: 'Hà Giang Motor Expedition — Vietnam',
-    short_description: 'Bespoke expeditions for sovereign founders.',
-    price: 2500,
-    currency: 'USD',
-    stripe_price_id: '',
-    features: [
-      { title: 'GS-segment fleet', description: 'BMW R1250GS, Honda Africa Twin' },
-      { title: 'Luxury route planning', description: 'Cross-border with local guides' },
-      { title: 'Private lodging', description: 'Curated culinary experiences' },
-    ],
-  },
-};
 
 function ServiceSkeleton() {
   return (
@@ -96,8 +67,38 @@ export default function ServicePage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [service, setService] = useState<Service | null>(null);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+  const [fallbackServices, setFallbackServices] = useState<Service[]>([]);
+  const exitIntentFired = useRef(false);
+
+  // Canceled state check
+  useEffect(() => {
+    if (searchParams.get('canceled') === 'true') {
+      toast({
+        title: t('service.canceledTitle', { defaultValue: 'Payment not completed' }),
+        description: t('service.canceledDesc', { defaultValue: 'Your payment was not completed. You can try again anytime.' }),
+      });
+    }
+  }, [searchParams, toast, t]);
+
+  // Exit intent (desktop only)
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (e.clientY <= 0 && !exitIntentFired.current) {
+        exitIntentFired.current = true;
+        toast({
+          title: t('service.exitIntentTitle', { defaultValue: 'Before you go…' }),
+          description: t('service.exitIntentDesc', { defaultValue: 'This process gets harder the longer you wait.' }),
+        });
+      }
+    };
+    document.addEventListener('mouseleave', handler);
+    return () => document.removeEventListener('mouseleave', handler);
+  }, [toast, t]);
 
   useEffect(() => {
     const fetchService = async () => {
@@ -110,42 +111,48 @@ export default function ServicePage() {
         .in('visible_on', [scope, 'both'])
         .maybeSingle();
 
-      if (error) {
-        navigate('/*', { replace: true });
+      if (error || !data) {
+        // Fetch fallback services
+        const { data: fbData } = await supabase
+          .from('services')
+          .select('*')
+          .eq('is_active', true)
+          .in('visible_on', [scope, 'both'])
+          .limit(3);
+        setFallbackServices((fbData as unknown as Service[]) || []);
+        setNotFound(true);
+        setLoading(false);
         return;
       }
 
-      if (data) {
-        setService(data as unknown as Service);
-      } else {
-        const fb = fallbacks[slug!];
-        if (fb) {
-          setService({ id: 'fallback', slug: slug!, seo_title: null, seo_description: null, image_url: null, category: null, stripe_description: null, calendly_url: null, delivery_time_days: null, location: null, capacity: null, is_featured: false, is_active: true, faq: null, features: null, short_description: null, description: null, price: 0, currency: 'USD', stripe_price_id: '', ...fb } as Service);
-        } else {
-          navigate('/*', { replace: true });
-          return;
-        }
-      }
+      setService(data as unknown as Service);
       setLoading(false);
     };
     fetchService();
-  }, [slug, navigate]);
+  }, [slug]);
 
   // Track service view
   useEffect(() => {
-    if (service && service.id !== 'fallback') {
+    if (service) {
       trackPostHogEvent('service_view', { slug: service.slug, title: service.title });
     }
   }, [service]);
 
   if (loading) return <ServiceSkeleton />;
+
+  if (notFound) {
+    return (
+      <div className="min-h-screen bg-background">
+        <SEOHead title={t('service.notFoundTitle', { defaultValue: 'Service Not Available' })} description="" />
+        <FocusedNavbar />
+        <ServiceFallback services={fallbackServices} />
+        <ServiceFooter />
+        <ConciergeButton />
+      </div>
+    );
+  }
+
   if (!service) return null;
-
-  const scrollToForm = () => {
-    document.getElementById('lead-form')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const currencySymbol = service.currency === 'USD' ? '$' : service.currency === 'EUR' ? '€' : service.currency === 'TRY' ? '₺' : service.currency;
 
   return (
     <div className="min-h-screen bg-background">
@@ -158,122 +165,40 @@ export default function ServicePage() {
       />
       <FocusedNavbar />
 
-      {/* Hero */}
-      <section className="pt-32 pb-20 md:pt-44 md:pb-28 bg-corporate-navy text-holistic">
-        <div className="container max-w-4xl text-center px-6">
-          <p className="caption-editorial text-holistic/50 mb-6">
-            {service.category || t('service.programme', { defaultValue: 'Sovereign Programme' })}
-          </p>
-          <h1 className="heading-display text-holistic mb-6">
-            {service.title}
-          </h1>
-          {service.short_description && (
-            <p className="body-editorial text-holistic/60 max-w-2xl mx-auto mb-6">
-              {service.short_description}
+      <ServiceHero service={service} />
+
+      <ServiceFeatures service={service} />
+
+      <ServiceWhoIsFor />
+
+      <ServiceFAQ service={service} />
+
+      <ServiceBundleItems service={service} />
+
+      <ServiceDeliveryInfo service={service} />
+
+      <ServiceCheckout service={service} />
+
+      <ServiceUpsell currentService={service} />
+
+      <PlanBForm serviceId={service.id} />
+
+      {/* Final CTA Mirror */}
+      <AnimatedSection>
+        <section className="py-20 bg-corporate-navy text-holistic text-center">
+          <div className="container max-w-3xl px-6">
+            <h2 className="heading-section text-holistic mb-4">
+              {t('service.finalCtaTitle', { defaultValue: 'Ready to move forward?' })}
+            </h2>
+            <p className="body-editorial text-holistic/60 mb-8">
+              {t('service.finalCtaBody', { defaultValue: 'Start your process now.' })}
             </p>
-          )}
-          <p className="font-heading text-3xl md:text-4xl text-holistic mb-10">
-            {currencySymbol}{service.price.toLocaleString()}
-          </p>
-          <Button
-            size="lg"
-            onClick={scrollToForm}
-            className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
-          >
-            {t('service.cta', { defaultValue: 'Begin Your Journey' })} <ArrowRight className="ml-3 h-4 w-4" />
-          </Button>
-        </div>
-      </section>
-
-      {/* Features */}
-      {service.features && Array.isArray(service.features) && service.features.length > 0 && (
-        <AnimatedSection>
-          <section className="section-editorial border-t border-border">
-            <div className="container max-w-3xl px-6">
-              <p className="caption-editorial text-muted-foreground mb-12">
-                {t('service.features', { defaultValue: 'What\'s Included' })}
-              </p>
-              <div className="space-y-6">
-                {(service.features as { title: string; description: string }[]).map((f, i) => (
-                  <div key={i} className="flex gap-4 border-b border-border pb-6">
-                    <CheckCircle className="h-5 w-5 text-accent mt-0.5 shrink-0 stroke-[1.5]" />
-                    <div>
-                      <h3 className="font-heading text-lg text-foreground">{f.title}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">{f.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        </AnimatedSection>
-      )}
-
-      {/* FAQ */}
-      {service.faq && Array.isArray(service.faq) && service.faq.length > 0 && (
-        <AnimatedSection>
-          <section className="section-editorial border-t border-border">
-            <div className="container max-w-3xl px-6">
-              <p className="caption-editorial text-muted-foreground mb-12">
-                {t('service.faq', { defaultValue: 'Frequently Asked Questions' })}
-              </p>
-              <div className="space-y-8">
-                {(service.faq as { question: string; answer: string }[]).map((item, i) => (
-                  <div key={i} className="border-b border-border pb-6">
-                    <h3 className="font-heading text-xl text-foreground mb-3">{item.question}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{item.answer}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        </AnimatedSection>
-      )}
-
-      {/* Delivery & Location Info */}
-      {(service.delivery_time_days || service.location) && (
-        <AnimatedSection>
-          <section className="py-16 bg-secondary">
-            <div className="container max-w-3xl px-6">
-              <div className="flex flex-wrap justify-center gap-x-16 gap-y-6">
-                {service.delivery_time_days && (
-                  <div className="text-center">
-                    <p className="font-heading text-3xl text-foreground">{service.delivery_time_days}</p>
-                    <p className="caption-editorial text-muted-foreground mt-1">{t('service.deliveryDays', { defaultValue: 'Delivery Days' })}</p>
-                  </div>
-                )}
-                {service.location && (
-                  <div className="text-center">
-                    <p className="font-heading text-3xl text-foreground">{service.location}</p>
-                    <p className="caption-editorial text-muted-foreground mt-1">{t('service.location', { defaultValue: 'Location' })}</p>
-                  </div>
-                )}
-                {service.capacity && (
-                  <div className="text-center">
-                    <p className="font-heading text-3xl text-foreground">{service.capacity}</p>
-                    <p className="caption-editorial text-muted-foreground mt-1">{t('service.capacity', { defaultValue: 'Capacity' })}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
-        </AnimatedSection>
-      )}
-
-      <PlanBForm serviceId={service.id !== 'fallback' ? service.id : undefined} />
-
-      <footer className="py-16 bg-corporate-navy border-t border-border/10">
-        <div className="container max-w-5xl px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">
-            © {new Date().getFullYear()} Atropox OÜ
-          </span>
-          <div className="flex gap-10 text-xs text-holistic/40 tracking-[0.2em] uppercase">
-            <a href="/privacy-policy" className="hover:text-holistic/70 transition-colors duration-500">{t('footer.privacy')}</a>
-            <a href="/terms-of-service" className="hover:text-holistic/70 transition-colors duration-500">{t('footer.terms')}</a>
-            <a href="/refund-policy" className="hover:text-holistic/70 transition-colors duration-500">{t('footer.refund')}</a>
+            <ServiceCheckout service={service} variant="mirror" />
           </div>
-        </div>
-      </footer>
+        </section>
+      </AnimatedSection>
+
+      <ServiceFooter />
       <ConciergeButton />
     </div>
   );
