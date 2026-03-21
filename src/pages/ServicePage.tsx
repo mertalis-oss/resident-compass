@@ -1,12 +1,12 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useState, useRef } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { getDomainScope } from '@/hooks/useDomainScope';
 import { trackPostHogEvent } from '@/lib/posthog';
-import { getStoredUtms } from '@/lib/utmStorage';
 import SEOHead from '@/components/SEOHead';
 import FocusedNavbar from '@/components/FocusedNavbar';
+import TrustBar from '@/components/TrustBar';
 import ConciergeButton from '@/components/ConciergeButton';
 import PlanBForm from '@/components/PlanBForm';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -22,6 +22,8 @@ import ServiceFallback from '@/components/service/ServiceFallback';
 import ServiceFooter from '@/components/service/ServiceFooter';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { AlertTriangle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export interface Service {
   id: string;
@@ -52,11 +54,27 @@ function ServiceSkeleton() {
   return (
     <div className="min-h-screen bg-background">
       <FocusedNavbar />
+      <TrustBar />
       <section className="pt-32 pb-20 md:pt-44 md:pb-28 bg-corporate-navy">
         <div className="container max-w-4xl text-center space-y-4">
+          <Skeleton className="h-6 w-32 mx-auto bg-holistic/10" />
           <Skeleton className="h-12 w-3/4 mx-auto bg-holistic/10" />
           <Skeleton className="h-6 w-1/2 mx-auto bg-holistic/10" />
-          <Skeleton className="h-12 w-48 mx-auto bg-holistic/10 mt-6" />
+          <Skeleton className="h-10 w-48 mx-auto bg-holistic/10 mt-4" />
+          <Skeleton className="h-4 w-64 mx-auto bg-holistic/10" />
+          <Skeleton className="h-12 w-56 mx-auto bg-holistic/10 mt-6" />
+        </div>
+      </section>
+      <section className="py-20">
+        <div className="container max-w-3xl space-y-4">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+          <div className="grid md:grid-cols-2 gap-4 mt-6">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-24" />
+            ))}
+          </div>
         </div>
       </section>
     </div>
@@ -65,13 +83,13 @@ function ServiceSkeleton() {
 
 export default function ServicePage() {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const [service, setService] = useState<Service | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [error, setError] = useState(false);
   const [fallbackServices, setFallbackServices] = useState<Service[]>([]);
   const exitIntentFired = useRef(false);
 
@@ -100,35 +118,72 @@ export default function ServicePage() {
     return () => document.removeEventListener('mouseleave', handler);
   }, [toast, t]);
 
+  // Fetch service with AbortController
   useEffect(() => {
-    const fetchService = async () => {
-      const scope = getDomainScope();
-      const { data, error } = await supabase
-        .from('services')
-        .select('*')
-        .eq('slug', slug!)
-        .eq('is_active', true)
-        .in('visible_on', [scope, 'both'])
-        .maybeSingle();
+    const controller = new AbortController();
 
-      if (error || !data) {
-        // Fetch fallback services
-        const { data: fbData } = await supabase
+    const fetchService = async () => {
+      // Strict state reset
+      setLoading(true);
+      setNotFound(false);
+      setError(false);
+      setService(null);
+      setFallbackServices([]);
+
+      const start = Date.now();
+      const scope = getDomainScope();
+
+      try {
+        const { data, error: fetchErr } = await supabase
           .from('services')
           .select('*')
+          .eq('slug', slug!)
           .eq('is_active', true)
           .in('visible_on', [scope, 'both'])
-          .limit(3);
-        setFallbackServices((fbData as unknown as Service[]) || []);
-        setNotFound(true);
-        setLoading(false);
-        return;
-      }
+          .maybeSingle()
+          .abortSignal(controller.signal);
 
-      setService(data as unknown as Service);
-      setLoading(false);
+        if (fetchErr) {
+          if (fetchErr.message?.includes('aborted')) return;
+          throw fetchErr;
+        }
+
+        if (!data) {
+          // Fetch fallback services
+          const { data: fbData } = await supabase
+            .from('services')
+            .select('*')
+            .eq('is_active', true)
+            .in('visible_on', [scope, 'both'])
+            .limit(3)
+            .abortSignal(controller.signal);
+
+          const elapsed = Date.now() - start;
+          const delay = Math.max(400 - elapsed, 0);
+          setTimeout(() => {
+            setFallbackServices((fbData as unknown as Service[]) || []);
+            setNotFound(true);
+            setLoading(false);
+          }, delay);
+          return;
+        }
+
+        const elapsed = Date.now() - start;
+        const delay = Math.max(400 - elapsed, 0);
+        setTimeout(() => {
+          setService(data as unknown as Service);
+          setLoading(false);
+        }, delay);
+      } catch (err: any) {
+        if (err?.message?.includes('aborted')) return;
+        console.error(err);
+        setError(true);
+        setLoading(false);
+      }
     };
+
     fetchService();
+    return () => controller.abort();
   }, [slug]);
 
   // Track service view
@@ -140,11 +195,36 @@ export default function ServicePage() {
 
   if (loading) return <ServiceSkeleton />;
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <FocusedNavbar />
+        <TrustBar />
+        <section className="pt-32 pb-20 md:pt-44 md:pb-28">
+          <div className="container max-w-2xl text-center px-6">
+            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-6" />
+            <h1 className="heading-section text-foreground mb-4">
+              {t('service.errorTitle', { defaultValue: 'Something went wrong' })}
+            </h1>
+            <p className="body-editorial text-muted-foreground mb-8">
+              {t('service.errorBody', { defaultValue: 'Please try again.' })}
+            </p>
+            <Button onClick={() => window.location.reload()} className="btn-luxury-primary">
+              {t('service.retry', { defaultValue: 'Try Again' })}
+            </Button>
+          </div>
+        </section>
+        <ServiceFooter />
+      </div>
+    );
+  }
+
   if (notFound) {
     return (
       <div className="min-h-screen bg-background">
         <SEOHead title={t('service.notFoundTitle', { defaultValue: 'Service Not Available' })} description="" />
         <FocusedNavbar />
+        <TrustBar />
         <ServiceFallback services={fallbackServices} />
         <ServiceFooter />
         <ConciergeButton />
@@ -164,6 +244,7 @@ export default function ServicePage() {
         serviceDescription={service.description || ''}
       />
       <FocusedNavbar />
+      <TrustBar />
 
       <ServiceHero service={service} />
 

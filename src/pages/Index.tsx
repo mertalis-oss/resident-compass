@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import SEOHead from '@/components/SEOHead';
 import FocusedNavbar from '@/components/FocusedNavbar';
+import TrustBar from '@/components/TrustBar';
 import ConciergeButton from '@/components/ConciergeButton';
 import PlanBForm from '@/components/PlanBForm';
 import Hero from '@/components/home/Hero';
@@ -21,6 +22,7 @@ export default function Index() {
         schemaType="Organization"
       />
       <FocusedNavbar />
+      <TrustBar />
       <Hero />
       <Philosophy />
       <Portals />
