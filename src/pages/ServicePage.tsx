@@ -140,11 +140,11 @@ export default function ServicePage() {
           .eq('slug', slug!)
           .eq('is_active', true)
           .in('visible_on', [scope, 'both'])
-          .maybeSingle()
-          .abortSignal(controller.signal);
+          .maybeSingle();
+
+        if (controller.signal.aborted) return;
 
         if (fetchErr) {
-          if (fetchErr.message?.includes('aborted')) return;
           throw fetchErr;
         }
 
@@ -155,8 +155,7 @@ export default function ServicePage() {
             .select('*')
             .eq('is_active', true)
             .in('visible_on', [scope, 'both'])
-            .limit(3)
-            .abortSignal(controller.signal);
+            .limit(3);
 
           const elapsed = Date.now() - start;
           const delay = Math.max(400 - elapsed, 0);
