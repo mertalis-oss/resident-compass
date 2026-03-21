@@ -213,6 +213,7 @@ const resources = {
   en: {
     translation: {
       nav: { residency: 'Residency', wellness: 'Wellness', corporate: 'Corporate', expeditions: 'Expeditions', getStarted: 'Get Started' },
+      trustBar: { secure: 'Secure process', noHidden: 'No hidden fees', realHuman: 'Real human support' },
       hero: {
         title: 'Plan B Asia',
         subtitle: 'Architecting Sovereign Mobility for Founders and Global Citizens.',
