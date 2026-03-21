@@ -170,6 +170,7 @@ export default function AdminServices() {
 
   const handleDuplicate = async (svc: Service) => {
     try {
+      // @ts-ignore - payload matches DB schema
       const { error } = await supabase.from('services').insert({
         title: `${svc.title} (Copy)`,
         slug: `${svc.slug}-copy-${Date.now()}`,

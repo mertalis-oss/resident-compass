@@ -71,7 +71,7 @@ export default function AdminOrders() {
     if (!actionDialog || updating) return;
     setUpdating(true);
     try {
-      const { error } = await supabase.from('orders').update({ status: actionDialog.action as any }).eq('id', actionDialog.id);
+      const { error } = await supabase.from('orders').update({ status: actionDialog.action as 'pending' | 'paid' | 'processing' | 'fulfilled' | 'cancelled' }).eq('id', actionDialog.id);
       if (error) throw error;
       toast({ title: t('admin.orderUpdated', { defaultValue: 'Order updated' }) });
       setActionDialog(null);
