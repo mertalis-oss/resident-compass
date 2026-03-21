@@ -48,7 +48,7 @@ export default function AdminOrders() {
   const fetchOrders = useCallback(async () => {
     try {
       let query = supabase.from('orders').select('*').order('created_at', { ascending: false });
-      if (filter !== 'all') query = query.eq('status', filter);
+      if (filter !== 'all') query = query.eq('status', filter as 'pending' | 'paid' | 'processing' | 'fulfilled' | 'cancelled');
       const { data, error } = await query;
       if (error) throw error;
       setOrders((data as unknown as Order[]) || []);
