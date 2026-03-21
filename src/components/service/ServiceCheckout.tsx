@@ -9,6 +9,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Shield, Clock, Lock } from 'lucide-react';
 import type { Service } from '@/pages/ServicePage';
 
+declare global {
+  interface Window {
+    __checkout_lock?: boolean;
+    __checkout_toast_shown?: boolean;
+  }
+}
+
 interface Props {
   service: Service;
   variant?: 'full' | 'mirror';
@@ -21,15 +28,19 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
 
   const handleCheckout = async () => {
-    if (isCheckoutLoading) return;
+    if (isCheckoutLoading || window.__checkout_lock) return;
+    window.__checkout_lock = true;
     setIsCheckoutLoading(true);
 
-    const timeoutId = setTimeout(() => {
-      toast({
-        title: t('checkout.stillProcessing', { defaultValue: 'Still processing...' }),
-        description: t('checkout.stillProcessingDesc', { defaultValue: 'This can take a few seconds depending on your connection.' }),
-      });
-    }, 4000);
+    if (!window.__checkout_toast_shown) {
+      window.__checkout_toast_shown = true;
+      setTimeout(() => {
+        toast({
+          title: t('checkout.stillProcessing', { defaultValue: 'Still processing...' }),
+          description: t('checkout.stillProcessingDesc', { defaultValue: 'This can take a few seconds depending on your connection.' }),
+        });
+      }, 4000);
+    }
 
     try {
       const utms = getStoredUtms() || {};
@@ -68,7 +79,8 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
       });
       setIsAgreed(false);
     } finally {
-      clearTimeout(timeoutId);
+      window.__checkout_lock = false;
+      window.__checkout_toast_shown = false;
       setIsCheckoutLoading(false);
     }
   };
@@ -111,9 +123,15 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
             {t('checkout.agreementLabel', { defaultValue: 'I agree to the Terms of Service, Privacy Policy, and Refund Policy. I understand this is an advisory service and government decisions are independent.' })}
           </label>
         </div>
-        <p className="text-xs text-muted-foreground ml-7 mb-8">
+        <p className="text-xs text-muted-foreground ml-7 mb-2">
           {t('checkout.legalReinforce', { defaultValue: 'By proceeding, you confirm you understand the scope of the service.' })}
         </p>
+        {!isAgreed && (
+          <p className="text-xs text-destructive/70 ml-7 mb-8">
+            {t('checkout.mustAccept', { defaultValue: 'You must accept the terms before proceeding.' })}
+          </p>
+        )}
+        {isAgreed && <div className="mb-8" />}
 
         {/* CTA Button */}
         <Button
