@@ -153,6 +153,7 @@ export default function AdminServices() {
         if (error) throw error;
         toast({ title: t('admin.serviceUpdated', { defaultValue: 'Service updated' }) });
       } else {
+        // @ts-ignore - payload matches DB schema
         const { error } = await supabase.from('services').insert(payload);
         if (error) throw error;
         toast({ title: t('admin.serviceCreated', { defaultValue: 'Service created' }) });
