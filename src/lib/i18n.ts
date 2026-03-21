@@ -52,6 +52,7 @@ const checkoutKeys = {
   errorDesc: 'Something went wrong. Please try again.',
   connectionError: 'Connection Error',
   connectionErrorDesc: 'Please check your connection and try again.',
+  mustAccept: 'You must accept the terms before proceeding.',
 };
 
 const successKeys = {
