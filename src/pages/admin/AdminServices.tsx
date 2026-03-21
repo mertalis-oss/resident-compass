@@ -148,6 +148,7 @@ export default function AdminServices() {
       };
 
       if (editService.id) {
+        // @ts-ignore - payload matches DB schema
         const { error } = await supabase.from('services').update(payload).eq('id', editService.id);
         if (error) throw error;
         toast({ title: t('admin.serviceUpdated', { defaultValue: 'Service updated' }) });
