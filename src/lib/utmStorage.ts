@@ -33,7 +33,7 @@ export function captureUtms(): void {
     const isExpired = !existing.timestamp || Date.now() - existing.timestamp > EXPIRY_MS;
     const isEmpty = !existing.utm_source && !existing.utm_medium && !existing.utm_campaign;
 
-    if (isEmpty || isExpired) {
+    if (isExpired || isEmpty) {
       const payload: StoredUtms = {
         timestamp: Date.now(),
         ...(isValid(utm_source) && { utm_source }),

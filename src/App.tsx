@@ -15,7 +15,11 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import Webhooks from "./pages/admin/system/Webhooks";
+import AdminServices from "./pages/admin/AdminServices";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminLeads from "./pages/admin/AdminLeads";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 
 const queryClient = new QueryClient();
 
@@ -46,7 +50,11 @@ const App = () => (
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
-            <Route path="/admin/system/webhooks" element={<Webhooks />} />
+            {/* Admin Routes */}
+            <Route path="/admin/services" element={<AdminRoute><AdminServices /></AdminRoute>} />
+            <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+            <Route path="/admin/leads" element={<AdminRoute><AdminLeads /></AdminRoute>} />
+            <Route path="/admin/system/webhooks" element={<AdminRoute><Webhooks /></AdminRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

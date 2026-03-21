@@ -52,6 +52,7 @@ const checkoutKeys = {
   errorDesc: 'Something went wrong. Please try again.',
   connectionError: 'Connection Error',
   connectionErrorDesc: 'Please check your connection and try again.',
+  mustAccept: 'You must accept the terms before proceeding.',
 };
 
 const successKeys = {
@@ -67,6 +68,9 @@ const successKeys = {
   avgResponse: 'Avg. first response: 2h',
   whatsappPush: 'We already have your request. Most clients message us here to get faster responses.',
   whatsappCta: 'Message Us on WhatsApp',
+  verifyFailedTitle: "We couldn't verify your payment automatically",
+  verifyFailedBody: 'Please contact support with your email address. Our team will confirm your order manually.',
+  contactSupport: 'Contact Support',
 };
 
 const serviceKeysTr: Record<string, string> = {
@@ -209,6 +213,7 @@ const resources = {
   en: {
     translation: {
       nav: { residency: 'Residency', wellness: 'Wellness', corporate: 'Corporate', expeditions: 'Expeditions', getStarted: 'Get Started' },
+      trustBar: { secure: 'Secure process', noHidden: 'No hidden fees', realHuman: 'Real human support' },
       hero: {
         title: 'Plan B Asia',
         subtitle: 'Architecting Sovereign Mobility for Founders and Global Citizens.',
@@ -355,6 +360,7 @@ const resources = {
   tr: {
     translation: {
       nav: { residency: 'Oturma İzni', wellness: 'Sağlık', corporate: 'Kurumsal', expeditions: 'Keşifler', getStarted: 'Başlayın' },
+      trustBar: { secure: 'Güvenli süreç', noHidden: 'Gizli ücret yok', realHuman: 'Gerçek insan desteği' },
       hero: {
         title: 'Plan B Asia',
         subtitle: 'Sadece Bir Seyahat Değil, Yeni Bir Başlangıç.',
@@ -501,6 +507,7 @@ const resources = {
   hi: {
     translation: {
       nav: { residency: 'निवास', wellness: 'स्वास्थ्य', corporate: 'कॉर्पोरेट', expeditions: 'अभियान', getStarted: 'शुरू करें' },
+      trustBar: { secure: 'सुरक्षित प्रक्रिया', noHidden: 'कोई छिपी फीस नहीं', realHuman: 'वास्तविक मानव सहायता' },
       hero: {
         title: 'Plan B Asia',
         subtitle: 'संस्थापकों और वैश्विक नागरिकों के लिए संप्रभु गतिशीलता वास्तुकला।',
