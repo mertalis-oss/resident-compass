@@ -170,8 +170,7 @@ export default function AdminServices() {
 
   const handleDuplicate = async (svc: Service) => {
     try {
-      // @ts-ignore - payload matches DB schema
-      const { error } = await supabase.from('services').insert({
+      const dupPayload = {
         title: `${svc.title} (Copy)`,
         slug: `${svc.slug}-copy-${Date.now()}`,
         price: svc.price,
@@ -180,7 +179,7 @@ export default function AdminServices() {
         is_active: false,
         is_featured: false,
         is_bundle: svc.is_bundle,
-        visible_on: svc.visible_on,
+        visible_on: (svc.visible_on || 'both') as 'tr' | 'global' | 'both',
         category: svc.category,
         short_description: svc.short_description,
         description: svc.description,
@@ -192,7 +191,8 @@ export default function AdminServices() {
         location: svc.location,
         capacity: svc.capacity,
         order_index: (svc.order_index || 0) + 1,
-      });
+      };
+      const { error } = await supabase.from('services').insert(dupPayload);
       if (error) throw error;
       toast({ title: t('admin.serviceDuplicated', { defaultValue: 'Service duplicated' }) });
       fetchServices();
