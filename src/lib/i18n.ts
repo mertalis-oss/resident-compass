@@ -360,6 +360,7 @@ const resources = {
   tr: {
     translation: {
       nav: { residency: 'Oturma İzni', wellness: 'Sağlık', corporate: 'Kurumsal', expeditions: 'Keşifler', getStarted: 'Başlayın' },
+      trustBar: { secure: 'Güvenli süreç', noHidden: 'Gizli ücret yok', realHuman: 'Gerçek insan desteği' },
       hero: {
         title: 'Plan B Asia',
         subtitle: 'Sadece Bir Seyahat Değil, Yeni Bir Başlangıç.',
