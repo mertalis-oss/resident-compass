@@ -68,6 +68,9 @@ const successKeys = {
   avgResponse: 'Avg. first response: 2h',
   whatsappPush: 'We already have your request. Most clients message us here to get faster responses.',
   whatsappCta: 'Message Us on WhatsApp',
+  verifyFailedTitle: "We couldn't verify your payment automatically",
+  verifyFailedBody: 'Please contact support with your email address. Our team will confirm your order manually.',
+  contactSupport: 'Contact Support',
 };
 
 const serviceKeysTr: Record<string, string> = {
