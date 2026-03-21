@@ -174,7 +174,7 @@ export default function ServicePage() {
           setLoading(false);
         }, delay);
       } catch (err: any) {
-        if (err?.message?.includes('aborted')) return;
+        if (controller.signal.aborted) return;
         console.error(err);
         setError(true);
         setLoading(false);
