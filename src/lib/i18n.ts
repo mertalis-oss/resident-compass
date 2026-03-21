@@ -507,6 +507,7 @@ const resources = {
   hi: {
     translation: {
       nav: { residency: 'निवास', wellness: 'स्वास्थ्य', corporate: 'कॉर्पोरेट', expeditions: 'अभियान', getStarted: 'शुरू करें' },
+      trustBar: { secure: 'सुरक्षित प्रक्रिया', noHidden: 'कोई छिपी फीस नहीं', realHuman: 'वास्तविक मानव सहायता' },
       hero: {
         title: 'Plan B Asia',
         subtitle: 'संस्थापकों और वैश्विक नागरिकों के लिए संप्रभु गतिशीलता वास्तुकला।',
