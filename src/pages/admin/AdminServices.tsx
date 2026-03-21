@@ -133,7 +133,7 @@ export default function AdminServices() {
         is_active: editService.is_active ?? true,
         is_featured: editService.is_featured ?? false,
         is_bundle: editService.is_bundle ?? false,
-        visible_on: editService.visible_on || 'both',
+        visible_on: (editService.visible_on || 'both') as 'tr' | 'global' | 'both',
         category: editService.category || null,
         short_description: editService.short_description || null,
         description: editService.description || null,
