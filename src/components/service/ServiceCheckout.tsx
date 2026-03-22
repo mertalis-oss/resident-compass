@@ -6,7 +6,7 @@ import { trackPostHogEvent } from '@/lib/posthog';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Shield, Clock, Lock } from 'lucide-react';
+import { Shield, Clock, Lock, CreditCard } from 'lucide-react';
 import type { Service } from '@/pages/ServicePage';
 
 declare global {
@@ -35,16 +35,19 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     if (!window.__checkout_toast_shown) {
       window.__checkout_toast_shown = true;
       setTimeout(() => {
-        toast({
-          title: t('checkout.stillProcessing', { defaultValue: 'Still processing...' }),
-          description: t('checkout.stillProcessingDesc', { defaultValue: 'This can take a few seconds depending on your connection.' }),
-        });
+        if (window.__checkout_lock) {
+          toast({
+            title: t('checkout.stillProcessing', { defaultValue: 'Still processing...' }),
+            description: t('checkout.stillProcessingDesc', { defaultValue: 'This can take a few seconds depending on your connection.' }),
+          });
+        }
       }, 4000);
     }
 
     try {
       const utms = getStoredUtms() || {};
       const normalizedHost = window.location.hostname.replace(/^www\./i, '').toLowerCase().replace(/\.$/, '');
+      const leadId = (() => { try { return localStorage.getItem('lead_id') || ''; } catch { return ''; } })();
 
       trackPostHogEvent('checkout_started', { service_id: service.id, service_title: service.title });
 
@@ -56,6 +59,7 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
           utm_source: String(utms?.utm_source || ''),
           utm_campaign: String(utms?.utm_campaign || ''),
           utm_medium: String(utms?.utm_medium || ''),
+          lead_id: leadId,
         },
       });
 
@@ -98,9 +102,17 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     );
   }
 
+  const currencyLabel = (service.currency || 'USD').toUpperCase();
+
   return (
     <section id="checkout-section" className="section-editorial border-t border-border">
       <div className="container max-w-2xl px-6">
+        {/* Stripe trust badge */}
+        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-6">
+          <CreditCard className="h-3.5 w-3.5" />
+          <span>{t('checkout.stripeTrust', { defaultValue: `Processed securely in ${currencyLabel} by Stripe`, currencyLabel })}</span>
+        </div>
+
         {/* Micro-trust signals */}
         <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground mb-8">
           <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {t('checkout.microTime', { defaultValue: 'Takes less than 2 minutes' })}</span>

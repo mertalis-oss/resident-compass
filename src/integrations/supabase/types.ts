@@ -290,8 +290,10 @@ export type Database = {
       }
       orders: {
         Row: {
+          admin_notes: string | null
           amount: number | null
           assigned_to: string | null
+          audit_trail: Json | null
           country: string | null
           created_at: string | null
           currency: string | null
@@ -299,6 +301,7 @@ export type Database = {
           customer_name: string | null
           customer_whatsapp: string | null
           id: string
+          lead_id: string | null
           notes: string | null
           paid_at: string | null
           refund_status: Database["public"]["Enums"]["refund_status"] | null
@@ -307,15 +310,19 @@ export type Database = {
           source_domain: string | null
           status: Database["public"]["Enums"]["order_status"] | null
           stripe_customer_id: string | null
+          stripe_event_id: string | null
           stripe_payment_intent: string | null
           stripe_session_id: string | null
           updated_at: string | null
+          updated_by: string | null
           utm_campaign: string | null
           utm_source: string | null
         }
         Insert: {
+          admin_notes?: string | null
           amount?: number | null
           assigned_to?: string | null
+          audit_trail?: Json | null
           country?: string | null
           created_at?: string | null
           currency?: string | null
@@ -323,6 +330,7 @@ export type Database = {
           customer_name?: string | null
           customer_whatsapp?: string | null
           id?: string
+          lead_id?: string | null
           notes?: string | null
           paid_at?: string | null
           refund_status?: Database["public"]["Enums"]["refund_status"] | null
@@ -331,15 +339,19 @@ export type Database = {
           source_domain?: string | null
           status?: Database["public"]["Enums"]["order_status"] | null
           stripe_customer_id?: string | null
+          stripe_event_id?: string | null
           stripe_payment_intent?: string | null
           stripe_session_id?: string | null
           updated_at?: string | null
+          updated_by?: string | null
           utm_campaign?: string | null
           utm_source?: string | null
         }
         Update: {
+          admin_notes?: string | null
           amount?: number | null
           assigned_to?: string | null
+          audit_trail?: Json | null
           country?: string | null
           created_at?: string | null
           currency?: string | null
@@ -347,6 +359,7 @@ export type Database = {
           customer_name?: string | null
           customer_whatsapp?: string | null
           id?: string
+          lead_id?: string | null
           notes?: string | null
           paid_at?: string | null
           refund_status?: Database["public"]["Enums"]["refund_status"] | null
@@ -355,9 +368,11 @@ export type Database = {
           source_domain?: string | null
           status?: Database["public"]["Enums"]["order_status"] | null
           stripe_customer_id?: string | null
+          stripe_event_id?: string | null
           stripe_payment_intent?: string | null
           stripe_session_id?: string | null
           updated_at?: string | null
+          updated_by?: string | null
           utm_campaign?: string | null
           utm_source?: string | null
         }
@@ -720,6 +735,30 @@ export type Database = {
           },
         ]
       }
+      webhook_logs: {
+        Row: {
+          created_at: string | null
+          event_id: string | null
+          id: string
+          payload: Json | null
+          type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          payload?: Json | null
+          type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          payload?: Json | null
+          type?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -778,6 +817,10 @@ export type Database = {
         | "processing"
         | "fulfilled"
         | "cancelled"
+        | "initiated"
+        | "abandoned"
+        | "failed"
+        | "disputed"
       payment_provider: "stripe" | "manual_transfer"
       refund_status: "none" | "requested" | "refunded" | "disputed"
       user_role: "admin" | "agent" | "client"
@@ -935,7 +978,17 @@ export const Constants = {
       ],
       lead_status: ["new", "contacted", "converted", "lost"],
       ledger_tx_type: ["payment", "refund"],
-      order_status: ["pending", "paid", "processing", "fulfilled", "cancelled"],
+      order_status: [
+        "pending",
+        "paid",
+        "processing",
+        "fulfilled",
+        "cancelled",
+        "initiated",
+        "abandoned",
+        "failed",
+        "disputed",
+      ],
       payment_provider: ["stripe", "manual_transfer"],
       refund_status: ["none", "requested", "refunded", "disputed"],
       user_role: ["admin", "agent", "client"],
