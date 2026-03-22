@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
@@ -16,10 +16,11 @@ export default function Success() {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [verified, setVerified] = useState(false);
-  const [verifyFailed, setVerifyFailed] = useState(false);
+  const [status, setStatus] = useState<'polling' | 'paid' | 'timeout' | 'error'>('polling');
   const [serviceTitle, setServiceTitle] = useState('');
   const sessionId = searchParams.get('session_id');
+  const pollCount = useRef(0);
+  const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!sessionId || sessionId.length < 10) {
@@ -27,47 +28,42 @@ export default function Success() {
       return;
     }
 
-    // Attempt backend verification with timeout
-    const verifySession = async () => {
-      try {
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('timeout')), 8000)
-        );
+    const poll = async () => {
+      pollCount.current++;
 
-        const fetchPromise = supabase.functions.invoke('verify-checkout-session', {
+      try {
+        const { data, error } = await supabase.functions.invoke('verify-checkout-session', {
           body: { session_id: sessionId },
         });
 
-        const result = await Promise.race([fetchPromise, timeoutPromise]) as any;
-
-        if (result?.data?.service_title) {
-          setServiceTitle(result.data.service_title);
-        } else {
-          // Fallback: use URL param if backend didn't return title
-          setServiceTitle(searchParams.get('service') || '');
+        if (data?.verified && data?.status === 'paid') {
+          if (pollTimer.current) clearInterval(pollTimer.current);
+          setServiceTitle(data.service_title || searchParams.get('service') || '');
+          setStatus('paid');
+          return;
         }
-        setVerified(true);
       } catch {
-        // Backend verification failed - show fallback
+        // Keep polling
+      }
+
+      // Timeout after 10 polls (30s)
+      if (pollCount.current >= 10) {
+        if (pollTimer.current) clearInterval(pollTimer.current);
         setServiceTitle(searchParams.get('service') || '');
-        // Still show success but with a softer verification
-        const timer = setTimeout(() => {
-          setVerified(true);
-          // If no service title at all, mark as unverified
-          if (!searchParams.get('service')) {
-            setVerifyFailed(true);
-          }
-        }, 1500);
-        return () => clearTimeout(timer);
+        setStatus('timeout');
       }
     };
 
-    // Show skeleton for min 1.5s
-    const minTimer = setTimeout(() => {
-      verifySession();
+    // Initial check after 1.5s skeleton
+    const initialTimer = setTimeout(() => {
+      poll();
+      pollTimer.current = setInterval(poll, 3000);
     }, 1500);
 
-    return () => clearTimeout(minTimer);
+    return () => {
+      clearTimeout(initialTimer);
+      if (pollTimer.current) clearInterval(pollTimer.current);
+    };
   }, [sessionId, navigate, searchParams]);
 
   const whatsappUrl = serviceTitle
@@ -79,7 +75,8 @@ export default function Success() {
     window.open(whatsappUrl, '_blank');
   };
 
-  if (!verified) {
+  // Loading/polling state
+  if (status === 'polling') {
     return (
       <div className="min-h-screen bg-background">
         <FocusedNavbar />
@@ -87,7 +84,7 @@ export default function Success() {
         <div className="flex flex-col items-center justify-center pt-40 gap-6">
           <Loader2 className="h-10 w-10 animate-spin text-accent" />
           <p className="font-heading text-xl text-foreground">
-            {t('success.verifying', { defaultValue: 'Verifying your secure payment...' })}
+            {t('success.verifying', { defaultValue: "We're verifying your payment..." })}
           </p>
           <div className="space-y-3 max-w-sm w-full px-6">
             <Skeleton className="h-4 w-full" />
@@ -99,7 +96,37 @@ export default function Success() {
     );
   }
 
-  if (verifyFailed) {
+  // Timeout state
+  if (status === 'timeout') {
+    return (
+      <div className="min-h-screen bg-background">
+        <SEOHead title={t('success.pageTitle', { defaultValue: 'Order Confirmed — Plan B Asia' })} description="" />
+        <FocusedNavbar />
+        <TrustBar />
+        <section className="pt-32 pb-20 md:pt-44 md:pb-28">
+          <div className="container max-w-2xl text-center px-6">
+            <CheckCircle className="h-14 w-14 text-gold mx-auto mb-6 stroke-[1.5]" />
+            <h1 className="heading-section text-foreground mb-4">
+              {t('success.timeoutTitle', { defaultValue: 'Payment received' })}
+            </h1>
+            <p className="body-editorial text-muted-foreground mb-8">
+              {t('success.timeoutBody', { defaultValue: 'Final confirmation may take a few minutes. You will be contacted within 24 hours.' })}
+            </p>
+            <p className="text-sm text-muted-foreground mb-6">
+              {t('success.timeoutCta', { defaultValue: "Didn't receive confirmation? Contact us on WhatsApp." })}
+            </p>
+            <Button size="lg" onClick={handleWhatsAppClick} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">
+              <MessageCircle className="mr-2 h-4 w-4" />
+              {t('success.contactSupport', { defaultValue: 'Contact Support' })}
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  // Error state
+  if (status === 'error') {
     return (
       <div className="min-h-screen bg-background">
         <SEOHead title={t('success.pageTitle', { defaultValue: 'Order Confirmed — Plan B Asia' })} description="" />
@@ -124,6 +151,7 @@ export default function Success() {
     );
   }
 
+  // Success (paid) state
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
