@@ -13,6 +13,8 @@ import { ArrowRight, ArrowLeft, CheckCircle, Globe, DollarSign, Briefcase, Clock
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { trackPostHogEvent } from '@/lib/posthog';
+import { normalizeEmail } from '@/lib/emailNormalize';
+import { safeGet, safeSet, safeRemove, safeGetJSON, safeSetJSON, cleanupFallback } from '@/lib/safeStorage';
 
 /* ── Data ── */
 const goals = [
@@ -62,25 +64,6 @@ const workTypes = [
   { value: 'investor', label: 'Investor / FIRE', score: 20 },
 ];
 
-/* ── Helpers ── */
-function safeGetAnswers(): Record<string, string> | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const raw = localStorage.getItem('planb_answers');
-    const parsed = raw ? JSON.parse(raw) : null;
-    if (parsed && (typeof parsed !== 'object' || Array.isArray(parsed))) throw new Error('invalid');
-    return parsed;
-  } catch {
-    localStorage.removeItem('planb_answers');
-    return null;
-  }
-}
-
-function safeSaveAnswers(answers: Record<string, string>) {
-  if (typeof window === 'undefined') return;
-  try { localStorage.setItem('planb_answers', JSON.stringify(answers)); } catch {}
-}
-
 /* ── Scoring: Max 100 ── */
 function calculateScore(answers: Record<string, string>): number {
   let score = 0;
@@ -113,12 +96,20 @@ export default function MobilityAssessment() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [answers, setAnswers] = useState<Record<string, string>>(() => safeGetAnswers() || {});
+  const [answers, setAnswers] = useState<Record<string, string>>(() => safeGetJSON<Record<string, string>>('planb_answers') || {});
   const [phase, setPhase] = useState<'quiz' | 'email' | 'result'>('quiz');
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const trackedSteps = useRef(new Set<number>());
   const resultEventFired = useRef(false);
+  // Multi-tab session isolation
+  const sessionId = useRef<string>(() => {
+    const existing = safeGet('planb_quiz_session');
+    if (existing) return existing;
+    const id = `qs_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    safeSet('planb_quiz_session', id);
+    return id;
+  });
 
   // Direct entry bypass: force step 1 if no answers
   useEffect(() => {
@@ -135,14 +126,13 @@ export default function MobilityAssessment() {
 
   const setAnswer = (key: string, value: string) => {
     const stepNum = parseInt(key.replace('step', ''));
-    // Delete subsequent answers when changing a previous answer
     const updated = { ...answers };
     for (let i = stepNum + 1; i <= TOTAL_STEPS; i++) {
       delete updated[`step${i}`];
     }
     updated[key] = value;
     setAnswers(updated);
-    safeSaveAnswers(updated);
+    safeSetJSON('planb_answers', updated);
   };
 
   const canProceed = () => !!answers[`step${step}`];
@@ -151,7 +141,6 @@ export default function MobilityAssessment() {
     if (step < TOTAL_STEPS) {
       setStep(step + 1);
     } else {
-      // All questions answered — go to email capture
       setPhase('email');
     }
   };
@@ -165,36 +154,37 @@ export default function MobilityAssessment() {
   const recommendation = getRecommendation(score);
 
   const handleEmailSubmit = async () => {
-    const trimmed = email.toLowerCase().trim();
-    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+    const cleanEmail = normalizeEmail(email);
+    if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
       toast.error(t('quiz.invalidEmail', { defaultValue: 'Please enter a valid email address.' }));
       return;
     }
 
     setIsSubmitting(true);
     try {
-      // STEP 1: Upsert lead
       const normalizedHost = typeof window !== 'undefined' ? window.location.hostname.replace(/^www\./i, '').toLowerCase().replace(/\.$/, '') : '';
-      const { data: leadData, error: leadErr } = await supabase.from('leads').insert({
-        email: trimmed,
+
+      // STEP 1: Upsert lead (conflict on email)
+      const { data: leadData, error: leadErr } = await supabase.from('leads').upsert({
+        email: cleanEmail,
         source_domain: normalizedHost,
         created_from: 'quiz',
         score,
         quiz_answers: answers,
-      }).select('id').single();
+      }, { onConflict: 'email', ignoreDuplicates: false }).select('id').single();
 
       if (leadErr) throw leadErr;
+      if (!leadData?.id) throw new Error('Lead upsert failed');
 
       // STEP 2: Track email_submitted
       trackPostHogEvent('email_submitted', { source: 'quiz', score }, true);
 
-      // STEP 3: Store lead_id (try/catch)
-      if (leadData?.id) {
-        try {
-          localStorage.setItem('planb_lead_id', leadData.id);
-          localStorage.setItem('planb_lead_email', trimmed);
-        } catch {}
-      }
+      // STEP 3: Store lead_id + email (SSR-safe with fallback)
+      safeSet('planb_lead_id', leadData.id);
+      safeSet('planb_lead_email', cleanEmail);
+
+      // STEP 4: Store quiz recommendation for checkout attribution
+      safeSet('planb_last_recommendation', recommendation.slug);
 
       trackPostHogEvent('mobility_assessment_completed', { score, recommendation: recommendation.tier }, true);
       setPhase('result');
@@ -206,15 +196,17 @@ export default function MobilityAssessment() {
     }
   };
 
-  // Result page event dedupe
+  // Result page event dedupe (window-level guard)
   useEffect(() => {
     if (phase === 'result' && !resultEventFired.current) {
+      if ((window as any).__result_viewed) return;
+      (window as any).__result_viewed = true;
       resultEventFired.current = true;
       trackPostHogEvent('quiz_result_viewed', { score, tier: recommendation.tier }, true);
     }
   }, [phase]);
 
-  const hasLeadId = typeof window !== 'undefined' && (() => { try { return !!localStorage.getItem('planb_lead_id'); } catch { return false; } })();
+  const hasLeadId = !!safeGet('planb_lead_id');
 
   const OptionButton = ({ selected, onClick, children }: { selected: boolean; onClick: () => void; children: React.ReactNode }) => (
     <button
@@ -322,8 +314,6 @@ export default function MobilityAssessment() {
                     </div>
                   </div>
                 )}
-
-                {/* Q2: Income */}
                 {step === 2 && (
                   <div className="space-y-5">
                     <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground font-body">{t('quiz.stepII', { defaultValue: 'Step II' })}</p>
@@ -342,8 +332,6 @@ export default function MobilityAssessment() {
                     </div>
                   </div>
                 )}
-
-                {/* Q3: Passport */}
                 {step === 3 && (
                   <div className="space-y-5">
                     <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground font-body">{t('quiz.stepIII', { defaultValue: 'Step III' })}</p>
@@ -362,8 +350,6 @@ export default function MobilityAssessment() {
                     </div>
                   </div>
                 )}
-
-                {/* Q4: Timeline */}
                 {step === 4 && (
                   <div className="space-y-5">
                     <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground font-body">{t('quiz.stepIV', { defaultValue: 'Step IV' })}</p>
@@ -382,8 +368,6 @@ export default function MobilityAssessment() {
                     </div>
                   </div>
                 )}
-
-                {/* Q5: Work Type */}
                 {step === 5 && (
                   <div className="space-y-5">
                     <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground font-body">{t('quiz.stepV', { defaultValue: 'Step V' })}</p>
