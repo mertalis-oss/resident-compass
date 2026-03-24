@@ -14,6 +14,9 @@ import MobilityAssessment from "./pages/MobilityAssessment";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
+import RabbitHolePage from "./pages/tr/RabbitHolePage";
+import NomadIncubatorPage from "./pages/tr/NomadIncubatorPage";
+import DTVVizePage from "./pages/tr/DTVVizePage";
 import Webhooks from "./pages/admin/system/Webhooks";
 import AdminServices from "./pages/admin/AdminServices";
 import AdminOrders from "./pages/admin/AdminOrders";
@@ -50,6 +53,10 @@ const App = () => (
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
+            {/* TR-specific pages */}
+            <Route path="/tr/rabbit-hole" element={<RabbitHolePage />} />
+            <Route path="/tr/nomad-incubator" element={<NomadIncubatorPage />} />
+            <Route path="/tr/dtv-vize" element={<DTVVizePage />} />
             {/* Admin Routes */}
             <Route path="/admin/services" element={<AdminRoute><AdminServices /></AdminRoute>} />
             <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
