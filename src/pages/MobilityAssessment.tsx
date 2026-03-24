@@ -103,13 +103,17 @@ export default function MobilityAssessment() {
   const trackedSteps = useRef(new Set<number>());
   const resultEventFired = useRef(false);
   // Multi-tab session isolation
-  const sessionId = useRef<string>(() => {
+  const sessionId = useRef<string>('');
+  if (!sessionId.current) {
     const existing = safeGet('planb_quiz_session');
-    if (existing) return existing;
-    const id = `qs_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    safeSet('planb_quiz_session', id);
-    return id;
-  });
+    if (existing) {
+      sessionId.current = existing;
+    } else {
+      const id = `qs_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      safeSet('planb_quiz_session', id);
+      sessionId.current = id;
+    }
+  }
 
   // Direct entry bypass: force step 1 if no answers
   useEffect(() => {
