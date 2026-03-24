@@ -192,6 +192,16 @@ export default function ServicePage() {
     }
   }, [service]);
 
+  // Checkout auto-trigger from quiz redirect
+  useEffect(() => {
+    if (service && searchParams.get('checkout') === 'true') {
+      const timer = setTimeout(() => {
+        document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [service, searchParams]);
+
   if (loading) return <ServiceSkeleton />;
 
   if (error) {

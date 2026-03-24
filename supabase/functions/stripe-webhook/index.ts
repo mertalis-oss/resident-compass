@@ -130,6 +130,14 @@ Deno.serve(async (req) => {
         );
       }
 
+      // DOUBLE FULFILLMENT GUARD
+      if (order.status === "paid") {
+        return new Response(
+          JSON.stringify({ received: true, skipped: "already_paid" }),
+          { status: 200 }
+        );
+      }
+
       // PRICE & CURRENCY GUARD
       const stripeAmountInUnits = (session.amount_total || 0) / 100;
       const stripeCurrency = (session.currency || "").toUpperCase();
@@ -172,29 +180,35 @@ Deno.serve(async (req) => {
         by: "webhook",
       };
 
-      // UPDATE ORDER
+      // UPDATE ORDER - also update lead_id from metadata if present
+      const updatePayload: Record<string, any> = {
+        status: "paid",
+        stripe_event_id: event.id,
+        stripe_payment_intent: paymentIntent,
+        stripe_customer_id:
+          typeof session.customer === "string"
+            ? session.customer
+            : session.customer?.id || null,
+        customer_email:
+          session.customer_details?.email || order.customer_email,
+        customer_name:
+          session.customer_details?.name || order.customer_name,
+        paid_at: new Date().toISOString(),
+        updated_by: "webhook",
+        audit_trail: [...existingAudit, auditEntry],
+      };
+
+      // Persist lead_id from metadata if order doesn't have one
+      if (!order.lead_id && metadata.lead_id) {
+        updatePayload.lead_id = metadata.lead_id;
+      }
+
       await supabase
         .from("orders")
-        .update({
-          status: "paid",
-          stripe_event_id: event.id,
-          stripe_payment_intent: paymentIntent,
-          stripe_customer_id:
-            typeof session.customer === "string"
-              ? session.customer
-              : session.customer?.id || null,
-          customer_email:
-            session.customer_details?.email || order.customer_email,
-          customer_name:
-            session.customer_details?.name || order.customer_name,
-          paid_at: new Date().toISOString(),
-          updated_by: "webhook",
-          audit_trail: [...existingAudit, auditEntry],
-        })
+        .update(updatePayload)
         .eq("id", order.id);
 
       // TODO: Trigger client receipt email (e.g., via Resend/SMTP)
-      // await sendReceiptEmail(order.customer_email, service.title, order.amount);
     }
 
     if (event.type === "checkout.session.expired") {
