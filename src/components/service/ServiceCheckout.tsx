@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { getStoredUtms } from '@/lib/utmStorage';
 import { trackPostHogEvent } from '@/lib/posthog';
+import { normalizeEmail } from '@/lib/emailNormalize';
+import { safeGet, cleanupFallback } from '@/lib/safeStorage';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -13,22 +15,13 @@ declare global {
   interface Window {
     __checkout_lock?: boolean;
     __checkout_toast_shown?: boolean;
+    __cta_fired?: Record<string, boolean>;
   }
 }
 
 interface Props {
   service: Service;
   variant?: 'full' | 'mirror';
-}
-
-function getLeadId(): string {
-  if (typeof window === 'undefined') return '';
-  try { return localStorage.getItem('planb_lead_id') || ''; } catch { return ''; }
-}
-
-function getLeadEmail(): string {
-  if (typeof window === 'undefined') return '';
-  try { return localStorage.getItem('planb_lead_email') || ''; } catch { return ''; }
 }
 
 export default function ServiceCheckout({ service, variant = 'full' }: Props) {
@@ -67,10 +60,16 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     try {
       const utms = getStoredUtms() || {};
       const normalizedHost = window.location.hostname.replace(/^www\./i, '').toLowerCase().replace(/\.$/, '');
-      const leadId = getLeadId();
-      const leadEmail = getLeadEmail();
+      const leadId = safeGet('planb_lead_id') || '';
+      const leadEmail = normalizeEmail(safeGet('planb_lead_email'));
+      const recommendedService = safeGet('planb_last_recommendation') || '';
 
-      trackPostHogEvent('checkout_started', { service_id: service.id, service_title: service.title }, true);
+      // Scoped CTA double-fire guard
+      window.__cta_fired = window.__cta_fired || {};
+      if (!window.__cta_fired[service.slug]) {
+        window.__cta_fired[service.slug] = true;
+        trackPostHogEvent('checkout_started', { service_id: service.id, service_title: service.title }, true);
+      }
 
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: {
@@ -82,12 +81,15 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
           utm_medium: String(utms?.utm_medium || ''),
           lead_id: leadId,
           source: leadId ? 'quiz' : 'direct',
-          email: leadEmail ? leadEmail.toLowerCase().trim() : '',
+          email: leadEmail,
+          recommended_service: recommendedService,
         },
       });
 
       if (error) {
         console.error(error);
+        // Release CTA guard on failure
+        if (window.__cta_fired) delete window.__cta_fired[service.slug];
         toast({
           variant: 'destructive',
           title: t('checkout.errorTitle', { defaultValue: 'Checkout Error' }),
@@ -100,12 +102,16 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
       if (data?.url) {
         // Fire cta_clicked with sendBeacon, then navigate with 150ms delay
         trackPostHogEvent('cta_clicked', { service_id: service.id, destination: 'stripe' }, true);
+        // Cleanup RAM fallbacks after successful checkout
+        cleanupFallback('planb_lead_id');
         setTimeout(() => {
           try { window.location.href = data.url; } catch { window.location.href = data.url; }
         }, 150);
       }
     } catch (err) {
       console.error(err);
+      // Release CTA guard on error
+      if (window.__cta_fired) delete window.__cta_fired[service.slug];
       toast({
         variant: 'destructive',
         title: t('checkout.connectionError', { defaultValue: 'Connection Error' }),

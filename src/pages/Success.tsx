@@ -6,7 +6,7 @@ import { trackPostHogEvent } from '@/lib/posthog';
 import SEOHead from '@/components/SEOHead';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
-import { CheckCircle, MessageCircle, Loader2, AlertTriangle } from 'lucide-react';
+import { CheckCircle, MessageCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -16,7 +16,7 @@ export default function Success() {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [status, setStatus] = useState<'polling' | 'paid' | 'timeout' | 'error'>('polling');
+  const [status, setStatus] = useState<'polling' | 'paid' | 'timeout'>('polling');
   const [serviceTitle, setServiceTitle] = useState('');
   const sessionId = searchParams.get('session_id');
   const pollCount = useRef(0);
@@ -53,10 +53,10 @@ export default function Success() {
           return;
         }
       } catch {
-        // Keep polling
+        // Keep polling — NEVER show error state
       }
 
-      // Timeout after 10 polls (30s)
+      // Timeout after 10 polls (30s) — show neutral pending, not error
       if (pollCount.current >= 10) {
         if (pollTimer.current) clearInterval(pollTimer.current);
         setServiceTitle(searchParams.get('service') || '');
@@ -106,7 +106,7 @@ export default function Success() {
     );
   }
 
-  // Timeout state
+  // Timeout state — NEUTRAL, not error. "Confirming your payment..."
   if (status === 'timeout') {
     return (
       <div className="min-h-screen bg-background">
@@ -124,32 +124,6 @@ export default function Success() {
             </p>
             <p className="text-sm text-muted-foreground mb-6">
               {t('success.timeoutCta', { defaultValue: "Didn't receive confirmation? Contact us on WhatsApp." })}
-            </p>
-            <Button size="lg" onClick={handleWhatsAppClick} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">
-              <MessageCircle className="mr-2 h-4 w-4" />
-              {t('success.contactSupport', { defaultValue: 'Contact Support' })}
-            </Button>
-          </div>
-        </section>
-      </div>
-    );
-  }
-
-  // Error state
-  if (status === 'error') {
-    return (
-      <div className="min-h-screen bg-background">
-        <SEOHead title={t('success.pageTitle', { defaultValue: 'Order Confirmed — Plan B Asia' })} description="" />
-        <FocusedNavbar />
-        <TrustBar />
-        <section className="pt-32 pb-20 md:pt-44 md:pb-28">
-          <div className="container max-w-2xl text-center px-6">
-            <AlertTriangle className="h-12 w-12 text-gold mx-auto mb-6" />
-            <h1 className="heading-section text-foreground mb-4">
-              {t('success.verifyFailedTitle', { defaultValue: "We couldn't verify your payment automatically" })}
-            </h1>
-            <p className="body-editorial text-muted-foreground mb-8">
-              {t('success.verifyFailedBody', { defaultValue: 'Please contact support with your email address. Our team will confirm your order manually.' })}
             </p>
             <Button size="lg" onClick={handleWhatsAppClick} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">
               <MessageCircle className="mr-2 h-4 w-4" />
