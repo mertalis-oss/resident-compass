@@ -20,6 +20,15 @@ export function trackPostHogEvent(
     if (import.meta.env.MODE === 'production' && posthog.__loaded) {
       const transport = typeof navigator !== 'undefined' && navigator.sendBeacon ? 'sendBeacon' : 'xhr';
       posthog.capture(event, { ...properties, $set_once: { first_event: event } } as any, { transport } as any);
+
+      // Analytics retry for critical events — fire again after 300ms with retry flag
+      if (critical) {
+        setTimeout(() => {
+          try {
+            posthog.capture(event, { ...properties, retry: true } as any, { transport } as any);
+          } catch {}
+        }, 300);
+      }
     }
   } catch {
     if (critical) {
