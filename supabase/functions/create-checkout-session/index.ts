@@ -31,6 +31,7 @@ Deno.serve(async (req) => {
       utm_medium,
       email,
       lead_id,
+      source,
     } = body;
 
     if (!service_id) {
@@ -57,7 +58,7 @@ Deno.serve(async (req) => {
 
     // Check for authenticated user (optional - guest checkout allowed)
     let userId: string | null = null;
-    let userEmail: string | null = email || null;
+    let userEmail: string | null = email ? email.toLowerCase().trim() : null;
     const authHeader = req.headers.get("Authorization");
     if (authHeader) {
       const anonClient = createClient(
@@ -70,6 +71,19 @@ Deno.serve(async (req) => {
         userId = userData.user.id;
         userEmail = userData.user.email || userEmail;
       }
+    }
+
+    // Resolve lead_id: if missing but email present, fallback lookup
+    let resolvedLeadId = lead_id || null;
+    if (!resolvedLeadId && userEmail) {
+      const { data: leadRow } = await supabase
+        .from("leads")
+        .select("id")
+        .ilike("email", userEmail)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (leadRow) resolvedLeadId = leadRow.id;
     }
 
     // ANTI-DUPLICATE: Check for recent initiated/pending order
@@ -108,12 +122,13 @@ Deno.serve(async (req) => {
         source_domain: source_domain || null,
         utm_source: utm_source || null,
         utm_campaign: utm_campaign || null,
-        lead_id: lead_id || null,
+        lead_id: resolvedLeadId || null,
         audit_trail: [
           {
             action: "order_created",
             timestamp: new Date().toISOString(),
             by: "checkout_function",
+            source: source || "direct",
           },
         ],
       });
@@ -138,6 +153,8 @@ Deno.serve(async (req) => {
       email: userEmail || "",
       amount: String(service.price),
       currency: service.currency || "USD",
+      lead_id: resolvedLeadId || "",
+      source: source || "direct",
     };
 
     const origin = req.headers.get("origin") || `https://${source_domain}`;

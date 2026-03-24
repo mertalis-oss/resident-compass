@@ -11,12 +11,19 @@ export function initPostHog(): void {
   }
 }
 
-export function trackPostHogEvent(event: string, properties?: Record<string, string | number | boolean>): void {
+export function trackPostHogEvent(
+  event: string,
+  properties?: Record<string, string | number | boolean>,
+  critical = false
+): void {
   try {
     if (import.meta.env.MODE === 'production' && posthog.__loaded) {
-      posthog.capture(event, properties);
+      const transport = typeof navigator !== 'undefined' && navigator.sendBeacon ? 'sendBeacon' : 'xhr';
+      posthog.capture(event, { ...properties, $set_once: { first_event: event } } as any, { transport } as any);
     }
   } catch {
-    // Silent fail
+    if (critical) {
+      console.warn('analytics failed for critical event:', event);
+    }
   }
 }

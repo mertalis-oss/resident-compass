@@ -21,6 +21,7 @@ export default function Success() {
   const sessionId = searchParams.get('session_id');
   const pollCount = useRef(0);
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const eventFired = useRef(false);
 
   useEffect(() => {
     if (!sessionId || sessionId.length < 10) {
@@ -40,6 +41,15 @@ export default function Success() {
           if (pollTimer.current) clearInterval(pollTimer.current);
           setServiceTitle(data.service_title || searchParams.get('service') || '');
           setStatus('paid');
+
+          // Dedupe payment_success event
+          if (!eventFired.current) {
+            eventFired.current = true;
+            trackPostHogEvent('payment_success', {
+              session_id: sessionId,
+              service_title: data.service_title || '',
+            }, true);
+          }
           return;
         }
       } catch {
@@ -71,7 +81,7 @@ export default function Success() {
     : `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi, I just completed a purchase.')}`;
 
   const handleWhatsAppClick = () => {
-    trackPostHogEvent('whatsapp_click', { source: 'success_page' });
+    trackPostHogEvent('whatsapp_click', { source: 'success_page' }, true);
     window.open(whatsappUrl, '_blank');
   };
 

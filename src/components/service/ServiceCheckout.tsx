@@ -21,6 +21,16 @@ interface Props {
   variant?: 'full' | 'mirror';
 }
 
+function getLeadId(): string {
+  if (typeof window === 'undefined') return '';
+  try { return localStorage.getItem('planb_lead_id') || ''; } catch { return ''; }
+}
+
+function getLeadEmail(): string {
+  if (typeof window === 'undefined') return '';
+  try { return localStorage.getItem('planb_lead_email') || ''; } catch { return ''; }
+}
+
 export default function ServiceCheckout({ service, variant = 'full' }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -31,6 +41,16 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     if (isCheckoutLoading || window.__checkout_lock) return;
     window.__checkout_lock = true;
     setIsCheckoutLoading(true);
+
+    // 8s timeout fallback message
+    const slowTimer = setTimeout(() => {
+      if (window.__checkout_lock) {
+        toast({
+          title: t('checkout.stillProcessing', { defaultValue: 'Still processing...' }),
+          description: t('checkout.connectionSlow', { defaultValue: 'Connection is slow. Please wait...' }),
+        });
+      }
+    }, 8000);
 
     if (!window.__checkout_toast_shown) {
       window.__checkout_toast_shown = true;
@@ -47,9 +67,10 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     try {
       const utms = getStoredUtms() || {};
       const normalizedHost = window.location.hostname.replace(/^www\./i, '').toLowerCase().replace(/\.$/, '');
-      const leadId = (() => { try { return localStorage.getItem('lead_id') || ''; } catch { return ''; } })();
+      const leadId = getLeadId();
+      const leadEmail = getLeadEmail();
 
-      trackPostHogEvent('checkout_started', { service_id: service.id, service_title: service.title });
+      trackPostHogEvent('checkout_started', { service_id: service.id, service_title: service.title }, true);
 
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: {
@@ -60,6 +81,8 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
           utm_campaign: String(utms?.utm_campaign || ''),
           utm_medium: String(utms?.utm_medium || ''),
           lead_id: leadId,
+          source: leadId ? 'quiz' : 'direct',
+          email: leadEmail ? leadEmail.toLowerCase().trim() : '',
         },
       });
 
@@ -73,7 +96,14 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
         setIsAgreed(false);
         return;
       }
-      if (data?.url) window.location.href = data.url;
+
+      if (data?.url) {
+        // Fire cta_clicked with sendBeacon, then navigate with 150ms delay
+        trackPostHogEvent('cta_clicked', { service_id: service.id, destination: 'stripe' }, true);
+        setTimeout(() => {
+          try { window.location.href = data.url; } catch { window.location.href = data.url; }
+        }, 150);
+      }
     } catch (err) {
       console.error(err);
       toast({
@@ -83,6 +113,7 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
       });
       setIsAgreed(false);
     } finally {
+      clearTimeout(slowTimer);
       window.__checkout_lock = false;
       window.__checkout_toast_shown = false;
       setIsCheckoutLoading(false);
