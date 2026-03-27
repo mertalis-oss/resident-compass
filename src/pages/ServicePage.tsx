@@ -290,9 +290,7 @@ export default function ServicePage() {
       </AnimatedSection>
 
       <ServiceFooter />
-      <StickyMobileCTA
-        onClick={isCheckoutReady ? handleCheckout : () => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })}
-      />
+      <StickyMobileCTA />
       <ConciergeButton />
     </div>
   );
