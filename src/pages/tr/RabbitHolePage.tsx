@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Sparkles, Leaf, Moon, Heart, Waves, TreePine } from 'lucide-react';
+import { Leaf, Moon, Heart, Waves, TreePine } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
-import SEOHead from '@/components/SEOHead';
 
 const offerings = [
   { icon: Moon, titleKey: 'rabbitHole.o1Title', descKey: 'rabbitHole.o1Desc', duration: '3-7 gün', location: 'Koh Phangan, Private Jungle Retreat' },
@@ -31,7 +31,12 @@ export default function RabbitHolePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title={t('rabbitHole.seoTitle', { defaultValue: 'İçsel Keşif Yolculuğu — Plan B Asia' })} description={t('rabbitHole.seoDesc', { defaultValue: 'Bilinçaltının katmanlarını keşfet.' })} />
+      {/* STEALTH: noindex + nofollow */}
+      <Helmet>
+        <title>{t('rabbitHole.seoTitle', { defaultValue: 'Private Wellness Experiences — Plan B Asia' })}</title>
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="googlebot" content="noindex, nofollow" />
+      </Helmet>
       <FocusedNavbar />
       <TrustBar />
 
@@ -51,9 +56,7 @@ export default function RabbitHolePage() {
         <div className="relative z-10 container mx-auto px-6 lg:px-12 text-center">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.3 }}>
             <div className="inline-flex items-center gap-2 mb-8">
-              <Sparkles className="w-5 h-5 text-cyan-400" />
-              <span className="text-cyan-400/80 text-sm uppercase tracking-[0.3em]">{t('rabbitHole.badge', { defaultValue: 'İçsel Yolculuk' })}</span>
-              <Sparkles className="w-5 h-5 text-cyan-400" />
+              <span className="text-cyan-400/80 text-sm uppercase tracking-[0.3em]">{t('rabbitHole.badge', { defaultValue: 'Private Wellness Experiences' })}</span>
             </div>
             <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-medium text-white mb-6 leading-tight">
               {t('rabbitHole.heroTitle', { defaultValue: 'Derinlere Dalış' })}
@@ -94,8 +97,8 @@ export default function RabbitHolePage() {
                   <h3 className="font-heading text-xl md:text-2xl text-white mb-3">{t(item.titleKey)}</h3>
                   <p className="text-white/50 leading-relaxed mb-6">{t(item.descKey)}</p>
                   <div className="flex flex-wrap gap-4 text-sm">
-                    <span className="text-purple-400">⏱ {item.duration}</span>
-                    <span className="text-cyan-400/70">📍 {item.location}</span>
+                    <span className="text-purple-400">{item.duration}</span>
+                    <span className="text-cyan-400/70">{item.location}</span>
                   </div>
                 </div>
               </motion.div>
@@ -125,12 +128,18 @@ export default function RabbitHolePage() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Legal Disclaimer + CTA */}
       <section className="py-24 lg:py-32 bg-slate-950">
         <div className="container mx-auto px-6 lg:px-12 text-center">
           <div className="max-w-2xl mx-auto">
             <h2 className="font-heading text-3xl md:text-4xl text-white mb-6">{t('rabbitHole.ctaTitle', { defaultValue: 'Bu Yolculuk Sana Uygun mu?' })}</h2>
             <p className="text-white/50 mb-8 leading-relaxed">{t('rabbitHole.ctaBody', { defaultValue: 'Gizli, bağlayıcı olmayan bir görüşme ile senin için doğru olup olmadığını birlikte değerlendirelim.' })}</p>
+            
+            {/* Legal text */}
+            <p className="text-xs text-white/30 border border-white/10 rounded p-4 mb-8 leading-relaxed">
+              {t('rabbitHole.legalDisclaimer', { defaultValue: 'Sunulan tüm hizmetler danışmanlık ve yönlendirme kapsamındadır. Plan B Asia sadece aracıdır. Herhangi bir yasa dışı faaliyet teşvik edilmez veya desteklenmez.' })}
+            </p>
+
             <Link to="/tools/dtv-visa-calculator" className="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm uppercase tracking-[0.15em] font-medium hover:from-purple-500 hover:to-pink-500 transition-all">
               {t('rabbitHole.ctaBtn', { defaultValue: 'Değerlendirme Başlat' })}
             </Link>
@@ -140,7 +149,7 @@ export default function RabbitHolePage() {
 
       <footer className="py-8 bg-slate-950 border-t border-white/5">
         <div className="container mx-auto px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center gap-4">
-          <Link to="/" className="text-white/40 hover:text-white/60 transition-colors text-sm">← {t('rabbitHole.backHome', { defaultValue: 'Ana Sayfaya Dön' })}</Link>
+          <Link to="/" className="text-white/40 hover:text-white/60 transition-colors text-sm">{t('rabbitHole.backHome', { defaultValue: 'Ana Sayfaya Dön' })}</Link>
           <p className="text-white/20 text-xs">Plan B Asia</p>
         </div>
       </footer>

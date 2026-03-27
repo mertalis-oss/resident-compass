@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { Shield, FileText, Globe } from 'lucide-react';
 
 export default function TrustSignals() {
   const { t } = useTranslation();
 
   const stats = t('trustSignals.stats', { returnObjects: true }) as { value: string; label: string }[];
-  const logos = ['Forbes', 'Bloomberg', 'TechCrunch', 'Condé Nast', 'WSJ'];
 
   return (
     <section className="py-24 lg:py-32 bg-secondary">
@@ -31,7 +31,7 @@ export default function TrustSignals() {
           ))}
         </div>
 
-        {/* As Seen In */}
+        {/* Trust Strip — text-only, no fake logos */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -39,22 +39,21 @@ export default function TrustSignals() {
           transition={{ duration: 0.8 }}
           className="text-center"
         >
-          <p className="caption-editorial text-muted-foreground mb-12">
-            {t('trustSignals.mediaLabel')}
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-8 lg:gap-16">
-            {logos.map((logo, index) => (
-              <motion.div
-                key={logo}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-                className="text-2xl md:text-3xl font-heading text-foreground/30 hover:text-foreground/60 transition-colors duration-300"
-              >
-                {logo}
-              </motion.div>
-            ))}
+          <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-10 text-sm text-muted-foreground">
+            <span className="flex items-center gap-2">
+              <Shield className="h-4 w-4 text-accent" />
+              {t('trustStrip.secure', { defaultValue: 'Güvenli Ödeme' })}
+            </span>
+            <span className="hidden sm:inline text-border">|</span>
+            <span className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-accent" />
+              {t('trustStrip.official', { defaultValue: 'Resmi Süreç Danışmanlığı' })}
+            </span>
+            <span className="hidden sm:inline text-border">|</span>
+            <span className="flex items-center gap-2">
+              <Globe className="h-4 w-4 text-accent" />
+              {t('trustStrip.global', { defaultValue: 'Global Operasyon' })}
+            </span>
           </div>
         </motion.div>
       </div>

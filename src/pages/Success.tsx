@@ -22,12 +22,17 @@ export default function Success() {
   const pollCount = useRef(0);
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const eventFired = useRef(false);
+  const initLock = useRef(false);
 
   useEffect(() => {
     if (!sessionId || sessionId.length < 10) {
       navigate('/', { replace: true });
       return;
     }
+
+    // Session-scoped initialization lock
+    if (initLock.current) return;
+    initLock.current = true;
 
     const poll = async () => {
       pollCount.current++;
@@ -37,12 +42,11 @@ export default function Success() {
           body: { session_id: sessionId },
         });
 
-        if (data?.verified && data?.status === 'paid') {
+        if (data?.verified && (data?.status === 'paid' || data?.status === 'complete')) {
           if (pollTimer.current) clearInterval(pollTimer.current);
           setServiceTitle(data.service_title || searchParams.get('service') || '');
           setStatus('paid');
 
-          // Dedupe payment_success event
           if (!eventFired.current) {
             eventFired.current = true;
             trackPostHogEvent('payment_success', {
@@ -56,15 +60,14 @@ export default function Success() {
         // Keep polling — NEVER show error state
       }
 
-      // Timeout after 10 polls (30s) — show neutral pending, not error
-      if (pollCount.current >= 10) {
+      // Timeout after 20 polls (60s) — show neutral pending, not error
+      if (pollCount.current >= 20) {
         if (pollTimer.current) clearInterval(pollTimer.current);
         setServiceTitle(searchParams.get('service') || '');
         setStatus('timeout');
       }
     };
 
-    // Initial check after 1.5s skeleton
     const initialTimer = setTimeout(() => {
       poll();
       pollTimer.current = setInterval(poll, 3000);
@@ -82,7 +85,9 @@ export default function Success() {
 
   const handleWhatsAppClick = () => {
     trackPostHogEvent('whatsapp_click', { source: 'success_page' }, true);
-    window.open(whatsappUrl, '_blank');
+    setTimeout(() => {
+      window.open(whatsappUrl, '_blank');
+    }, 150);
   };
 
   // Loading/polling state
@@ -106,7 +111,7 @@ export default function Success() {
     );
   }
 
-  // Timeout state — NEUTRAL, not error. "Confirming your payment..."
+  // Timeout state — VIP neutral, never error
   if (status === 'timeout') {
     return (
       <div className="min-h-screen bg-background">
@@ -120,7 +125,7 @@ export default function Success() {
               {t('success.timeoutTitle', { defaultValue: 'Payment received' })}
             </h1>
             <p className="body-editorial text-muted-foreground mb-8">
-              {t('success.timeoutBody', { defaultValue: 'Final confirmation may take a few minutes. You will be contacted within 24 hours.' })}
+              {t('success.timeoutBody', { defaultValue: 'Ödemeniz sistemimize ulaşmıştır. Teknik doğrulama süreci devam ediyor. Her durumda sizinle manuel olarak iletişime geçeceğiz.' })}
             </p>
             <p className="text-sm text-muted-foreground mb-6">
               {t('success.timeoutCta', { defaultValue: "Didn't receive confirmation? Contact us on WhatsApp." })}
@@ -135,7 +140,7 @@ export default function Success() {
     );
   }
 
-  // Success (paid) state
+  // Success (paid) — VIP microcopy
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
@@ -151,8 +156,11 @@ export default function Success() {
           <h1 className="heading-section text-foreground mb-4">
             {t('success.title', { defaultValue: 'Order Successfully Received' })}
           </h1>
-          <p className="body-editorial text-accent mb-12">
+          <p className="body-editorial text-accent mb-4">
             {t('success.dopamine', { defaultValue: 'You just removed a major uncertainty from your path.' })}
+          </p>
+          <p className="text-sm text-muted-foreground mb-12">
+            {t('success.vipNote', { defaultValue: 'Size özel süreciniz başlatıldı. Şu anda sistemde önceliklendirildiniz. Genellikle birkaç saat, en geç 24 saat içinde sizinle iletişime geçiyoruz.' })}
           </p>
 
           {/* Next steps */}

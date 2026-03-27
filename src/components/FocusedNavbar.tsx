@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useDomainScope } from '@/hooks/useDomainScope';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Globe } from 'lucide-react';
 import logoDark from '@/assets/Dark_Seffaf.png';
@@ -14,6 +15,7 @@ const langs = [
 
 export default function FocusedNavbar() {
   const { t, i18n } = useTranslation();
+  const scope = useDomainScope();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
@@ -24,25 +26,36 @@ export default function FocusedNavbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const navLinks = [
-    { to: '/residency/dtv-thailand', label: t('nav.residency') },
-    { to: '/wellness/thailand-retreat', label: t('nav.wellness') },
-    { to: '/corporate-retreats/mice-thailand', label: t('nav.corporate') },
-    { to: '/expeditions/ha-giang-motor-expedition', label: t('nav.expeditions') },
-  ];
+  // Force TR language on TR domain before first render flicker
+  useEffect(() => {
+    if (scope === 'tr' && i18n.language !== 'tr') {
+      i18n.changeLanguage('tr');
+    }
+  }, [scope, i18n]);
+
+  const navLinks = scope === 'tr'
+    ? [
+        { to: '/tr/dtv-vize', label: t('navTr.visa', { defaultValue: 'Vize & Oturum' }) },
+        { to: '/tr/nomad-incubator', label: t('navTr.incubator', { defaultValue: 'Kuluçka Programı' }) },
+        { to: '/wellness/thailand-retreat', label: t('navTr.education', { defaultValue: 'Eğitim ve Kurumsal' }) },
+      ]
+    : [
+        { to: '/residency/dtv-thailand', label: t('nav.residency') },
+        { to: '/wellness/thailand-retreat', label: t('nav.wellness') },
+        { to: '/corporate-retreats/mice-thailand', label: t('nav.corporate') },
+        { to: '/expeditions/ha-giang-motor-expedition', label: t('nav.expeditions') },
+      ];
 
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-500 ease-out ${
-        scrolled
-          ? 'bg-corporate-navy shadow-lg'
-          : 'bg-transparent'
+        scrolled ? 'bg-corporate-navy shadow-lg' : 'bg-transparent'
       }`}
     >
       <div className="container flex items-center justify-between h-16 md:h-20">
         <Link to="/">
           <img
-            src={scrolled ? logoWhite : logoWhite}
+            src={logoWhite}
             alt="Plan B Asia"
             className="h-9 md:h-10 transition-all duration-500"
           />

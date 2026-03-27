@@ -20,6 +20,7 @@ import ServiceUpsell from '@/components/service/ServiceUpsell';
 import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceFallback from '@/components/service/ServiceFallback';
 import ServiceFooter from '@/components/service/ServiceFooter';
+import StickyMobileCTA from '@/components/StickyMobileCTA';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { AlertTriangle } from 'lucide-react';
@@ -289,6 +290,7 @@ export default function ServicePage() {
       </AnimatedSection>
 
       <ServiceFooter />
+      <StickyMobileCTA />
       <ConciergeButton />
     </div>
   );

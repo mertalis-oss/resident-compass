@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { getStoredUtms } from '@/lib/utmStorage';
@@ -8,7 +8,7 @@ import { safeGet, cleanupFallback } from '@/lib/safeStorage';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Shield, Clock, Lock, CreditCard } from 'lucide-react';
+import { Shield, Clock, Lock, CreditCard, MessageCircle } from 'lucide-react';
 import type { Service } from '@/pages/ServicePage';
 
 declare global {
@@ -16,6 +16,8 @@ declare global {
     __checkout_lock?: boolean;
     __checkout_toast_shown?: boolean;
     __cta_fired?: Record<string, boolean>;
+    __session_id?: string;
+    __state?: Record<string, Record<string, boolean>>;
   }
 }
 
@@ -24,18 +26,27 @@ interface Props {
   variant?: 'full' | 'mirror';
 }
 
+const WHATSAPP_NUMBER = '905551234567';
+
 export default function ServiceCheckout({ service, variant = 'full' }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [isAgreed, setIsAgreed] = useState(false);
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+  const sessionKey = useRef(window.__session_id || `s_${Date.now()}`);
 
   const handleCheckout = async () => {
+    // Session-scoped click guard
+    const stateKey = `checkout_${service.slug}`;
+    window.__state = window.__state || {};
+    window.__state[sessionKey.current] = window.__state[sessionKey.current] || {};
+    if (window.__state[sessionKey.current][stateKey]) return;
+
     if (isCheckoutLoading || window.__checkout_lock) return;
     window.__checkout_lock = true;
+    window.__state[sessionKey.current][stateKey] = true;
     setIsCheckoutLoading(true);
 
-    // 8s timeout fallback message
     const slowTimer = setTimeout(() => {
       if (window.__checkout_lock) {
         toast({
@@ -44,18 +55,6 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
         });
       }
     }, 8000);
-
-    if (!window.__checkout_toast_shown) {
-      window.__checkout_toast_shown = true;
-      setTimeout(() => {
-        if (window.__checkout_lock) {
-          toast({
-            title: t('checkout.stillProcessing', { defaultValue: 'Still processing...' }),
-            description: t('checkout.stillProcessingDesc', { defaultValue: 'This can take a few seconds depending on your connection.' }),
-          });
-        }
-      }, 4000);
-    }
 
     try {
       const utms = getStoredUtms() || {};
@@ -88,8 +87,8 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
 
       if (error) {
         console.error(error);
-        // Release CTA guard on failure
         if (window.__cta_fired) delete window.__cta_fired[service.slug];
+        if (window.__state?.[sessionKey.current]) delete window.__state[sessionKey.current][stateKey];
         toast({
           variant: 'destructive',
           title: t('checkout.errorTitle', { defaultValue: 'Checkout Error' }),
@@ -100,9 +99,7 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
       }
 
       if (data?.url) {
-        // Fire cta_clicked with sendBeacon, then navigate with 150ms delay
         trackPostHogEvent('cta_clicked', { service_id: service.id, destination: 'stripe' }, true);
-        // Cleanup RAM fallbacks after successful checkout
         cleanupFallback('planb_lead_id');
         setTimeout(() => {
           try { window.location.href = data.url; } catch { window.location.href = data.url; }
@@ -110,8 +107,8 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
       }
     } catch (err) {
       console.error(err);
-      // Release CTA guard on error
       if (window.__cta_fired) delete window.__cta_fired[service.slug];
+      if (window.__state?.[sessionKey.current]) delete window.__state[sessionKey.current][stateKey];
       toast({
         variant: 'destructive',
         title: t('checkout.connectionError', { defaultValue: 'Connection Error' }),
@@ -126,7 +123,15 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     }
   };
 
-  // Mirror variant: simplified CTA only
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Merhaba, planımı inceledim. Ödeme öncesi kısa bir sorum var:')}`;
+
+  const handleWhatsAppClick = () => {
+    trackPostHogEvent('whatsapp_click', { source: 'checkout_escape', service: service.slug }, true);
+    setTimeout(() => {
+      window.open(whatsappUrl, '_blank');
+    }, 150);
+  };
+
   if (variant === 'mirror') {
     return (
       <Button
@@ -161,6 +166,17 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
           {t('checkout.hesitationKiller', { defaultValue: "You don't need to have everything figured out. That's exactly why this exists." })}
         </p>
 
+        {/* Price justification ABOVE CTA */}
+        <div className="bg-card border border-border rounded-lg p-5 mb-8 text-center space-y-2">
+          <p className="text-sm text-foreground font-medium">
+            {t('checkout.priceJustify', { defaultValue: 'Anında erişim. Bekleme yok. Bu hizmet, durumunuza özel analiz ve yol haritasını içerir.' })}
+          </p>
+          <p className="text-xs text-muted-foreground flex items-center justify-center gap-1.5">
+            <Lock className="h-3 w-3" />
+            {t('checkout.stripeSecure', { defaultValue: 'Güvenli ödeme altyapısı (Stripe)' })}
+          </p>
+        </div>
+
         {/* Legal agreement */}
         <div className="flex items-start gap-3 mb-3">
           <Checkbox
@@ -194,6 +210,25 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
             : t('service.ctaStart', { defaultValue: 'Start Your Process' })}
         </Button>
 
+        {/* Post-CTA reassurance */}
+        <p className="text-xs text-muted-foreground text-center mt-3">
+          {t('checkout.postCtaReassure', { defaultValue: 'İlk adımınız ödeme sonrası hemen başlatılır. Kart bilgileriniz sistemimizde tutulmaz.' })}
+        </p>
+
+        {/* WhatsApp Escape Hatch */}
+        <div className="text-center mt-8 space-y-1.5">
+          <p className="text-xs text-muted-foreground">
+            {t('checkout.whatsappEscapeLabel', { defaultValue: 'Ödeme öncesi hızlı sorular için' })}
+          </p>
+          <button onClick={handleWhatsAppClick} className="text-xs text-accent hover:text-accent/80 underline underline-offset-4 transition-colors inline-flex items-center gap-1.5">
+            <MessageCircle className="h-3 w-3" />
+            {t('checkout.whatsappEscapeCta', { defaultValue: "WhatsApp'tan yazın" })}
+          </button>
+          <p className="text-[10px] text-muted-foreground/60">
+            {t('checkout.whatsappResponseTime', { defaultValue: 'Yanıt süresi: genellikle birkaç dakika' })}
+          </p>
+        </div>
+
         {/* What happens next */}
         <div className="mt-10 space-y-4">
           <p className="caption-editorial text-muted-foreground mb-4">
@@ -217,20 +252,6 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
         <p className="text-sm text-muted-foreground text-center mt-8 leading-relaxed">
           {t('checkout.realHuman', { defaultValue: "You'll be speaking with a real expert, not an automated system. If this service is not a fit for your situation, we will guide you to the right next step. You're one step away from getting clarity." })}
         </p>
-      </div>
-
-      {/* Sticky mobile CTA */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur border-t border-border p-4 md:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-        <Button
-          size="lg"
-          onClick={isAgreed ? handleCheckout : () => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })}
-          disabled={isCheckoutLoading}
-          className="w-full btn-luxury-gold text-xs tracking-[0.15em] uppercase py-4 h-auto"
-        >
-          {isCheckoutLoading
-            ? t('checkout.processing', { defaultValue: 'Processing your secure session...' })
-            : t('service.ctaStart', { defaultValue: 'Start Your Process' })}
-        </Button>
       </div>
     </section>
   );
