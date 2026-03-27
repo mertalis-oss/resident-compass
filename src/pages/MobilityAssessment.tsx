@@ -462,6 +462,14 @@ export default function MobilityAssessment() {
                   </div>
                 ) : (
                   <>
+                    {/* Analysis Complete Confirmation */}
+                    <div className="flex items-center justify-center gap-2 text-accent">
+                      <CheckCircle className="h-5 w-5" />
+                      <p className="text-sm font-medium font-body">
+                        {t('quiz.analysisComplete', { defaultValue: 'Analiziniz tamamlandı' })}
+                      </p>
+                    </div>
+
                     <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground font-body">
                       {t('quiz.resultLabel', { defaultValue: 'Assessment Complete' })}
                     </p>
@@ -501,6 +509,11 @@ export default function MobilityAssessment() {
                         : score >= 40
                         ? t('quiz.scoreMed', { defaultValue: 'You have moderate eligibility. Strategic document preparation can significantly improve your position.' })
                         : t('quiz.scoreLow', { defaultValue: 'Your profile may require additional documentation. Our team can assess alternative pathways.' })}
+                    </p>
+
+                    {/* Personalized trust copy */}
+                    <p className="text-xs text-accent/80 font-body max-w-sm mx-auto">
+                      {t('quiz.personalizedTrust', { defaultValue: '%100 sizin verdiğiniz bilgilere göre oluşturuldu. Bu seçenek en az sürpriz ve en hızlı sonuç veren yoldur.' })}
                     </p>
 
                     {/* Session recovery */}
