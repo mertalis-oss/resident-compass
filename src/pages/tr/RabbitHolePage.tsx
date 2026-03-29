@@ -36,6 +36,7 @@ export default function RabbitHolePage() {
         <title>{t('rabbitHole.seoTitle', { defaultValue: 'Private Wellness Experiences — Plan B Asia' })}</title>
         <meta name="robots" content="noindex, nofollow" />
         <meta name="googlebot" content="noindex, nofollow" />
+        <meta name="description" content="Private wellness experiences in Southeast Asia." />
       </Helmet>
       <FocusedNavbar />
       <TrustBar />

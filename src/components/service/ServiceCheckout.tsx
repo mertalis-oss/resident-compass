@@ -196,7 +196,12 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
             {t('checkout.mustAccept', { defaultValue: 'You must accept the terms before proceeding.' })}
           </p>
         )}
-        {isAgreed && <div className="mb-8" />}
+        {isAgreed && <div className="mb-4" />}
+
+        {/* CRO: Response time + impulse copy */}
+        <p className="text-xs text-muted-foreground text-center mb-2">
+          {t('checkout.avgResponseTime', { defaultValue: 'Ortalama geri dönüş: 24 saat' })}
+        </p>
 
         {/* CTA Button */}
         <Button
@@ -207,11 +212,14 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
         >
           {isCheckoutLoading
             ? t('checkout.processing', { defaultValue: 'Processing your secure session...' })
-            : t('service.ctaStart', { defaultValue: 'Start Your Process' })}
+            : t('checkout.ctaLabel', { defaultValue: 'Planımı Oluştur' })}
         </Button>
 
         {/* Post-CTA reassurance */}
-        <p className="text-xs text-muted-foreground text-center mt-3">
+        <p className="text-xs text-muted-foreground text-center mt-2">
+          {t('checkout.readyIn3', { defaultValue: '3 dakika içinde planın hazır' })}
+        </p>
+        <p className="text-xs text-muted-foreground text-center mt-1">
           {t('checkout.postCtaReassure', { defaultValue: 'İlk adımınız ödeme sonrası hemen başlatılır. Kart bilgileriniz sistemimizde tutulmaz.' })}
         </p>
 

@@ -63,9 +63,19 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
-            className="font-heading text-2xl md:text-3xl lg:text-4xl text-background/90 mb-6 italic"
+            className="font-heading text-xl md:text-2xl lg:text-3xl text-background/90 mb-4 italic"
           >
             {t('hero.subtitle')}
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.15 }}
+            className="text-sm md:text-base text-background/70 max-w-2xl mx-auto mb-6 leading-relaxed"
+          >
+            {t('hero.hook', { defaultValue: 'Global bir yaşam kurmak ve sınırları aşmak için en güvenli, yasal ve stratejik yol haritanızı çıkarıyoruz.' })}
+          </motion.p>
           </motion.p>
 
           <motion.p
