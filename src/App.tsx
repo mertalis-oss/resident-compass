@@ -62,6 +62,9 @@ const App = () => (
               <Route path="/tr/rabbit-hole" element={<RabbitHolePage />} />
               <Route path="/tr/nomad-incubator" element={<NomadIncubatorPage />} />
               <Route path="/tr/dtv-vize" element={<DTVVizePage />} />
+              <Route path="/tr/soft-power" element={<ServicePage />} />
+              <Route path="/tr/expeditions" element={<ServicePage />} />
+              <Route path="/tr/mice" element={<ServicePage />} />
               {/* Admin Routes */}
               <Route path="/admin/services" element={<AdminRoute><AdminServices /></AdminRoute>} />
               <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />

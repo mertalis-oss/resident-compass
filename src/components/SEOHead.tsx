@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { getDomainScope } from '@/hooks/useDomainScope';
 
 interface SEOHeadProps {
@@ -13,6 +14,11 @@ interface SEOHeadProps {
   noIndex?: boolean;
 }
 
+const DOMAIN_MAP = {
+  tr: 'https://planbasya.com',
+  global: 'https://planbasia.com',
+} as const;
+
 export default function SEOHead({
   title,
   description,
@@ -23,11 +29,14 @@ export default function SEOHead({
   ogImage,
   noIndex = false,
 }: SEOHeadProps) {
-  const { t, i18n } = useTranslation();
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const { t } = useTranslation();
+  const location = useLocation();
   const scope = getDomainScope();
   const lang = scope === 'tr' ? 'tr' : 'en';
+
+  const baseUrl = DOMAIN_MAP[scope];
+  const currentPath = location.pathname;
+  const absoluteUrl = `${baseUrl}${currentPath}`;
 
   const metaDescription = description || t('hero.subtitle');
   const defaultOgImage = ogImage || `${baseUrl}/images/hero-home.webp`;
@@ -45,7 +54,6 @@ export default function SEOHead({
       contactType: 'customer service',
       availableLanguage: ['English', 'Turkish', 'Hindi'],
     },
-    sameAs: [],
   };
 
   const serviceSchema = {
@@ -53,16 +61,9 @@ export default function SEOHead({
     '@type': schemaType,
     name: serviceName || title,
     description: serviceDescription || metaDescription,
-    provider: {
-      '@type': 'Organization',
-      name: 'Plan B Asia',
-      url: baseUrl,
-    },
-    areaServed: {
-      '@type': 'Place',
-      name: 'Southeast Asia',
-    },
-    url: currentUrl,
+    provider: { '@type': 'Organization', name: 'Plan B Asia', url: baseUrl },
+    areaServed: { '@type': 'Place', name: 'Southeast Asia' },
+    url: absoluteUrl,
   };
 
   return (
@@ -70,7 +71,15 @@ export default function SEOHead({
       <html lang={lang} />
       <title>{title}</title>
       <meta name="description" content={metaDescription} />
-      <link rel="canonical" href={canonical || currentUrl} />
+
+      {/* Canonical — always absolute */}
+      <link rel="canonical" href={canonical || absoluteUrl} />
+
+      {/* Hreflang — explicit absolute URLs */}
+      <link rel="alternate" hrefLang="tr" href={`https://planbasya.com${currentPath}`} />
+      <link rel="alternate" hrefLang="en" href={`https://planbasia.com${currentPath}`} />
+      <link rel="alternate" hrefLang="hi" href={`https://planbasia.com${currentPath}`} />
+      <link rel="alternate" hrefLang="x-default" href={`https://planbasia.com${currentPath}`} />
 
       {noIndex && <meta name="robots" content="noindex, nofollow" />}
       {noIndex && <meta name="googlebot" content="noindex, nofollow" />}
@@ -79,7 +88,7 @@ export default function SEOHead({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={metaDescription} />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content={canonical || currentUrl} />
+      <meta property="og:url" content={canonical || absoluteUrl} />
       <meta property="og:image" content={defaultOgImage} />
       <meta property="og:locale" content={lang === 'tr' ? 'tr_TR' : 'en_US'} />
 

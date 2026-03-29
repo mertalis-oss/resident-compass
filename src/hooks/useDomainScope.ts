@@ -1,14 +1,10 @@
-export type DomainScope = 'tr' | 'global' | 'both';
+export type DomainScope = 'tr' | 'global';
 
 export function getDomainScope(): DomainScope {
   if (typeof window === 'undefined') return 'global';
-  const host = window.location.hostname
-    .replace(/^www\./i, '')
-    .toLowerCase()
-    .replace(/\.$/, '');
-  if (host === 'planbasya.com') return 'tr';
-  if (host === 'planbasia.com') return 'global';
-  return 'global'; // Strict fallback
+  const host = window.location.hostname.toLowerCase();
+  if (host === 'planbasya.com' || host.endsWith('.planbasya.com')) return 'tr';
+  return 'global';
 }
 
 export function useDomainScope(): DomainScope {

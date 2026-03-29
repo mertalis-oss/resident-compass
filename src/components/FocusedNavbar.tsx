@@ -7,6 +7,14 @@ import { Menu, X, Globe } from 'lucide-react';
 import logoDark from '@/assets/Dark_Seffaf.png';
 import logoWhite from '@/assets/White_Seffaf.png';
 
+const TR_NAV_ITEMS = [
+  { to: '/tr/dtv-vize', label: 'Vize & Oturum' },
+  { to: '/tr/nomad-incubator', label: 'Kuluçka' },
+  { to: '/tr/soft-power', label: 'Eğitim & Yaşam' },
+  { to: '/tr/expeditions', label: 'Keşifler' },
+  { to: '/tr/mice', label: 'Kurumsal' },
+] as const;
+
 const langs = [
   { code: 'en', label: 'EN' },
   { code: 'tr', label: 'TR' },
@@ -34,11 +42,7 @@ export default function FocusedNavbar() {
   }, [scope, i18n]);
 
   const navLinks = scope === 'tr'
-    ? [
-        { to: '/tr/dtv-vize', label: t('navTr.visa', { defaultValue: 'Vize & Oturum' }) },
-        { to: '/tr/nomad-incubator', label: t('navTr.incubator', { defaultValue: 'Kuluçka Programı' }) },
-        { to: '/wellness/thailand-retreat', label: t('navTr.education', { defaultValue: 'Eğitim ve Kurumsal' }) },
-      ]
+    ? TR_NAV_ITEMS.map(item => ({ to: item.to, label: item.label }))
     : [
         { to: '/residency/dtv-thailand', label: t('nav.residency') },
         { to: '/wellness/thailand-retreat', label: t('nav.wellness') },
@@ -53,7 +57,7 @@ export default function FocusedNavbar() {
       }`}
     >
       <div className="container flex items-center justify-between h-16 md:h-20">
-        <Link to="/">
+        <Link to={scope === 'tr' ? '/tr' : '/'}>
           <img
             src={logoWhite}
             alt="Plan B Asia"
@@ -73,31 +77,33 @@ export default function FocusedNavbar() {
             </Link>
           ))}
 
-          {/* Language Switcher */}
-          <div className="relative">
-            <button
-              onClick={() => setLangOpen(!langOpen)}
-              className="flex items-center gap-1 text-sm text-holistic/70 hover:text-holistic transition-colors"
-            >
-              <Globe className="h-4 w-4" />
-              {i18n.language.toUpperCase()}
-            </button>
-            {langOpen && (
-              <div className="absolute top-full right-0 mt-2 py-1 bg-card border border-border rounded-md shadow-xl min-w-[60px]">
-                {langs.map((l) => (
-                  <button
-                    key={l.code}
-                    onClick={() => { i18n.changeLanguage(l.code); setLangOpen(false); }}
-                    className={`block w-full text-left px-3 py-1.5 text-sm hover:bg-muted transition-colors ${
-                      i18n.language === l.code ? 'text-secondary font-semibold' : 'text-foreground'
-                    }`}
-                  >
-                    {l.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Language Switcher — only on global domain */}
+          {scope === 'global' && (
+            <div className="relative">
+              <button
+                onClick={() => setLangOpen(!langOpen)}
+                className="flex items-center gap-1 text-sm text-holistic/70 hover:text-holistic transition-colors"
+              >
+                <Globe className="h-4 w-4" />
+                {i18n.language.toUpperCase()}
+              </button>
+              {langOpen && (
+                <div className="absolute top-full right-0 mt-2 py-1 bg-card border border-border rounded-md shadow-xl min-w-[60px]">
+                  {langs.filter(l => l.code !== 'tr').map((l) => (
+                    <button
+                      key={l.code}
+                      onClick={() => { i18n.changeLanguage(l.code); setLangOpen(false); }}
+                      className={`block w-full text-left px-3 py-1.5 text-sm hover:bg-muted transition-colors ${
+                        i18n.language === l.code ? 'text-secondary font-semibold' : 'text-foreground'
+                      }`}
+                    >
+                      {l.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           <Link to="/login">
             <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90">
@@ -128,21 +134,23 @@ export default function FocusedNavbar() {
               {link.label}
             </Link>
           ))}
-          <div className="flex gap-2 pt-2">
-            {langs.map((l) => (
-              <button
-                key={l.code}
-                onClick={() => { i18n.changeLanguage(l.code); }}
-                className={`px-3 py-1 text-xs rounded-full border ${
-                  i18n.language === l.code
-                    ? 'bg-secondary text-secondary-foreground border-secondary'
-                    : 'border-border/30 text-holistic/60'
-                }`}
-              >
-                {l.label}
-              </button>
-            ))}
-          </div>
+          {scope === 'global' && (
+            <div className="flex gap-2 pt-2">
+              {langs.filter(l => l.code !== 'tr').map((l) => (
+                <button
+                  key={l.code}
+                  onClick={() => { i18n.changeLanguage(l.code); }}
+                  className={`px-3 py-1 text-xs rounded-full border ${
+                    i18n.language === l.code
+                      ? 'bg-secondary text-secondary-foreground border-secondary'
+                      : 'border-border/30 text-holistic/60'
+                  }`}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
+          )}
           <Link to="/login" onClick={() => setMobileOpen(false)}>
             <Button size="sm" className="w-full bg-secondary text-secondary-foreground mt-2">
               {t('nav.getStarted')}

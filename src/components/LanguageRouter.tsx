@@ -5,7 +5,7 @@ import { getDomainScope } from '@/hooks/useDomainScope';
 
 /**
  * Synchronous language resolver + auto-redirect for TR domain.
- * Runs once on mount and on location change.
+ * Enforces strict bidirectional isolation.
  */
 export default function LanguageRouter() {
   const { i18n } = useTranslation();
@@ -14,31 +14,21 @@ export default function LanguageRouter() {
   const scope = getDomainScope();
 
   useEffect(() => {
-    // Set html lang attribute
-    const lang = scope === 'tr' ? 'tr' : 'en';
-    document.documentElement.lang = lang;
+    if (scope === 'tr') {
+      // HARD LOCK: TR domain = Turkish only
+      document.documentElement.lang = 'tr';
+      if (i18n.language !== 'tr') i18n.changeLanguage('tr');
 
-    // Force language sync before render
-    if (scope === 'tr' && i18n.language !== 'tr') {
-      i18n.changeLanguage('tr');
-    }
-
-    // Auto-redirect: TR domain on root "/" → /tr
-    if (scope === 'tr' && location.pathname === '/') {
-      // Only redirect if not already on /tr
-      navigate('/tr', { replace: true });
+      // Auto-redirect: TR domain on root "/" → /tr
+      if (location.pathname === '/') {
+        navigate('/tr', { replace: true });
+      }
+    } else {
+      // HARD LOCK: Global domain = EN (allows HI via switcher)
+      document.documentElement.lang = i18n.language === 'hi' ? 'hi' : 'en';
+      if (i18n.language === 'tr') i18n.changeLanguage('en');
     }
   }, [scope, location.pathname, i18n, navigate]);
-
-  // Also handle global domain with Turkish browser
-  useEffect(() => {
-    if (scope === 'global' && location.pathname === '/') {
-      const browserLang = navigator.language?.toLowerCase() || '';
-      if (browserLang.startsWith('tr')) {
-        i18n.changeLanguage('tr');
-      }
-    }
-  }, []);
 
   return null;
 }
