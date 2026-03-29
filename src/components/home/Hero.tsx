@@ -76,7 +76,6 @@ export default function Hero() {
           >
             {t('hero.hook', { defaultValue: 'Global bir yaşam kurmak ve sınırları aşmak için en güvenli, yasal ve stratejik yol haritanızı çıkarıyoruz.' })}
           </motion.p>
-          </motion.p>
 
           <motion.p
             initial={{ opacity: 0 }}
