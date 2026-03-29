@@ -255,7 +255,7 @@ export default function MobilityAssessment() {
             {t('quiz.heroTitle', { defaultValue: 'Strategic Mobility Assessment' })}
           </h1>
           <p className="text-base text-holistic/60 max-w-lg mx-auto font-body font-light leading-relaxed">
-            {t('quiz.heroSub', { defaultValue: 'A 60-second evaluation of your eligibility profile for sovereign residency pathways in Southeast Asia.' })}
+            {t('quiz.heroSub', { defaultValue: '60 saniyede sana en doğru yolu çıkaralım.' })}
           </p>
         </div>
       </section>
@@ -496,7 +496,7 @@ export default function MobilityAssessment() {
 
                     {/* Psychological boost */}
                     <p className="text-sm text-accent font-body font-medium">
-                      {t('quiz.topPercent', { defaultValue: "Based on your answers, you're in the top 18% of applicants eligible for this route." })}
+                      {t('quiz.resultHook', { defaultValue: 'Sizin için en hızlı ve en mantıklı yol:' })}
                     </p>
                     <p className="text-xs text-muted-foreground font-body italic">
                       {t('quiz.topPercentSub', { defaultValue: 'Based on internal eligibility benchmarks.' })}
@@ -535,7 +535,7 @@ export default function MobilityAssessment() {
                         }}
                         className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto transition-all duration-500 ease-out hover:scale-[1.02]"
                       >
-                        {t('quiz.startProcess', { defaultValue: 'Start Your Process' })} <ArrowRight className="ml-3 h-4 w-4" />
+                        {t('quiz.startProcess', { defaultValue: 'Başvurumu Başlat' })} <ArrowRight className="ml-3 h-4 w-4" />
                       </Button>
                       <p className="text-xs text-muted-foreground font-body">
                         {t('quiz.secureCheckout', { defaultValue: 'Secure checkout. Instant confirmation.' })}

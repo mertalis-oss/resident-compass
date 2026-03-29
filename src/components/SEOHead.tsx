@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
+import { getDomainScope } from '@/hooks/useDomainScope';
 
 interface SEOHeadProps {
   title: string;
@@ -9,6 +10,7 @@ interface SEOHeadProps {
   serviceName?: string;
   serviceDescription?: string;
   ogImage?: string;
+  noIndex?: boolean;
 }
 
 export default function SEOHead({
@@ -19,13 +21,16 @@ export default function SEOHead({
   serviceName,
   serviceDescription,
   ogImage,
+  noIndex = false,
 }: SEOHeadProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const scope = getDomainScope();
+  const lang = scope === 'tr' ? 'tr' : 'en';
 
-  // Fall back to i18n seo description if none provided
   const metaDescription = description || t('hero.subtitle');
+  const defaultOgImage = ogImage || `${baseUrl}/images/hero-home.webp`;
 
   const orgSchema = {
     '@context': 'https://schema.org',
@@ -62,21 +67,27 @@ export default function SEOHead({
 
   return (
     <Helmet>
+      <html lang={lang} />
       <title>{title}</title>
       <meta name="description" content={metaDescription} />
       <link rel="canonical" href={canonical || currentUrl} />
+
+      {noIndex && <meta name="robots" content="noindex, nofollow" />}
+      {noIndex && <meta name="googlebot" content="noindex, nofollow" />}
 
       {/* Open Graph */}
       <meta property="og:title" content={title} />
       <meta property="og:description" content={metaDescription} />
       <meta property="og:type" content="website" />
       <meta property="og:url" content={canonical || currentUrl} />
-      {ogImage && <meta property="og:image" content={ogImage} />}
+      <meta property="og:image" content={defaultOgImage} />
+      <meta property="og:locale" content={lang === 'tr' ? 'tr_TR' : 'en_US'} />
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={metaDescription} />
+      <meta name="twitter:image" content={defaultOgImage} />
 
       <meta name="viewport" content="width=device-width, initial-scale=1" />
 

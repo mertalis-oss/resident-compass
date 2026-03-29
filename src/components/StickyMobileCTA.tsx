@@ -35,7 +35,8 @@ export default function StickyMobileCTA({ id, onClick, disabled, loading, classN
         size="lg"
         onClick={handleClick}
         disabled={disabled || loading}
-        className="w-full btn-luxury-gold text-xs tracking-[0.15em] uppercase py-4 h-auto"
+        className="w-full btn-luxury-gold text-xs tracking-[0.15em] uppercase h-auto"
+        style={{ minHeight: '48px' }}
       >
         {loading
           ? t('checkout.processing', { defaultValue: 'İşleniyor...' })

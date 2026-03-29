@@ -124,8 +124,11 @@ export default function Success() {
             <h1 className="heading-section text-foreground mb-4">
               {t('success.timeoutTitle', { defaultValue: 'Payment received' })}
             </h1>
-            <p className="body-editorial text-muted-foreground mb-8">
+            <p className="body-editorial text-muted-foreground mb-4">
               {t('success.timeoutBody', { defaultValue: 'Ödemeniz sistemimize ulaşmıştır. Teknik doğrulama süreci devam ediyor. Her durumda sizinle manuel olarak iletişime geçeceğiz.' })}
+            </p>
+            <p className="text-sm text-accent font-medium mb-8">
+              {t('success.teamWorking', { defaultValue: 'Ekibimiz şu an planınızı hazırlıyor.' })}
             </p>
             <p className="text-sm text-muted-foreground mb-6">
               {t('success.timeoutCta', { defaultValue: "Didn't receive confirmation? Contact us on WhatsApp." })}
@@ -158,6 +161,9 @@ export default function Success() {
           </h1>
           <p className="body-editorial text-accent mb-4">
             {t('success.dopamine', { defaultValue: 'You just removed a major uncertainty from your path.' })}
+          </p>
+          <p className="text-sm text-accent/80 font-medium mb-4">
+            {t('success.teamWorking', { defaultValue: 'Ekibimiz şu an planınızı hazırlıyor.' })}
           </p>
           <p className="text-sm text-muted-foreground mb-12">
             {t('success.vipNote', { defaultValue: 'Size özel süreciniz başlatıldı. Şu anda sistemde önceliklendirildiniz. Genellikle birkaç saat, en geç 24 saat içinde sizinle iletişime geçiyoruz.' })}
