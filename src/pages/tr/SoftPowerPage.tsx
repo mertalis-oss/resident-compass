@@ -15,7 +15,7 @@ const courses = [
     duration: '1-6 Ay',
     visa: 'ED Visa / DTV Visa',
     transition: 'Eğitim vizesinden oturma iznine geçiş imkânı',
-    desc: 'Tayland'ın en köklü kamplarında profesyonel eğitim. Vize süreci dahil.',
+    desc: 'Tayland\'ın en köklü kamplarında profesyonel eğitim. Vize süreci dahil.',
     slug: 'muay-thai-training',
   },
   {
