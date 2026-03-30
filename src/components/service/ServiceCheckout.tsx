@@ -5,10 +5,11 @@ import { getStoredUtms } from '@/lib/utmStorage';
 import { trackPostHogEvent } from '@/lib/posthog';
 import { normalizeEmail } from '@/lib/emailNormalize';
 import { safeGet, cleanupFallback } from '@/lib/safeStorage';
+import { getDomainScope } from '@/hooks/useDomainScope';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Shield, Clock, Lock, CreditCard, MessageCircle } from 'lucide-react';
+import { Shield, Clock, Lock, CreditCard, MessageCircle, AlertTriangle } from 'lucide-react';
 import type { Service } from '@/pages/ServicePage';
 
 declare global {
@@ -27,6 +28,7 @@ interface Props {
 }
 
 const WHATSAPP_NUMBER = '905551234567';
+const scope = getDomainScope();
 
 export default function ServiceCheckout({ service, variant = 'full' }: Props) {
   const { t } = useTranslation();
