@@ -1,18 +1,29 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Shield, FileText, Globe } from 'lucide-react';
+import { getDomainScope } from '@/hooks/useDomainScope';
 
 export default function TrustSignals() {
   const { t } = useTranslation();
+  const scope = getDomainScope();
 
-  const stats = t('trustSignals.stats', { returnObjects: true }) as { value: string; label: string }[];
+  // TR-specific authentic pillars
+  const trPillars = [
+    { value: '10+', label: 'Yıllık Turizm & Operasyon Deneyimi' },
+    { value: '360°', label: 'Kişiye Özel Yaşam Kurulumu' },
+    { value: '100%', label: 'Yasal Süreç Danışmanlığı' },
+    { value: '24s', label: 'Ortalama İlk Yanıt Süresi' },
+  ];
+
+  const globalPillars = t('trustSignals.stats', { returnObjects: true }) as { value: string; label: string }[];
+  const stats = scope === 'tr' ? trPillars : (Array.isArray(globalPillars) ? globalPillars : trPillars);
 
   return (
     <section className="py-24 lg:py-32 bg-secondary">
       <div className="container mx-auto px-6 lg:px-12">
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-20 lg:mb-32">
-          {Array.isArray(stats) && stats.map((stat, index) => (
+          {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, y: 30 }}
