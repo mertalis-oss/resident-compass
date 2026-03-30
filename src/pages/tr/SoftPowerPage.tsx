@@ -1,0 +1,169 @@
+import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { BookOpen, Utensils, Languages, Heart, Shield, ArrowRight, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import FocusedNavbar from '@/components/FocusedNavbar';
+import TrustBar from '@/components/TrustBar';
+import SEOHead from '@/components/SEOHead';
+import StickyMobileCTA from '@/components/StickyMobileCTA';
+import PlanBForm from '@/components/PlanBForm';
+
+const courses = [
+  {
+    icon: Shield,
+    title: 'Muay Thai Eğitim Programı',
+    duration: '1-6 Ay',
+    visa: 'ED Visa / DTV Visa',
+    transition: 'Eğitim vizesinden oturma iznine geçiş imkânı',
+    desc: 'Tayland\'ın en köklü kamplarında profesyonel eğitim. Vize süreci dahil.',
+    slug: 'muay-thai-training',
+  },
+  {
+    icon: Utensils,
+    title: 'Culinary Arts — Mutfak Sanatları',
+    duration: '2 Hafta - 3 Ay',
+    visa: 'ED Visa',
+    transition: 'Sertifika sonrası iş vizesine geçiş danışmanlığı',
+    desc: 'Thai mutfağı ve Güneydoğu Asya gastronomi programları. Uluslararası sertifika.',
+    slug: 'culinary-arts',
+  },
+  {
+    icon: Languages,
+    title: 'Dil Programları (Thai / İngilizce)',
+    duration: '3-12 Ay',
+    visa: 'ED Visa',
+    transition: 'Uzun süreli kalış ve yerel entegrasyon',
+    desc: 'Akredite dil okullarında yoğun program. Vize uzatma desteği dahil.',
+    slug: 'language-programs',
+  },
+  {
+    icon: Heart,
+    title: 'Thai Massage & Wellness Sertifikası',
+    duration: '2-8 Hafta',
+    visa: 'DTV Visa / Tourist + Extension',
+    transition: 'Wellness sektöründe kariyer geçişi',
+    desc: 'Wat Pho akredite masaj ve wellness eğitimi. Uluslararası geçerli sertifika.',
+    slug: 'thai-massage-wellness',
+  },
+];
+
+export default function SoftPowerPage() {
+  const { t } = useTranslation();
+
+  return (
+    <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Asya'da Eğitim ve Yaşam Paketleri — Plan B Asia"
+        description="Muay Thai, mutfak sanatları, dil programları ve wellness eğitimleri. Vize dahil özel paketler."
+        schemaType="Service"
+        serviceName="Soft Power Eğitim Paketleri"
+      />
+      <FocusedNavbar />
+      <TrustBar />
+
+      {/* Hero */}
+      <section className="relative min-h-[85vh] flex items-center grain-overlay">
+        <div className="absolute inset-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2020&auto=format&fit=crop')` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/70 to-foreground/40" />
+        </div>
+        <div className="relative z-10 container mx-auto px-6 lg:px-12 py-32">
+          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 bg-accent/20 backdrop-blur-sm border border-accent/30 px-4 py-2 mb-8">
+              <BookOpen className="w-4 h-4 text-accent" />
+              <span className="text-sm text-background/90 tracking-wide">Eğitim & Yaşam Paketleri</span>
+            </div>
+            <h1 className="heading-display text-background mb-6">
+              Asya'da Tutkunuzu Yaşayın:
+              <span className="block text-accent">Özel Eğitim ve Yasal Kalış Paketleri.</span>
+            </h1>
+            <p className="text-lg text-background/80 max-w-xl mb-10">
+              Her program kendi fiyatlandırması ve başvuru süreci olan bağımsız bir hizmettir. Vize uygunluğu ve geçiş yolları dahildir.
+            </p>
+            <Link to="/tools/dtv-visa-calculator" className="btn-luxury-gold inline-flex items-center gap-2">
+              Uygunluk Kontrolü <ArrowRight className="w-4 h-4" />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Courses Grid */}
+      <section className="py-20 lg:py-32 bg-background">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="text-center mb-16">
+            <p className="caption-editorial text-accent mb-4">Programlar</p>
+            <h2 className="heading-section mb-4">4 Farklı Eğitim Yolu</h2>
+            <p className="text-muted-foreground max-w-lg mx-auto">Her biri bağımsız vize uygunluğu ve fiyatlandırmaya sahiptir.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {courses.map((course, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="group bg-card p-8 lg:p-10 border border-border hover:border-accent/30 transition-all duration-500"
+              >
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-14 h-14 bg-accent/10 flex items-center justify-center">
+                    <course.icon className="w-7 h-7 text-accent" />
+                  </div>
+                  <div>
+                    <h3 className="font-heading text-xl mb-1">{course.title}</h3>
+                    <span className="text-sm text-accent">{course.visa}</span>
+                  </div>
+                </div>
+                <p className="text-muted-foreground mb-4 leading-relaxed">{course.desc}</p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-accent flex-shrink-0" />
+                    <span>Süre: {course.duration}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ArrowRight className="w-4 h-4 text-accent flex-shrink-0" />
+                    <span className="text-muted-foreground">{course.transition}</span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Legal Guard */}
+      <section className="py-12 bg-card border-y border-border">
+        <div className="container mx-auto px-6 lg:px-12 text-center">
+          <p className="text-xs text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Her program kendi fiyatlandırması ve başvuru süreci olan bağımsız bir hizmettir. Plan B Asia resmi danışmanlık ve yönlendirme hizmeti sunmaktadır. Vize onay kararları ilgili devlet kurumlarına aittir.
+          </p>
+        </div>
+      </section>
+
+      {/* Lead Form */}
+      <PlanBForm />
+
+      {/* CTA */}
+      <section className="py-20 lg:py-32 bg-foreground text-background grain-overlay">
+        <div className="container mx-auto px-6 lg:px-12 text-center">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="heading-section mb-6">Hangi Program Size Uygun?</h2>
+            <p className="body-editorial text-background/70 mb-8">Ücretsiz uygunluk değerlendirmesiyle başlayın.</p>
+            <Link to="/tools/dtv-visa-calculator?checkout=true" className="btn-luxury-gold inline-block">Ücretsiz Değerlendirme</Link>
+          </div>
+        </div>
+      </section>
+
+      <footer className="py-16 bg-corporate-navy border-t border-holistic/10">
+        <div className="container max-w-5xl px-6 text-center">
+          <span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span>
+        </div>
+      </footer>
+
+      <StickyMobileCTA onClick={() => window.location.href = '/tools/dtv-visa-calculator?checkout=true'} />
+    </div>
+  );
+}

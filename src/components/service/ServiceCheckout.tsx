@@ -5,10 +5,11 @@ import { getStoredUtms } from '@/lib/utmStorage';
 import { trackPostHogEvent } from '@/lib/posthog';
 import { normalizeEmail } from '@/lib/emailNormalize';
 import { safeGet, cleanupFallback } from '@/lib/safeStorage';
+import { getDomainScope } from '@/hooks/useDomainScope';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Shield, Clock, Lock, CreditCard, MessageCircle } from 'lucide-react';
+import { Shield, Clock, Lock, CreditCard, MessageCircle, AlertTriangle } from 'lucide-react';
 import type { Service } from '@/pages/ServicePage';
 
 declare global {
@@ -27,6 +28,7 @@ interface Props {
 }
 
 const WHATSAPP_NUMBER = '905551234567';
+const scope = getDomainScope();
 
 export default function ServiceCheckout({ service, variant = 'full' }: Props) {
   const { t } = useTranslation();
@@ -132,6 +134,35 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     }, 150);
   };
 
+  // LEAD-RESCUE FAILSAFE: If no stripe_price_id, show fallback UI
+  if (!service.stripe_price_id) {
+    const rescueWhatsapp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Merhaba, ' + service.title + ' hizmeti hakkında bilgi almak istiyorum.')}`;
+    return (
+      <section id="checkout-section" className="section-editorial border-t border-border">
+        <div className="container max-w-2xl px-6 text-center py-16">
+          <AlertTriangle className="h-10 w-10 text-accent mx-auto mb-6" />
+          <h3 className="font-heading text-xl mb-4">
+            {t('checkout.rescueTitle', { defaultValue: 'Paket şu anda güncelleniyor. Size hemen yardımcı olalım.' })}
+          </h3>
+          <p className="text-sm text-muted-foreground mb-8">
+            {t('checkout.rescueDesc', { defaultValue: 'WhatsApp üzerinden bize ulaşın, en kısa sürede size dönüş yapalım.' })}
+          </p>
+          <Button
+            size="lg"
+            onClick={() => {
+              trackPostHogEvent('whatsapp_click', { source: 'lead_rescue', service: service.slug }, true);
+              setTimeout(() => window.open(rescueWhatsapp, '_blank'), 150);
+            }}
+            className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
+          >
+            <MessageCircle className="mr-2 h-4 w-4" />
+            {t('checkout.rescueCta', { defaultValue: 'WhatsApp ile İletişime Geçin' })}
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
   if (variant === 'mirror') {
     return (
       <Button
@@ -211,7 +242,9 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
           className="w-full btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
         >
           {isCheckoutLoading
-            ? t('checkout.processing', { defaultValue: 'Processing your secure session...' })
+            ? (scope === 'tr'
+              ? t('checkout.redirectingTR', { defaultValue: 'Yönlendiriliyorsunuz...' })
+              : t('checkout.redirectingEN', { defaultValue: 'Redirecting...' }))
             : t('checkout.ctaLabel', { defaultValue: 'Planımı Oluştur' })}
         </Button>
 

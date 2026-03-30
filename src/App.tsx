@@ -18,6 +18,9 @@ import RefundPolicy from "./pages/RefundPolicy";
 import RabbitHolePage from "./pages/tr/RabbitHolePage";
 import NomadIncubatorPage from "./pages/tr/NomadIncubatorPage";
 import DTVVizePage from "./pages/tr/DTVVizePage";
+import SoftPowerPage from "./pages/tr/SoftPowerPage";
+import MICEPage from "./pages/tr/MICEPage";
+import ExpeditionsPage from "./pages/tr/ExpeditionsPage";
 import Webhooks from "./pages/admin/system/Webhooks";
 import AdminServices from "./pages/admin/AdminServices";
 import AdminOrders from "./pages/admin/AdminOrders";
@@ -62,9 +65,9 @@ const App = () => (
               <Route path="/tr/rabbit-hole" element={<RabbitHolePage />} />
               <Route path="/tr/nomad-incubator" element={<NomadIncubatorPage />} />
               <Route path="/tr/dtv-vize" element={<DTVVizePage />} />
-              <Route path="/tr/soft-power" element={<ServicePage />} />
-              <Route path="/tr/expeditions" element={<ServicePage />} />
-              <Route path="/tr/mice" element={<ServicePage />} />
+              <Route path="/tr/soft-power" element={<SoftPowerPage />} />
+              <Route path="/tr/expeditions" element={<ExpeditionsPage />} />
+              <Route path="/tr/mice" element={<MICEPage />} />
               {/* Admin Routes */}
               <Route path="/admin/services" element={<AdminRoute><AdminServices /></AdminRoute>} />
               <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
