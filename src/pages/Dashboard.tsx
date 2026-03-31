@@ -130,12 +130,37 @@ export default function Dashboard() {
 
       <main className="container py-10 space-y-8 max-w-5xl">
         {/* Welcome */}
-        <div>
-          <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
-            Welcome back
-          </h1>
-          <p className="text-muted-foreground mt-1">Your sovereign dashboard — residency, documents, and concierge.</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
+              Welcome back
+            </h1>
+            <p className="text-muted-foreground mt-1">Your sovereign dashboard — residency, documents, and concierge.</p>
+          </div>
         </div>
+
+        {/* Admin Quick Links */}
+        {isAdmin && (
+          <Card className="border-accent/30 bg-accent/5">
+            <CardContent className="py-4">
+              <p className="text-xs uppercase tracking-widest text-accent font-medium mb-3">Admin Panel</p>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" onClick={() => navigate('/admin/services')} className="gap-1.5">
+                  <LayoutDashboard className="h-3.5 w-3.5" /> Services
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => navigate('/admin/orders')} className="gap-1.5">
+                  <ShoppingCart className="h-3.5 w-3.5" /> Orders
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => navigate('/admin/leads')} className="gap-1.5">
+                  <Users className="h-3.5 w-3.5" /> Leads
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => navigate('/admin/system/webhooks')} className="gap-1.5">
+                  <Settings className="h-3.5 w-3.5" /> Webhooks
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Residency Tracker */}
         <Card>
