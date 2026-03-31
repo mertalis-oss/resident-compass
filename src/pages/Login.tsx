@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { toast } from "sonner";
 import logoDark from "@/assets/Dark_Seffaf.png";
 
+const FOUNDER_EMAIL = 'mertalis@gmail.com';
+
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
