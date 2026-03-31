@@ -35,8 +35,14 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
   const { toast } = useToast();
   const [isAgreed, setIsAgreed] = useState(false);
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+  const [showRescue, setShowRescue] = useState(false);
   const sessionKey = useRef(window.__session_id || `s_${Date.now()}`);
 
+  const showLeadRescue = () => {
+    setShowRescue(true);
+    setIsCheckoutLoading(false);
+    window.__checkout_lock = false;
+  };
   const handleCheckout = async () => {
     // Session-scoped click guard
     const stateKey = `checkout_${service.slug}`;
