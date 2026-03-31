@@ -10,7 +10,7 @@ import { CheckCircle, MessageCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const WHATSAPP_NUMBER = '905551234567';
+const WHATSAPP_NUMBER = '66647036510';
 
 export default function Success() {
   const { t } = useTranslation();

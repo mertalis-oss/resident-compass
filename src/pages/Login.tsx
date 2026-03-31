@@ -44,7 +44,7 @@ export default function Login() {
       } else if (data.user) {
         // FOUNDER GOD-MODE: instant admin redirect
         if (data.user.email?.toLowerCase() === FOUNDER_EMAIL) {
-          navigate("/admin/services", { replace: true });
+          navigate("/admin/leads", { replace: true });
         } else {
           const { data: isAdmin } = await supabase.rpc('has_role', {
             _user_id: data.user.id,
