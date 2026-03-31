@@ -42,12 +42,16 @@ export default function Login() {
       if (error) {
         toast.error(error.message);
       } else if (data.user) {
-        const { data: isAdmin } = await supabase.rpc('has_role', {
-          _user_id: data.user.id,
-          _role: 'admin',
-        });
-
-        navigate(isAdmin ? "/admin/services" : "/dashboard", { replace: true });
+        // FOUNDER GOD-MODE: instant admin redirect
+        if (data.user.email?.toLowerCase() === FOUNDER_EMAIL) {
+          navigate("/admin/services", { replace: true });
+        } else {
+          const { data: isAdmin } = await supabase.rpc('has_role', {
+            _user_id: data.user.id,
+            _role: 'admin',
+          });
+          navigate(isAdmin ? "/admin/services" : "/dashboard", { replace: true });
+        }
       }
     }
 
