@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDropzone } from "react-dropzone";
-import { AlertTriangle, Upload, FileText, Image, LogOut, Loader2, Trash2 } from "lucide-react";
+import { AlertTriangle, Upload, FileText, Image, LogOut, Loader2, Trash2, Settings, ShoppingCart, Users, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
 import AIConciergeWidget from "@/components/AIConciergeWidget";
 import logoDark from "@/assets/Dark_Seffaf.png";

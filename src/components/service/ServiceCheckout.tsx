@@ -163,8 +163,8 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     }, 150);
   };
 
-  // LEAD-RESCUE FAILSAFE: If no stripe_price_id, show fallback UI
-  if (!service.stripe_price_id) {
+  // LEAD-RESCUE FAILSAFE: If no stripe_price_id OR timeout/price error
+  if (!service.stripe_price_id || showRescue) {
     const rescueWhatsapp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Merhaba, ' + service.title + ' hizmeti hakkında bilgi almak istiyorum.')}`;
     return (
       <section id="checkout-section" className="section-editorial border-t border-border">
