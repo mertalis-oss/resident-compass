@@ -27,7 +27,7 @@ interface Props {
   variant?: 'full' | 'mirror';
 }
 
-const WHATSAPP_NUMBER = '905551234567';
+const WHATSAPP_NUMBER = '66647036510';
 const scope = getDomainScope();
 
 export default function ServiceCheckout({ service, variant = 'full' }: Props) {
