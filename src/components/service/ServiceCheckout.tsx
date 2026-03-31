@@ -163,8 +163,14 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     }, 150);
   };
 
-  // LEAD-RESCUE FAILSAFE: If no stripe_price_id OR timeout/price error
-  if (!service.stripe_price_id || showRescue) {
+  // STEP 7.5: Stripe placeholder detection
+  const isPlaceholder = service.stripe_price_id && (/xxx|placeholder/i.test(service.stripe_price_id) || !service.stripe_price_id.startsWith('price_'));
+  if (isPlaceholder) {
+    console.warn('STRIPE PLACEHOLDER DETECTED:', service.stripe_price_id, '— Real price_id needed from Stripe Dashboard.');
+  }
+
+  // LEAD-RESCUE FAILSAFE: If no stripe_price_id, placeholder, OR timeout/price error
+  if (!service.stripe_price_id || isPlaceholder || showRescue) {
     const rescueWhatsapp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Merhaba, ' + service.title + ' hizmeti hakkında bilgi almak istiyorum.')}`;
     return (
       <section id="checkout-section" className="section-editorial border-t border-border">
