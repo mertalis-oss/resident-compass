@@ -217,6 +217,7 @@ const resources = {
       hero: {
         title: 'Plan B Asia',
         subtitle: 'Architecting Sovereign Mobility for Founders and Global Citizens.',
+        hook: 'We design the safest, legal, and most strategic roadmap for building a global life and crossing borders.',
         cta: 'Begin Strategic Plan',
         ctaSub: 'Private consultation. Response within 24 hours.',
         explore: 'Explore',
@@ -364,6 +365,7 @@ const resources = {
       hero: {
         title: 'Plan B Asia',
         subtitle: 'Sadece Bir Seyahat Değil, Yeni Bir Başlangıç.',
+        hook: 'Global bir yaşam kurmak ve sınırları aşmak için en güvenli, yasal ve stratejik yol haritanızı çıkarıyoruz.',
         cta: 'Stratejik Plana Başlayın',
         ctaSub: 'Holistik Seyahat  |  Yeni Nesil Göçebelik  |  Yaşam Tasarımı',
         explore: 'Keşfet',
@@ -511,6 +513,7 @@ const resources = {
       hero: {
         title: 'Plan B Asia',
         subtitle: 'संस्थापकों और वैश्विक नागरिकों के लिए संप्रभु गतिशीलता वास्तुकला।',
+        hook: 'वैश्विक जीवन बनाने और सीमाओं को पार करने के लिए सबसे सुरक्षित, कानूनी और रणनीतिक रोडमैप।',
         cta: 'रणनीतिक योजना शुरू करें',
         ctaSub: 'निजी परामर्श। 24 घंटे के भीतर प्रतिक्रिया।',
         explore: 'खोजें',

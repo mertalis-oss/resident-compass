@@ -74,7 +74,7 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 1.15 }}
             className="text-sm md:text-base text-background/70 max-w-2xl mx-auto mb-6 leading-relaxed"
           >
-            {t('hero.hook', { defaultValue: 'Global bir yaşam kurmak ve sınırları aşmak için en güvenli, yasal ve stratejik yol haritanızı çıkarıyoruz.' })}
+            {t('hero.hook')}
           </motion.p>
 
           <motion.p
