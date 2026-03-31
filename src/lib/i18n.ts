@@ -365,6 +365,7 @@ const resources = {
       hero: {
         title: 'Plan B Asia',
         subtitle: 'Sadece Bir Seyahat Değil, Yeni Bir Başlangıç.',
+        hook: 'Global bir yaşam kurmak ve sınırları aşmak için en güvenli, yasal ve stratejik yol haritanızı çıkarıyoruz.',
         cta: 'Stratejik Plana Başlayın',
         ctaSub: 'Holistik Seyahat  |  Yeni Nesil Göçebelik  |  Yaşam Tasarımı',
         explore: 'Keşfet',
