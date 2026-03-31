@@ -105,11 +105,7 @@ export default function FocusedNavbar() {
             </div>
           )}
 
-          <Link to="/login">
-            <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90">
-              {t('nav.getStarted')}
-            </Button>
-          </Link>
+          {/* Login accessible only via direct URL — invisible to public */}
         </div>
 
         {/* Mobile Toggle */}
@@ -151,11 +147,7 @@ export default function FocusedNavbar() {
               ))}
             </div>
           )}
-          <Link to="/login" onClick={() => setMobileOpen(false)}>
-            <Button size="sm" className="w-full bg-secondary text-secondary-foreground mt-2">
-              {t('nav.getStarted')}
-            </Button>
-          </Link>
+          {/* Login accessible only via direct URL — invisible to public */}
         </div>
       )}
     </nav>
