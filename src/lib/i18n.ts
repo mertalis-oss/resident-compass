@@ -217,6 +217,7 @@ const resources = {
       hero: {
         title: 'Plan B Asia',
         subtitle: 'Architecting Sovereign Mobility for Founders and Global Citizens.',
+        hook: 'We design the safest, legal, and most strategic roadmap for building a global life and crossing borders.',
         cta: 'Begin Strategic Plan',
         ctaSub: 'Private consultation. Response within 24 hours.',
         explore: 'Explore',
