@@ -23,21 +23,32 @@ export default function Login() {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: fullName } },
+        options: {
+          data: { full_name: fullName },
+          emailRedirectTo: window.location.origin,
+        },
       });
+
       if (error) {
         toast.error(error.message);
       } else {
         toast.success("Check your email to verify your account before signing in.");
       }
     } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
       if (error) {
         toast.error(error.message);
-      } else {
-        navigate("/dashboard", { replace: true });
+      } else if (data.user) {
+        const { data: isAdmin } = await supabase.rpc('has_role', {
+          _user_id: data.user.id,
+          _role: 'admin',
+        });
+
+        navigate(isAdmin ? "/admin/services" : "/dashboard", { replace: true });
       }
     }
+
     setLoading(false);
   };
 
