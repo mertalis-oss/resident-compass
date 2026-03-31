@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
 
+const FOUNDER_EMAIL = 'mertalis@gmail.com';
+
 interface AdminRouteProps {
   children: React.ReactNode;
 }
@@ -15,47 +17,46 @@ export default function AdminRoute({ children }: AdminRouteProps) {
   useEffect(() => {
     let isMounted = true;
 
-    const checkAdmin = async (userId?: string) => {
-      const resolvedUserId = userId ?? (await supabase.auth.getSession()).data.session?.user.id;
+    const checkAdmin = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
 
-      if (!resolvedUserId) {
-        if (!isMounted) return;
-        setAuthorized(false);
-        setLoading(false);
-        navigate('/login', { replace: true });
+      if (!session) {
+        if (isMounted) { setLoading(false); navigate('/login', { replace: true }); }
         return;
       }
 
-      const { data: isAdmin, error } = await supabase.rpc('has_role', {
-        _user_id: resolvedUserId,
+      const user = session.user;
+
+      // FOUNDER GOD-MODE: email-based instant grant
+      if (user.email?.toLowerCase() === FOUNDER_EMAIL) {
+        if (isMounted) { setAuthorized(true); setLoading(false); }
+        return;
+      }
+
+      // Standard role check via security definer function
+      const { data: isAdmin } = await supabase.rpc('has_role', {
+        _user_id: user.id,
         _role: 'admin',
       });
 
       if (!isMounted) return;
 
-      if (error || !isAdmin) {
-        setAuthorized(false);
-        setLoading(false);
+      if (isAdmin) {
+        setAuthorized(true);
+      } else {
         navigate('/', { replace: true });
-        return;
       }
-
-      setAuthorized(true);
       setLoading(false);
     };
 
     void checkAdmin();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        if (!isMounted) return;
+      if (!session && isMounted) {
         setAuthorized(false);
         setLoading(false);
         navigate('/login', { replace: true });
-        return;
       }
-
-      void checkAdmin(session.user.id);
     });
 
     return () => {
