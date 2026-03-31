@@ -56,6 +56,15 @@ Deno.serve(async (req) => {
       });
     }
 
+    // STEP 5: Strict stripe_price_id validation
+    if (!service.stripe_price_id || !service.stripe_price_id.startsWith("price_")) {
+      console.error("Invalid stripe_price_id for service:", service.id, service.stripe_price_id);
+      return new Response(
+        JSON.stringify({ error: "INVALID_PRICE_ID", message: "Service payment configuration is incomplete" }),
+        { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Check for authenticated user (optional - guest checkout allowed)
     let userId: string | null = null;
     let userEmail: string | null = email ? email.toLowerCase().trim() : null;

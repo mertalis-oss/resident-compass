@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDropzone } from "react-dropzone";
-import { AlertTriangle, Upload, FileText, Image, LogOut, Loader2, Trash2 } from "lucide-react";
+import { AlertTriangle, Upload, FileText, Image, LogOut, Loader2, Trash2, Settings, ShoppingCart, Users, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
 import AIConciergeWidget from "@/components/AIConciergeWidget";
 import logoDark from "@/assets/Dark_Seffaf.png";
@@ -36,6 +36,7 @@ export default function Dashboard() {
   const [files, setFiles] = useState<StoredFile[]>([]);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -44,13 +45,15 @@ export default function Dashboard() {
       setUser(session.user);
 
       // Parallel fetch
-      const [visaRes, enrollRes] = await Promise.all([
+      const [visaRes, enrollRes, profileRes] = await Promise.all([
         supabase.rpc("check_visa_status", { p_user_id: session.user.id }),
         supabase.from("enrollments").select("status").eq("user_id", session.user.id).order("created_at", { ascending: false }).limit(1),
+        supabase.from("profiles").select("role").eq("id", session.user.id).single(),
       ]);
 
       if (visaRes.data) setVisaStatus(visaRes.data);
       if (enrollRes.data?.[0]) setEnrollmentStatus(enrollRes.data[0].status);
+      if (profileRes.data?.role === 'admin') setIsAdmin(true);
 
       await fetchFiles(session.user.id);
       setLoading(false);
@@ -127,12 +130,37 @@ export default function Dashboard() {
 
       <main className="container py-10 space-y-8 max-w-5xl">
         {/* Welcome */}
-        <div>
-          <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
-            Welcome back
-          </h1>
-          <p className="text-muted-foreground mt-1">Your sovereign dashboard — residency, documents, and concierge.</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
+              Welcome back
+            </h1>
+            <p className="text-muted-foreground mt-1">Your sovereign dashboard — residency, documents, and concierge.</p>
+          </div>
         </div>
+
+        {/* Admin Quick Links */}
+        {isAdmin && (
+          <Card className="border-accent/30 bg-accent/5">
+            <CardContent className="py-4">
+              <p className="text-xs uppercase tracking-widest text-accent font-medium mb-3">Admin Panel</p>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" onClick={() => navigate('/admin/services')} className="gap-1.5">
+                  <LayoutDashboard className="h-3.5 w-3.5" /> Services
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => navigate('/admin/orders')} className="gap-1.5">
+                  <ShoppingCart className="h-3.5 w-3.5" /> Orders
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => navigate('/admin/leads')} className="gap-1.5">
+                  <Users className="h-3.5 w-3.5" /> Leads
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => navigate('/admin/system/webhooks')} className="gap-1.5">
+                  <Settings className="h-3.5 w-3.5" /> Webhooks
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Residency Tracker */}
         <Card>
