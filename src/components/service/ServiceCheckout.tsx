@@ -153,6 +153,7 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     }
   };
 
+  const rescueWhatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Service: ' + service.slug + ' | Time: ' + Date.now() + ' | Domain: ' + window.location.hostname)}`;
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Merhaba, planımı inceledim. Ödeme öncesi kısa bir sorum var:')}`;
 
   const handleWhatsAppClick = () => {
