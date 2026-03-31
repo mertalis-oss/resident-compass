@@ -53,17 +53,17 @@ export default function TrustSignals() {
           <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-10 text-sm text-muted-foreground">
             <span className="flex items-center gap-2">
               <Shield className="h-4 w-4 text-accent" />
-              {t('trustStrip.secure', { defaultValue: 'Güvenli Ödeme' })}
+              {scope === 'tr' ? 'Güvenli Ödeme' : 'Secure Payment'}
             </span>
             <span className="hidden sm:inline text-border">|</span>
             <span className="flex items-center gap-2">
               <FileText className="h-4 w-4 text-accent" />
-              {t('trustStrip.official', { defaultValue: 'Resmi Süreç Danışmanlığı' })}
+              {scope === 'tr' ? 'Resmi Süreç Danışmanlığı' : 'Official Process Advisory'}
             </span>
             <span className="hidden sm:inline text-border">|</span>
             <span className="flex items-center gap-2">
               <Globe className="h-4 w-4 text-accent" />
-              {t('trustStrip.global', { defaultValue: 'Global Operasyon' })}
+              {scope === 'tr' ? 'Global Operasyon' : 'Global Operations'}
             </span>
           </div>
         </motion.div>
