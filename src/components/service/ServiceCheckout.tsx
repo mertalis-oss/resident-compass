@@ -72,7 +72,8 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
         trackPostHogEvent('checkout_started', { service_id: service.id, service_title: service.title }, true);
       }
 
-      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+      // STEP 5: Promise.race with 5s timeout
+      const checkoutPromise = supabase.functions.invoke('create-checkout-session', {
         body: {
           service_id: service.id,
           source_domain: normalizedHost,
@@ -87,16 +88,37 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
         },
       });
 
-      if (error) {
-        console.error(error);
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('CHECKOUT_TIMEOUT')), 5000)
+      );
+
+      let result: { data: any; error: any };
+      try {
+        result = await Promise.race([checkoutPromise, timeoutPromise]) as any;
+      } catch (timeoutErr) {
+        // Timeout or price error → show lead-rescue failsafe
         if (window.__cta_fired) delete window.__cta_fired[service.slug];
         if (window.__state?.[sessionKey.current]) delete window.__state[sessionKey.current][stateKey];
-        toast({
-          variant: 'destructive',
-          title: t('checkout.errorTitle', { defaultValue: 'Checkout Error' }),
-          description: t('checkout.errorDesc', { defaultValue: 'Something went wrong. Please try again.' }),
-        });
-        setIsAgreed(false);
+        showLeadRescue();
+        return;
+      }
+
+      const { data, error } = result;
+
+      if (error || data?.error === 'INVALID_PRICE_ID') {
+        console.error(error || data?.error);
+        if (window.__cta_fired) delete window.__cta_fired[service.slug];
+        if (window.__state?.[sessionKey.current]) delete window.__state[sessionKey.current][stateKey];
+        if (data?.error === 'INVALID_PRICE_ID') {
+          showLeadRescue();
+        } else {
+          toast({
+            variant: 'destructive',
+            title: t('checkout.errorTitle', { defaultValue: 'Checkout Error' }),
+            description: t('checkout.errorDesc', { defaultValue: 'Something went wrong. Please try again.' }),
+          });
+          setIsAgreed(false);
+        }
         return;
       }
 
