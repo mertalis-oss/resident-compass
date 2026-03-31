@@ -44,16 +44,15 @@ export default function Dashboard() {
       if (!session) { navigate("/login", { replace: true }); return; }
       setUser(session.user);
 
-      // Parallel fetch
-      const [visaRes, enrollRes, profileRes] = await Promise.all([
+      const [visaRes, enrollRes, adminRes] = await Promise.all([
         supabase.rpc("check_visa_status", { p_user_id: session.user.id }),
         supabase.from("enrollments").select("status").eq("user_id", session.user.id).order("created_at", { ascending: false }).limit(1),
-        supabase.from("profiles").select("role").eq("id", session.user.id).single(),
+        supabase.rpc("has_role", { _user_id: session.user.id, _role: 'admin' }),
       ]);
 
       if (visaRes.data) setVisaStatus(visaRes.data);
       if (enrollRes.data?.[0]) setEnrollmentStatus(enrollRes.data[0].status);
-      if (profileRes.data?.role === 'admin') setIsAdmin(true);
+      if (adminRes.data === true) setIsAdmin(true);
 
       await fetchFiles(session.user.id);
       setLoading(false);

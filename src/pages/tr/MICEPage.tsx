@@ -8,19 +8,19 @@ import PlanBForm from '@/components/PlanBForm';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import { trackPostHogEvent } from '@/lib/posthog';
 
-const WHATSAPP_NUMBER = '905551234567';
+const WHATSAPP_NUMBER = '66647036510';
 
 const features = [
-  { icon: Calendar, title: 'Etkinlik Planlama', desc: 'A\'dan Z\'ye kurumsal etkinlik organizasyonu. Mekan seçimi, lojistik, catering.' },
-  { icon: Users, title: 'Takım Buluşmaları', desc: 'Remote ekipler için Tayland\'da motivasyon ve team-building programları.' },
-  { icon: Building2, title: 'Konferans & Seminer', desc: 'Bangkok ve Phuket\'te uluslararası standartta konferans organizasyonu.' },
+  { icon: Calendar, title: 'Etkinlik Planlama', desc: 'A’dan Z’ye kurumsal etkinlik organizasyonu. Mekan seçimi, lojistik, catering.' },
+  { icon: Users, title: 'Takım Buluşmaları', desc: 'Remote ekipler için Tayland’da motivasyon ve team-building programları.' },
+  { icon: Building2, title: 'Konferans & Seminer', desc: 'Bangkok ve Phuket’te uluslararası standartta konferans organizasyonu.' },
   { icon: Globe, title: 'İncentive Turları', desc: 'Performans ödüllendirme ve motivasyon turları. Özel rotalar ve deneyimler.' },
 ];
 
 export default function MICEPage() {
   const { t } = useTranslation();
 
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Merhaba, kurumsal etkinlik planlamak istiyorum. Detayları konuşabilir miyiz?')}`;
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Sayfa: MICE | Domain: ' + window.location.hostname + ' | Merhaba, etkinliğimizi planlamak istiyoruz.')}`;
 
   const handleWhatsAppClick = () => {
     trackPostHogEvent('whatsapp_click', { source: 'mice_page' }, true);

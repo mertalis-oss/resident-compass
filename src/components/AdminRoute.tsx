@@ -13,20 +13,29 @@ export default function AdminRoute({ children }: AdminRouteProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAdmin = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+    let isMounted = true;
+
+    const checkAdmin = async (userId?: string) => {
+      const resolvedUserId = userId ?? (await supabase.auth.getSession()).data.session?.user.id;
+
+      if (!resolvedUserId) {
+        if (!isMounted) return;
+        setAuthorized(false);
+        setLoading(false);
         navigate('/login', { replace: true });
         return;
       }
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
-        .single();
+      const { data: isAdmin, error } = await supabase.rpc('has_role', {
+        _user_id: resolvedUserId,
+        _role: 'admin',
+      });
 
-      if (!profile || profile.role !== 'admin') {
+      if (!isMounted) return;
+
+      if (error || !isAdmin) {
+        setAuthorized(false);
+        setLoading(false);
         navigate('/', { replace: true });
         return;
       }
@@ -35,13 +44,24 @@ export default function AdminRoute({ children }: AdminRouteProps) {
       setLoading(false);
     };
 
-    checkAdmin();
+    void checkAdmin();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) navigate('/login', { replace: true });
+      if (!session) {
+        if (!isMounted) return;
+        setAuthorized(false);
+        setLoading(false);
+        navigate('/login', { replace: true });
+        return;
+      }
+
+      void checkAdmin(session.user.id);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   if (loading) {
