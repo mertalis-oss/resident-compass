@@ -36,6 +36,7 @@ export default function Dashboard() {
   const [files, setFiles] = useState<StoredFile[]>([]);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const init = async () => {
