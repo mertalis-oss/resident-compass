@@ -25,6 +25,7 @@ import Webhooks from "./pages/admin/system/Webhooks";
 import AdminServices from "./pages/admin/AdminServices";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminLeads from "./pages/admin/AdminLeads";
+import AdminCustomers from "./pages/admin/AdminCustomers";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import LanguageRouter from "./components/LanguageRouter";
