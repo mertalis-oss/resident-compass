@@ -1,11 +1,17 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Check, Shield, Clock, Award, ChevronDown } from 'lucide-react';
+import { Shield, Clock, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
 import SEOHead from '@/components/SEOHead';
+import ServiceCheckout from '@/components/service/ServiceCheckout';
+import { supabase } from '@/integrations/supabase/client';
+import type { Service } from '@/pages/ServicePage';
+
+const DTV_SERVICE_SLUG = 'dtv-thailand';
 
 const processSteps = [
   { step: 1, titleKey: 'dtvVize.proc1Title', descKey: 'dtvVize.proc1Desc' },
@@ -22,8 +28,24 @@ const faqs = [
   { qKey: 'dtvVize.faq6Q', aKey: 'dtvVize.faq6A' },
 ];
 
+const formatPrice = (price: number, currency: string) =>
+  new Intl.NumberFormat('en-US', { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(price);
+
 export default function DTVVizePage() {
   const { t } = useTranslation();
+  const [service, setService] = useState<Service | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from('services')
+      .select('*')
+      .eq('slug', DTV_SERVICE_SLUG)
+      .eq('is_active', true)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) setService(data as unknown as Service);
+      });
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,11 +70,27 @@ export default function DTVVizePage() {
               <span className="block text-accent">{t('dtvVize.heroAccent', { defaultValue: 'Tek Başvuru.' })}</span>
             </h1>
             <p className="text-lg text-background/80 max-w-xl mb-8">{t('dtvVize.heroDesc', { defaultValue: 'Dijital göçebeler için tasarlanan DTV vizesi ile 180 gün kalış hakkı, sınırsız giriş-çıkış ve 5 yıllık geçerlilik.' })}</p>
+            
+            {/* Show price if service loaded */}
+            {service && service.price > 0 && (
+              <div className="mb-8">
+                <p className="font-heading text-3xl md:text-4xl text-accent mb-2">
+                  {formatPrice(service.price, service.currency || 'USD')}
+                </p>
+                <p className="text-sm text-background/60">{t('dtvVize.priceNote', { defaultValue: '45 dakikalık stratejik danışmanlık görüşmesi' })}</p>
+              </div>
+            )}
+
             <div className="flex items-center gap-3 mb-10">
               <Clock className="w-5 h-5 text-accent" />
               <span className="text-background/90 font-medium">{t('dtvVize.scarcity', { defaultValue: '2026 Kotaları Dolmadan Yerini Ayırt' })}</span>
             </div>
-            <Link to="/tools/dtv-visa-calculator" className="btn-luxury-gold inline-block">{t('dtvVize.heroCta', { defaultValue: 'Ücretsiz Uygunluk Kontrolü' })}</Link>
+            <button
+              onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })}
+              className="btn-luxury-gold inline-block"
+            >
+              {service ? t('dtvVize.heroCta', { defaultValue: 'Hemen Başla' }) : t('dtvVize.heroCtaFree', { defaultValue: 'Ücretsiz Uygunluk Kontrolü' })}
+            </button>
           </motion.div>
         </div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
@@ -104,6 +142,22 @@ export default function DTVVizePage() {
         </div>
       </section>
 
+      {/* Checkout Section — dynamic from DB */}
+      {service && <ServiceCheckout service={service} />}
+
+      {/* If no service, show free consultation CTA */}
+      {!service && (
+        <section id="checkout-section" className="py-20 lg:py-32 bg-foreground text-background grain-overlay">
+          <div className="container mx-auto px-6 lg:px-12 text-center">
+            <div className="max-w-2xl mx-auto">
+              <h2 className="heading-section mb-6">{t('dtvVize.finalCta', { defaultValue: 'Hâlâ Düşünüyor musun?' })}</h2>
+              <p className="body-editorial text-background/70 mb-8">{t('dtvVize.finalBody', { defaultValue: 'Ücretsiz 15 dakikalık uygunluk görüşmesi ile başla.' })}</p>
+              <Link to="/tools/dtv-visa-calculator" className="btn-luxury-gold inline-block">{t('dtvVize.finalBtn', { defaultValue: 'Ücretsiz Görüşme Planla' })}</Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* FAQ */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
@@ -120,17 +174,6 @@ export default function DTVVizePage() {
                 </AccordionItem>
               ))}
             </Accordion>
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="py-20 lg:py-32 bg-foreground text-background grain-overlay">
-        <div className="container mx-auto px-6 lg:px-12 text-center">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="heading-section mb-6">{t('dtvVize.finalCta', { defaultValue: 'Hâlâ Düşünüyor musun?' })}</h2>
-            <p className="body-editorial text-background/70 mb-8">{t('dtvVize.finalBody', { defaultValue: 'Ücretsiz 15 dakikalık uygunluk görüşmesi ile başla.' })}</p>
-            <Link to="/tools/dtv-visa-calculator" className="btn-luxury-gold inline-block">{t('dtvVize.finalBtn', { defaultValue: 'Ücretsiz Görüşme Planla' })}</Link>
           </div>
         </div>
       </section>
