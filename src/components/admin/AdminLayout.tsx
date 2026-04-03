@@ -9,6 +9,7 @@ const navItems = [
   { to: '/admin/services', icon: Package, labelKey: 'admin.navServices' },
   { to: '/admin/orders', icon: ShoppingCart, labelKey: 'admin.navOrders' },
   { to: '/admin/leads', icon: Users, labelKey: 'admin.navLeads' },
+  { to: '/admin/customers', icon: UserCheck, labelKey: 'admin.navCustomers' },
   { to: '/admin/system/webhooks', icon: Webhook, labelKey: 'admin.navWebhooks' },
 ];
 
