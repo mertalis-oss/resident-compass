@@ -25,6 +25,7 @@ import Webhooks from "./pages/admin/system/Webhooks";
 import AdminServices from "./pages/admin/AdminServices";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminLeads from "./pages/admin/AdminLeads";
+import AdminCustomers from "./pages/admin/AdminCustomers";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import LanguageRouter from "./components/LanguageRouter";
@@ -72,6 +73,7 @@ const App = () => (
               <Route path="/admin/services" element={<AdminRoute><AdminServices /></AdminRoute>} />
               <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
               <Route path="/admin/leads" element={<AdminRoute><AdminLeads /></AdminRoute>} />
+              <Route path="/admin/customers" element={<AdminRoute><AdminCustomers /></AdminRoute>} />
               <Route path="/admin/system/webhooks" element={<AdminRoute><Webhooks /></AdminRoute>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

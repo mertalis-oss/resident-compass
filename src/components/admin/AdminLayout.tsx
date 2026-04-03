@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LayoutDashboard, Package, ShoppingCart, Users, Webhook, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Users, UserCheck, Webhook, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +9,7 @@ const navItems = [
   { to: '/admin/services', icon: Package, labelKey: 'admin.navServices' },
   { to: '/admin/orders', icon: ShoppingCart, labelKey: 'admin.navOrders' },
   { to: '/admin/leads', icon: Users, labelKey: 'admin.navLeads' },
+  { to: '/admin/customers', icon: UserCheck, labelKey: 'admin.navCustomers' },
   { to: '/admin/system/webhooks', icon: Webhook, labelKey: 'admin.navWebhooks' },
 ];
 
@@ -16,6 +17,7 @@ const defaultLabels: Record<string, string> = {
   'admin.navServices': 'Services',
   'admin.navOrders': 'Orders',
   'admin.navLeads': 'Leads',
+  'admin.navCustomers': 'Customers',
   'admin.navWebhooks': 'Webhooks',
 };
 
