@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LayoutDashboard, Package, ShoppingCart, Users, Webhook, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Users, UserCheck, Webhook, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
