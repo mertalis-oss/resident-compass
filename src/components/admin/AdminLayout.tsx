@@ -17,6 +17,7 @@ const defaultLabels: Record<string, string> = {
   'admin.navServices': 'Services',
   'admin.navOrders': 'Orders',
   'admin.navLeads': 'Leads',
+  'admin.navCustomers': 'Customers',
   'admin.navWebhooks': 'Webhooks',
 };
 
