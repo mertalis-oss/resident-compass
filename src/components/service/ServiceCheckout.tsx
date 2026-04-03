@@ -212,9 +212,26 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
 
   const currencyLabel = (service.currency || 'USD').toUpperCase();
 
+  const formatPrice = (price: number, currency: string) =>
+    new Intl.NumberFormat(scope === 'tr' ? 'tr-TR' : 'en-US', { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(price);
+
   return (
     <section id="checkout-section" className="section-editorial border-t border-border">
       <div className="container max-w-2xl px-6">
+        {/* Service & Price Card */}
+        <div className="text-center mb-10">
+          <h2 className="font-heading text-2xl md:text-3xl mb-3">{service.title}</h2>
+          {service.short_description && (
+            <p className="text-muted-foreground text-sm mb-6 max-w-lg mx-auto">{service.short_description}</p>
+          )}
+          <p className="font-heading text-4xl md:text-5xl text-accent mb-2">
+            {formatPrice(service.price, service.currency || 'USD')}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {t('checkout.oneTimePayment', { defaultValue: 'Tek seferlik ödeme. Gizli masraf yok.' })}
+          </p>
+        </div>
+
         {/* Stripe trust badge */}
         <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-6">
           <CreditCard className="h-3.5 w-3.5" />
