@@ -1,9 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import AnimatedSection from '@/components/AnimatedSection';
+import { getDomainScope } from '@/hooks/useDomainScope';
 
 export default function Testimonials() {
   const { t } = useTranslation();
+  const scope = getDomainScope();
+
+  // Hide testimonials on TR domain until real reviews are added
+  if (scope === 'tr') return null;
+
   const items = t('testimonials.items', { returnObjects: true }) as { quote: string; author: string; role: string }[];
 
   if (!Array.isArray(items) || items.length === 0) return null;
