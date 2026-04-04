@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Shield, Clock, Lock, CreditCard, MessageCircle, AlertTriangle } from 'lucide-react';
+import { WHATSAPP_NUMBER } from '@/lib/constants';
 import type { Service } from '@/pages/ServicePage';
 
 declare global {
