@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MessageCircle, X } from 'lucide-react';
+import { WHATSAPP_NUMBER } from '@/lib/constants';
 
 export default function ConciergeButton() {
   const { t } = useTranslation();
