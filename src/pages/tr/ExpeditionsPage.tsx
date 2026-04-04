@@ -1,58 +1,67 @@
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Mountain, Shield, MapPin, ArrowRight, AlertTriangle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Mountain, Shield, MapPin, ArrowRight, AlertTriangle, Loader } from 'lucide-react';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
 import SEOHead from '@/components/SEOHead';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import PlanBForm from '@/components/PlanBForm';
+import ServiceCheckout from '@/components/service/ServiceCheckout';
+import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import type { Service } from '@/pages/ServicePage';
+
+const EXPEDITIONS_SLUG = 'expeditions-sea';
 
 const expeditions = [
-  {
-    title: 'Ha Giang Motor Expedition',
-    location: 'Vietnam — Ha Giang',
-    duration: '4-7 Gün',
-    desc: 'Vietnam\'ın en dramatik dağ yollarında rehberli motosiklet ekspedisyonu. Tüm ekipman ve konaklama dahil.',
-    highlight: 'En Popüler',
-  },
-  {
-    title: 'Kuzey Tayland Keşif Rotası',
-    location: 'Tayland — Chiang Mai & Chiang Rai',
-    duration: '5-10 Gün',
-    desc: 'Tapınaklar, dağ köyleri ve doğa yürüyüşleri. Kültürel derinlik ve macera bir arada.',
-    highlight: null,
-  },
-  {
-    title: 'Kamboçya & Laos Sınır Ötesi',
-    location: 'Kamboçya — Laos',
-    duration: '7-14 Gün',
-    desc: 'Angkor Wat\'tan Luang Prabang\'a uzanan sınır ötesi keşif rotası.',
-    highlight: null,
-  },
+  { title: 'Ha Giang Motor Expedition', location: 'Vietnam — Ha Giang', duration: '4-7 Gün', desc: "Vietnam'ın en dramatik dağ yollarında rehberli motosiklet ekspedisyonu.", highlight: 'En Popüler' },
+  { title: 'Kuzey Tayland Keşif Rotası', location: 'Tayland — Chiang Mai & Chiang Rai', duration: '5-10 Gün', desc: 'Tapınaklar, dağ köyleri ve doğa yürüyüşleri.', highlight: null },
+  { title: 'Kamboçya & Laos Sınır Ötesi', location: 'Kamboçya — Laos', duration: '7-14 Gün', desc: "Angkor Wat'tan Luang Prabang'a uzanan sınır ötesi keşif rotası.", highlight: null },
 ];
 
 export default function ExpeditionsPage() {
   const { t } = useTranslation();
+  const [service, setService] = useState<Service | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const fetchIdRef = useRef(0);
+
+  useEffect(() => {
+    const currentId = ++fetchIdRef.current;
+    setIsLoading(true); setHasError(false); setService(null);
+    supabase.from('services').select('*').eq('slug', EXPEDITIONS_SLUG).eq('is_active', true).maybeSingle()
+      .then(({ data, error }) => {
+        if (currentId !== fetchIdRef.current) return;
+        if (error) { console.error('[Expeditions] Fetch error:', error); setHasError(true); setIsLoading(false); return; }
+        if (data) setService(data as unknown as Service);
+        setIsLoading(false);
+      });
+  }, []);
+
+  if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
+
+  const isValid = service && service.id && service.stripe_price_id;
+  if (hasError || !isValid) {
+    if (!hasError) console.error('[Expeditions] Invalid service data:', service);
+    return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Expeditions" /></div>;
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead
-        title="Keşif Ekspedisyonları — Plan B Asia"
-        description="Güneydoğu Asya'da rehberli motor ve keşif ekspedisyonları. Lisanslı operasyon."
-        schemaType="Service"
-        serviceName="Keşif Ekspedisyonları"
-      />
+      <SEOHead title="Keşif Ekspedisyonları — Plan B Asia" description="Güneydoğu Asya'da rehberli motor ve keşif ekspedisyonları." schemaType="Service" serviceName="Keşif Ekspedisyonları" />
       <FocusedNavbar />
       <TrustBar />
+
+      {/* CHECKOUT FIRST */}
+      <ServiceCheckout service={service} />
 
       {/* Hero */}
       <section className="relative min-h-[85vh] flex items-center grain-overlay">
         <div className="absolute inset-0">
-          <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop')` }}
-          />
+          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop')` }} />
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/70 to-foreground/40" />
         </div>
         <div className="relative z-10 container mx-auto px-6 lg:px-12 py-32">
@@ -65,53 +74,33 @@ export default function ExpeditionsPage() {
               Güneydoğu Asya'nın
               <span className="block text-accent">Keşfedilmemiş Rotaları.</span>
             </h1>
-            <p className="text-lg text-background/80 max-w-xl mb-10">
-              Lisanslı ve rehberli ekspedisyonlar. Tüm güvenlik protokolleri titizlikle uygulanmaktadır.
-            </p>
-            <Link to="/tools/dtv-visa-calculator" className="btn-luxury-gold inline-flex items-center gap-2">
-              Rotanı Keşfet <ArrowRight className="w-4 h-4" />
-            </Link>
+            <p className="text-lg text-background/80 max-w-xl mb-10">Lisanslı ve rehberli ekspedisyonlar.</p>
+            <button onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">
+              Hemen Başla <ArrowRight className="w-4 h-4" />
+            </button>
           </motion.div>
         </div>
       </section>
 
-      {/* Safety Legal Banner */}
+      {/* Safety */}
       <section className="py-6 bg-accent/5 border-y border-accent/20">
         <div className="container mx-auto px-6 lg:px-12 flex items-center justify-center gap-3">
           <Shield className="w-5 h-5 text-accent flex-shrink-0" />
-          <p className="text-sm text-foreground font-medium">
-            Lisanslı ve Rehberli Operasyon. Tüm güvenlik protokolleri titizlikle uygulanmaktadır.
-          </p>
+          <p className="text-sm text-foreground font-medium">Lisanslı ve Rehberli Operasyon.</p>
         </div>
       </section>
 
       {/* Expeditions Grid */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16">
-            <p className="caption-editorial text-accent mb-4">Rotalar</p>
-            <h2 className="heading-section mb-4">Aktif Ekspedisyonlar</h2>
-          </div>
+          <div className="text-center mb-16"><p className="caption-editorial text-accent mb-4">Rotalar</p><h2 className="heading-section mb-4">Aktif Ekspedisyonlar</h2></div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {expeditions.map((exp, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className={`bg-card p-8 border transition-all duration-500 ${
-                  exp.highlight ? 'border-accent/40 shadow-[0_0_40px_rgba(212,175,55,0.15)]' : 'border-border hover:border-accent/30'
-                }`}
-              >
-                {exp.highlight && (
-                  <span className="inline-block text-xs tracking-[0.2em] uppercase text-accent mb-4">{exp.highlight}</span>
-                )}
+              <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className={`bg-card p-8 border transition-all duration-500 ${exp.highlight ? 'border-accent/40 shadow-[0_0_40px_rgba(212,175,55,0.15)]' : 'border-border hover:border-accent/30'}`}>
+                {exp.highlight && <span className="inline-block text-xs tracking-[0.2em] uppercase text-accent mb-4">{exp.highlight}</span>}
                 <h3 className="font-heading text-xl mb-2">{exp.title}</h3>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                  <MapPin className="w-4 h-4 text-accent" />
-                  <span>{exp.location}</span>
-                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4"><MapPin className="w-4 h-4 text-accent" /><span>{exp.location}</span></div>
                 <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{exp.desc}</p>
                 <p className="text-sm font-medium text-accent">{exp.duration}</p>
               </motion.div>
@@ -120,40 +109,33 @@ export default function ExpeditionsPage() {
         </div>
       </section>
 
-      {/* Lead Form */}
-      <PlanBForm />
-
-      {/* CTA */}
-      <section className="py-20 lg:py-32 bg-foreground text-background grain-overlay">
-        <div className="container mx-auto px-6 lg:px-12 text-center">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="heading-section mb-6">Maceraya Hazır mısın?</h2>
-            <p className="body-editorial text-background/70 mb-8">Ücretsiz keşif görüşmesiyle başla.</p>
-            <Link to="/tools/dtv-visa-calculator?checkout=true" className="btn-luxury-gold inline-block">Keşif Başlat</Link>
-          </div>
+      {/* PlanBForm — repurposed */}
+      <section className="py-20 bg-card border-t border-border">
+        <div className="container max-w-2xl px-6">
+          <h2 className="heading-section text-center mb-4">Ücretsiz Uygunluk Kontrolü</h2>
+          {formSubmitted ? (
+            <div className="text-center py-10 space-y-6">
+              <p className="text-lg font-heading text-foreground">Uygunluk ihtimaliniz yüksek. Süreci başlatmak için hemen yukarıdan danışmanlık paketini satın alabilirsiniz.</p>
+              <Button onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Danışmanlık Paketini Satın Al ↑</Button>
+            </div>
+          ) : (
+            <PlanBForm serviceId={service.id} onSubmitSuccess={() => setFormSubmitted(true)} />
+          )}
         </div>
       </section>
 
       {/* Legal */}
       <section className="py-8 bg-card border-t border-border">
         <div className="container mx-auto px-6 lg:px-12 text-center">
-          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-2">
-            <AlertTriangle className="w-3 h-3" />
-            <span>Güvenlik Bildirimi</span>
-          </div>
-          <p className="text-xs text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Tüm ekspedisyonlar lisanslı operatörler tarafından yürütülmektedir. Katılımcıların seyahat sigortası yaptırması zorunludur. Plan B Asia organizatör ve danışman olarak hizmet vermektedir.
-          </p>
+          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-2"><AlertTriangle className="w-3 h-3" /><span>Güvenlik Bildirimi</span></div>
+          <p className="text-xs text-muted-foreground max-w-2xl mx-auto leading-relaxed">Tüm ekspedisyonlar lisanslı operatörler tarafından yürütülmektedir.</p>
         </div>
       </section>
 
       <footer className="py-16 bg-corporate-navy border-t border-holistic/10">
-        <div className="container max-w-5xl px-6 text-center">
-          <span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span>
-        </div>
+        <div className="container max-w-5xl px-6 text-center"><span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span></div>
       </footer>
-
-      <StickyMobileCTA onClick={() => window.location.href = '/tools/dtv-visa-calculator?checkout=true'} />
+      <StickyMobileCTA onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} />
     </div>
   );
 }

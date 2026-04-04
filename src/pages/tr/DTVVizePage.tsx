@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Shield, Clock, ChevronDown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Shield, Clock, ChevronDown, Loader } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
 import SEOHead from '@/components/SEOHead';
 import ServiceCheckout from '@/components/service/ServiceCheckout';
+import PlanBForm from '@/components/PlanBForm';
+import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
 import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
 import type { Service } from '@/pages/ServicePage';
 
 const DTV_SERVICE_SLUG = 'dtv-thailand';
@@ -34,24 +36,68 @@ const formatPrice = (price: number, currency: string) =>
 export default function DTVVizePage() {
   const { t } = useTranslation();
   const [service, setService] = useState<Service | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const fetchIdRef = useRef(0);
 
+  // State A: Race-condition-safe client-side fetch with no-cache
   useEffect(() => {
+    const currentId = ++fetchIdRef.current;
+    setIsLoading(true);
+    setHasError(false);
+    setService(null);
+
     supabase
       .from('services')
       .select('*')
       .eq('slug', DTV_SERVICE_SLUG)
       .eq('is_active', true)
       .maybeSingle()
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (currentId !== fetchIdRef.current) return; // stale request
+        if (error) {
+          console.error('[DTV] Fetch error:', error);
+          setHasError(true);
+          setIsLoading(false);
+          return;
+        }
         if (data) setService(data as unknown as Service);
+        setIsLoading(false);
       });
   }, []);
 
+  // STATE A: Strict Loading
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" />
+      </div>
+    );
+  }
+
+  // STATE B & C: Error or invalid data
+  const isValid = service && service.id && service.stripe_price_id;
+  if (hasError || !isValid) {
+    if (!hasError) console.error('[DTV] Invalid service data:', service);
+    return (
+      <div className="min-h-screen bg-background">
+        <FocusedNavbar />
+        <TrustBar />
+        <ServiceUpdateFallback context="DTV Vize" />
+      </div>
+    );
+  }
+
+  // STATE D: Valid service — Checkout-first model
   return (
     <div className="min-h-screen bg-background">
       <SEOHead title={t('dtvVize.seoTitle', { defaultValue: 'Tayland DTV Vizesi — Plan B Asia' })} description={t('dtvVize.seoDesc', { defaultValue: "Tayland'da 5 yıl yaşama ve çalışma özgürlüğü." })} />
       <FocusedNavbar />
       <TrustBar />
+
+      {/* CHECKOUT FIRST — above the fold */}
+      <ServiceCheckout service={service} />
 
       {/* Hero */}
       <section className="relative min-h-[90vh] flex items-center grain-overlay">
@@ -70,17 +116,12 @@ export default function DTVVizePage() {
               <span className="block text-accent">{t('dtvVize.heroAccent', { defaultValue: 'Tek Başvuru.' })}</span>
             </h1>
             <p className="text-lg text-background/80 max-w-xl mb-8">{t('dtvVize.heroDesc', { defaultValue: 'Dijital göçebeler için tasarlanan DTV vizesi ile 180 gün kalış hakkı, sınırsız giriş-çıkış ve 5 yıllık geçerlilik.' })}</p>
-            
-            {/* Show price if service loaded */}
-            {service && service.price > 0 && (
-              <div className="mb-8">
-                <p className="font-heading text-3xl md:text-4xl text-accent mb-2">
-                  {formatPrice(service.price, service.currency || 'USD')}
-                </p>
-                <p className="text-sm text-background/60">{t('dtvVize.priceNote', { defaultValue: '45 dakikalık stratejik danışmanlık görüşmesi' })}</p>
-              </div>
-            )}
-
+            <div className="mb-8">
+              <p className="font-heading text-3xl md:text-4xl text-accent mb-2">
+                {formatPrice(service.price, service.currency || 'USD')}
+              </p>
+              <p className="text-sm text-background/60">{t('dtvVize.priceNote', { defaultValue: '45 dakikalık stratejik danışmanlık görüşmesi' })}</p>
+            </div>
             <div className="flex items-center gap-3 mb-10">
               <Clock className="w-5 h-5 text-accent" />
               <span className="text-background/90 font-medium">{t('dtvVize.scarcity', { defaultValue: '2026 Kotaları Dolmadan Yerini Ayırt' })}</span>
@@ -89,7 +130,7 @@ export default function DTVVizePage() {
               onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })}
               className="btn-luxury-gold inline-block"
             >
-              {service ? t('dtvVize.heroCta', { defaultValue: 'Hemen Başla' }) : t('dtvVize.heroCtaFree', { defaultValue: 'Ücretsiz Uygunluk Kontrolü' })}
+              {t('dtvVize.heroCta', { defaultValue: 'Hemen Başla' })}
             </button>
           </motion.div>
         </div>
@@ -142,22 +183,6 @@ export default function DTVVizePage() {
         </div>
       </section>
 
-      {/* Checkout Section — dynamic from DB */}
-      {service && <ServiceCheckout service={service} />}
-
-      {/* If no service, show free consultation CTA */}
-      {!service && (
-        <section id="checkout-section" className="py-20 lg:py-32 bg-foreground text-background grain-overlay">
-          <div className="container mx-auto px-6 lg:px-12 text-center">
-            <div className="max-w-2xl mx-auto">
-              <h2 className="heading-section mb-6">{t('dtvVize.finalCta', { defaultValue: 'Hâlâ Düşünüyor musun?' })}</h2>
-              <p className="body-editorial text-background/70 mb-8">{t('dtvVize.finalBody', { defaultValue: 'Ücretsiz 15 dakikalık uygunluk görüşmesi ile başla.' })}</p>
-              <Link to="/tools/dtv-visa-calculator" className="btn-luxury-gold inline-block">{t('dtvVize.finalBtn', { defaultValue: 'Ücretsiz Görüşme Planla' })}</Link>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* FAQ */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
@@ -175,6 +200,31 @@ export default function DTVVizePage() {
               ))}
             </Accordion>
           </div>
+        </div>
+      </section>
+
+      {/* PlanBForm — repurposed as free tool */}
+      <section className="py-20 bg-card border-t border-border">
+        <div className="container max-w-2xl px-6">
+          <h2 className="heading-section text-center mb-4">{t('dtvVize.formTitle', { defaultValue: 'Ücretsiz Uygunluk Kontrolü' })}</h2>
+          <p className="text-muted-foreground text-center mb-10 body-editorial">
+            {t('dtvVize.formDesc', { defaultValue: 'Hızlı bir ön değerlendirme yapın. Ardından danışmanlık paketinizi satın alabilirsiniz.' })}
+          </p>
+          {formSubmitted ? (
+            <div className="text-center py-10 space-y-6">
+              <p className="text-lg font-heading text-foreground">
+                Uygunluk ihtimaliniz yüksek. Süreci başlatmak için hemen yukarıdan danışmanlık paketini satın alabilirsiniz.
+              </p>
+              <Button
+                onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
+              >
+                Danışmanlık Paketini Satın Al ↑
+              </Button>
+            </div>
+          ) : (
+            <PlanBForm serviceId={service.id} onSubmitSuccess={() => setFormSubmitted(true)} />
+          )}
         </div>
       </section>
 

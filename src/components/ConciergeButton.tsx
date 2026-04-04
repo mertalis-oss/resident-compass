@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MessageCircle, X } from 'lucide-react';
+import { WHATSAPP_NUMBER } from '@/lib/constants';
 
 export default function ConciergeButton() {
   const { t } = useTranslation();
@@ -29,7 +30,7 @@ export default function ConciergeButton() {
             </p>
             <div className="space-y-3">
               <a
-                href={`https://wa.me/905551234567?text=${encodeURIComponent('Hello, I would like to learn more about Plan B Asia services.')}`}
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hello, I would like to learn more about Plan B Asia services.')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 p-3 rounded-lg border border-border hover:border-secondary/50 hover:bg-muted/50 transition-all duration-300"

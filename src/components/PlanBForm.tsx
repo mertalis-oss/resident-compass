@@ -18,9 +18,10 @@ const leadSchema = z.object({
 
 interface PlanBFormProps {
   serviceId?: string;
+  onSubmitSuccess?: () => void;
 }
 
-export default function PlanBForm({ serviceId }: PlanBFormProps) {
+export default function PlanBForm({ serviceId, onSubmitSuccess }: PlanBFormProps) {
   const { t } = useTranslation();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -54,6 +55,7 @@ export default function PlanBForm({ serviceId }: PlanBFormProps) {
     trackEvent('lead_form_submit', { source: 'plan_b_form' });
     trackPostHogEvent('lead_form_submit', { source: 'plan_b_form' });
     setSubmitted(true);
+    onSubmitSuccess?.();
   };
 
   if (submitted) {

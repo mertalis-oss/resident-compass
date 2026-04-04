@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Shield, Clock, Lock, CreditCard, MessageCircle, AlertTriangle } from 'lucide-react';
+import { WHATSAPP_NUMBER } from '@/lib/constants';
 import type { Service } from '@/pages/ServicePage';
 
 declare global {
@@ -27,7 +28,7 @@ interface Props {
   variant?: 'full' | 'mirror';
 }
 
-const WHATSAPP_NUMBER = '66647036510';
+// WhatsApp number centralized in @/lib/constants
 const scope = getDomainScope();
 
 export default function ServiceCheckout({ service, variant = 'full' }: Props) {
