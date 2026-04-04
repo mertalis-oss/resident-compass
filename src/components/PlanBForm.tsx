@@ -21,7 +21,7 @@ interface PlanBFormProps {
   onSubmitSuccess?: () => void;
 }
 
-export default function PlanBForm({ serviceId }: PlanBFormProps) {
+export default function PlanBForm({ serviceId, onSubmitSuccess }: PlanBFormProps) {
   const { t } = useTranslation();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
