@@ -18,6 +18,7 @@ const leadSchema = z.object({
 
 interface PlanBFormProps {
   serviceId?: string;
+  onSubmitSuccess?: () => void;
 }
 
 export default function PlanBForm({ serviceId }: PlanBFormProps) {
