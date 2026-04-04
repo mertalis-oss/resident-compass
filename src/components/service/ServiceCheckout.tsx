@@ -28,7 +28,7 @@ interface Props {
   variant?: 'full' | 'mirror';
 }
 
-const WHATSAPP_NUMBER = '66647036510';
+// WhatsApp number centralized in @/lib/constants
 const scope = getDomainScope();
 
 export default function ServiceCheckout({ service, variant = 'full' }: Props) {
