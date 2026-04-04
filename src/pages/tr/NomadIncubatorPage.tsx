@@ -1,11 +1,19 @@
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Building2, Globe, Calculator, Users, Zap, Shield, ArrowRight, CheckCircle, Home, Briefcase, Heart, MapPin } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Building2, Globe, Calculator, Users, Zap, Shield, ArrowRight, CheckCircle, Home, Briefcase, Heart, MapPin, Loader } from 'lucide-react';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
 import SEOHead from '@/components/SEOHead';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
+import PlanBForm from '@/components/PlanBForm';
+import ServiceCheckout from '@/components/service/ServiceCheckout';
+import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import type { Service } from '@/pages/ServicePage';
+
+const NOMAD_SLUG = 'nomad-incubator';
 
 const services = [
   { icon: Building2, titleKey: 'nomad.s1Title', subtitleKey: 'nomad.s1Sub', descKey: 'nomad.s1Desc', features: ['Estonya e-Residency başvurusu', 'ABD Wyoming/Delaware LLC', 'Singapur Pte. Ltd.', 'Dubai Serbest Bölge şirketi'] },
@@ -25,12 +33,40 @@ const fullLifeItems = [
 
 export default function NomadIncubatorPage() {
   const { t } = useTranslation();
+  const [service, setService] = useState<Service | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const fetchIdRef = useRef(0);
+
+  useEffect(() => {
+    const currentId = ++fetchIdRef.current;
+    setIsLoading(true); setHasError(false); setService(null);
+    supabase.from('services').select('*').eq('slug', NOMAD_SLUG).eq('is_active', true).maybeSingle()
+      .then(({ data, error }) => {
+        if (currentId !== fetchIdRef.current) return;
+        if (error) { console.error('[Nomad] Fetch error:', error); setHasError(true); setIsLoading(false); return; }
+        if (data) setService(data as unknown as Service);
+        setIsLoading(false);
+      });
+  }, []);
+
+  if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
+
+  const isValid = service && service.id && service.stripe_price_id;
+  if (hasError || !isValid) {
+    if (!hasError) console.error('[Nomad] Invalid service data:', service);
+    return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Nomad Incubator" /></div>;
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <SEOHead title={t('nomad.seoTitle', { defaultValue: 'Dijital Göçebe Kuluçka — Plan B Asia' })} description={t('nomad.seoDesc', { defaultValue: 'Şirket kurulumu, vergi optimizasyonu, ikinci pasaport.' })} />
       <FocusedNavbar />
       <TrustBar />
+
+      {/* CHECKOUT FIRST */}
+      <ServiceCheckout service={service} />
 
       {/* Hero */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden">
@@ -47,20 +83,13 @@ export default function NomadIncubatorPage() {
               {t('nomad.heroTitle', { defaultValue: 'Nerede Yaşarsan Yaşa,' })}
               <span className="block text-accent">{t('nomad.heroAccent', { defaultValue: 'İşini Global Yap.' })}</span>
             </h1>
-            <p className="text-lg text-background/70 max-w-xl mb-4">{t('nomad.heroDesc', { defaultValue: 'Şirket kurulumu, vergi optimizasyonu, ikinci pasaport ve güçlü bir topluluk — dijital göçebe hayatının tüm altyapısı tek çatı altında.' })}</p>
-            
-            {/* 360° Outcome Statement */}
+            <p className="text-lg text-background/70 max-w-xl mb-4">{t('nomad.heroDesc', { defaultValue: 'Şirket kurulumu, vergi optimizasyonu, ikinci pasaport ve güçlü bir topluluk.' })}</p>
             <div className="bg-accent/10 border border-accent/20 px-6 py-4 mb-10 max-w-xl">
-              <p className="text-background font-heading text-lg">
-                {t('nomad.outcomeStatement', { defaultValue: "Asya'da 30 gün içinde tamamen kurulu bir hayat." })}
-              </p>
+              <p className="text-background font-heading text-lg">{t('nomad.outcomeStatement', { defaultValue: "Asya'da 30 gün içinde tamamen kurulu bir hayat." })}</p>
             </div>
-
-            <div className="flex flex-wrap gap-4">
-              <Link to="/tools/dtv-visa-calculator?checkout=true" className="btn-luxury-gold inline-flex items-center gap-2">
-                {t('nomad.ctaJoin', { defaultValue: 'Kuluçkaya Katıl' })} <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+            <button onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">
+              {t('nomad.ctaJoin', { defaultValue: 'Kuluçkaya Katıl' })} <ArrowRight className="w-4 h-4" />
+            </button>
           </motion.div>
         </div>
       </section>
@@ -75,11 +104,8 @@ export default function NomadIncubatorPage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
             {fullLifeItems.map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
-                className="flex items-start gap-3 p-4">
-                <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
-                  <item.icon className="w-5 h-5 text-accent" />
-                </div>
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex items-start gap-3 p-4">
+                <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0"><item.icon className="w-5 h-5 text-accent" /></div>
                 <p className="text-sm font-medium text-foreground">{item.label}</p>
               </motion.div>
             ))}
@@ -90,21 +116,18 @@ export default function NomadIncubatorPage() {
       {/* Services Grid */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16">
-            <p className="caption-editorial text-accent mb-4">{t('nomad.servicesLabel', { defaultValue: 'Hizmetler' })}</p>
-            <h2 className="heading-section mb-4">{t('nomad.servicesTitle', { defaultValue: 'Kuluçka Programı' })}</h2>
-          </div>
+          <div className="text-center mb-16"><p className="caption-editorial text-accent mb-4">{t('nomad.servicesLabel', { defaultValue: 'Hizmetler' })}</p><h2 className="heading-section mb-4">{t('nomad.servicesTitle', { defaultValue: 'Kuluçka Programı' })}</h2></div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {services.map((service, i) => (
+            {services.map((svc, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
                 className="group bg-card p-8 lg:p-10 border border-border hover:border-accent/30 transition-all duration-500">
                 <div className="flex items-start gap-4 mb-6">
-                  <div className="w-14 h-14 bg-accent/10 flex items-center justify-center"><service.icon className="w-7 h-7 text-accent" /></div>
-                  <div><h3 className="font-heading text-xl mb-1">{t(service.titleKey)}</h3><span className="text-sm text-accent">{t(service.subtitleKey)}</span></div>
+                  <div className="w-14 h-14 bg-accent/10 flex items-center justify-center"><svc.icon className="w-7 h-7 text-accent" /></div>
+                  <div><h3 className="font-heading text-xl mb-1">{t(svc.titleKey)}</h3><span className="text-sm text-accent">{t(svc.subtitleKey)}</span></div>
                 </div>
-                <p className="text-muted-foreground mb-6 leading-relaxed">{t(service.descKey)}</p>
+                <p className="text-muted-foreground mb-6 leading-relaxed">{t(svc.descKey)}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {service.features.map((f, j) => (
+                  {svc.features.map((f, j) => (
                     <div key={j} className="flex items-center gap-2 text-sm"><CheckCircle className="w-4 h-4 text-accent flex-shrink-0" /><span>{f}</span></div>
                   ))}
                 </div>
@@ -114,25 +137,25 @@ export default function NomadIncubatorPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 lg:py-32 bg-foreground text-background grain-overlay">
-        <div className="container mx-auto px-6 lg:px-12 text-center">
-          <div className="max-w-2xl mx-auto">
-            <Zap className="w-12 h-12 text-accent mx-auto mb-8" />
-            <h2 className="heading-section mb-6">{t('nomad.ctaTitle', { defaultValue: 'Kuluçkaya Katıl' })}</h2>
-            <p className="body-editorial text-background/70 mb-8">{t('nomad.ctaBody', { defaultValue: 'Ücretsiz 30 dakikalık strateji görüşmesiyle başla.' })}</p>
-            <Link to="/tools/dtv-visa-calculator?checkout=true" className="btn-luxury-gold inline-block">{t('nomad.ctaBtn', { defaultValue: 'Ücretsiz Strateji Görüşmesi' })}</Link>
-          </div>
+      {/* PlanBForm — repurposed */}
+      <section className="py-20 bg-card border-t border-border">
+        <div className="container max-w-2xl px-6">
+          <h2 className="heading-section text-center mb-4">Ücretsiz Uygunluk Kontrolü</h2>
+          {formSubmitted ? (
+            <div className="text-center py-10 space-y-6">
+              <p className="text-lg font-heading text-foreground">Uygunluk ihtimaliniz yüksek. Süreci başlatmak için hemen yukarıdan danışmanlık paketini satın alabilirsiniz.</p>
+              <Button onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Danışmanlık Paketini Satın Al ↑</Button>
+            </div>
+          ) : (
+            <PlanBForm serviceId={service.id} onSubmitSuccess={() => setFormSubmitted(true)} />
+          )}
         </div>
       </section>
 
       <footer className="py-16 bg-corporate-navy border-t border-holistic/10">
-        <div className="container max-w-5xl px-6 text-center">
-          <span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span>
-        </div>
+        <div className="container max-w-5xl px-6 text-center"><span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span></div>
       </footer>
-
-      <StickyMobileCTA onClick={() => window.location.href = '/tools/dtv-visa-calculator?checkout=true'} />
+      <StickyMobileCTA onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} />
     </div>
   );
 }
