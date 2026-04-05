@@ -262,17 +262,27 @@ export default function ServicePage() {
 
       <ServiceHero service={service} />
 
-      <ServiceFeatures service={service} />
+      <ExpectationOutcome />
+
+      <TrustBlock />
+
+      <SocialProofMini />
+
+      <FOMOBlock service={service} />
+
+      <div id="checkout">
+        <ServiceCheckout service={service} />
+      </div>
 
       <ServiceWhoIsFor />
+
+      <ServiceFeatures service={service} />
 
       <ServiceFAQ service={service} />
 
       <ServiceBundleItems service={service} />
 
       <ServiceDeliveryInfo service={service} />
-
-      <ServiceCheckout service={service} />
 
       <ServiceUpsell currentService={service} />
 
