@@ -302,7 +302,9 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
             ? (scope === 'tr'
               ? t('checkout.redirectingTR', { defaultValue: 'Yönlendiriliyorsunuz...' })
               : t('checkout.redirectingEN', { defaultValue: 'Redirecting...' }))
-            : t('checkout.ctaLabel', { defaultValue: 'Planımı Oluştur' })}
+            : (scope === 'tr'
+              ? t('checkout.ctaLabelTR', { defaultValue: 'Güvenli Ödemeye Geç' })
+              : t('checkout.ctaLabelEN', { defaultValue: 'Continue to Secure Payment' }))}
         </Button>
 
         {/* Post-CTA reassurance */}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { BookOpen, Utensils, Languages, Heart, Shield, ArrowRight, Clock, Loader } from 'lucide-react';
@@ -13,11 +13,13 @@ import ExpectationOutcome from '@/components/service/ExpectationOutcome';
 import TrustBlock from '@/components/service/TrustBlock';
 import SocialProofMini from '@/components/service/SocialProofMini';
 import FOMOBlock from '@/components/service/FOMOBlock';
+import BundleSelector from '@/components/service/BundleSelector';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
-import { useServiceFetch } from '@/hooks/useServiceFetch';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import type { Service } from '@/pages/ServicePage';
 
-const SOFT_POWER_SLUG = 'muay-thai';
+const BUNDLE_SLUGS = ['thai-language-6m', 'english-language-6m', 'thai-immersion-9m', 'english-mastery-12m'];
 
 const courses = [
   { icon: Shield, title: 'Muay Thai Eğitim Programı', duration: '1-6 Ay', visa: 'ED Visa / DTV Visa', transition: 'Eğitim vizesinden oturma iznine geçiş imkânı', desc: "Tayland'ın en köklü kamplarında profesyonel eğitim. Vize süreci dahil." },
@@ -28,11 +30,62 @@ const courses = [
 
 export default function SoftPowerPage() {
   const { t } = useTranslation();
-  const { service, isLoading, hasError } = useServiceFetch(SOFT_POWER_SLUG);
+  const [bundles, setBundles] = useState<Service[]>([]);
+  const [selectedBundle, setSelectedBundle] = useState<Service | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const fetchIdRef = useRef(0);
+
+  useEffect(() => {
+    const currentFetchId = ++fetchIdRef.current;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('services')
+          .select('*')
+          .in('slug', BUNDLE_SLUGS)
+          .eq('is_active', true)
+          .abortSignal(controller.signal);
+
+        clearTimeout(timer);
+        if (currentFetchId !== fetchIdRef.current) return;
+
+        if (error || !data || data.length === 0) {
+          setHasError(true);
+          setIsLoading(false);
+          return;
+        }
+
+        // Validate all have valid stripe_price_id
+        const valid = (data as unknown as Service[]).filter(
+          (s) => s.stripe_price_id && s.stripe_price_id.startsWith('price_')
+        );
+
+        if (valid.length === 0) {
+          setHasError(true);
+          setIsLoading(false);
+          return;
+        }
+
+        setBundles(valid);
+        setIsLoading(false);
+      } catch {
+        clearTimeout(timer);
+        if (currentFetchId !== fetchIdRef.current) return;
+        setHasError(true);
+        setIsLoading(false);
+      }
+    })();
+
+    return () => { controller.abort(); clearTimeout(timer); };
+  }, []);
 
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
-  if (hasError || !service) return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Soft Power" /></div>;
+  if (hasError || bundles.length === 0) return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Soft Power" /></div>;
 
   return (
     <div className="min-h-screen bg-background">
@@ -64,16 +117,29 @@ export default function SoftPowerPage() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5. FOMO & Price */}
-      <FOMOBlock service={service} />
+      {/* 5. FOMO & Price — show selected bundle or first */}
+      <FOMOBlock service={selectedBundle || bundles[0]} />
 
-      {/* 6. CHECKOUT */}
-      <div id="checkout"><ServiceCheckout service={service} /></div>
+      {/* 6. BUNDLE SELECTOR */}
+      <BundleSelector bundles={bundles} selected={selectedBundle} onSelect={setSelectedBundle} />
 
-      {/* 7. WHO IS FOR */}
+      {/* 7. CHECKOUT (id="checkout") — ONLY renders if bundle selected */}
+      <div id="checkout">
+        {selectedBundle ? (
+          <ServiceCheckout service={selectedBundle} />
+        ) : (
+          <section className="section-editorial border-t border-border">
+            <div className="container max-w-2xl px-6 text-center py-12">
+              <p className="text-sm text-muted-foreground">{t('softPower.selectToCheckout', { defaultValue: 'Ödeme bölümünü görmek için yukarıdan bir paket seçin.' })}</p>
+            </div>
+          </section>
+        )}
+      </div>
+
+      {/* 8. WHO IS FOR */}
       <ServiceWhoIsFor />
 
-      {/* 8. Content — Courses Grid */}
+      {/* 9. Content — Courses Grid */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
@@ -118,7 +184,7 @@ export default function SoftPowerPage() {
               <Button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Danışmanlık Paketini Satın Al ↑</Button>
             </div>
           ) : (
-            <PlanBForm serviceId={service.id} onSubmitSuccess={() => setFormSubmitted(true)} />
+            <PlanBForm serviceId={bundles[0]?.id} onSubmitSuccess={() => setFormSubmitted(true)} />
           )}
         </div>
       </section>
