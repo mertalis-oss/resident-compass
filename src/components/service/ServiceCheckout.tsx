@@ -313,6 +313,30 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
           {t('checkout.postCtaReassure', { defaultValue: 'İlk adımınız ödeme sonrası hemen başlatılır. Kart bilgileriniz sistemimizde tutulmaz.' })}
         </p>
 
+        {/* Friction Breakers */}
+        <div className="flex flex-wrap justify-center gap-3 mt-6 text-xs text-muted-foreground">
+          <span>✓ {t('checkout.frictionNoUpsells', { defaultValue: scope === 'tr' ? 'Gereksiz ek satış yok' : 'No unnecessary upsells' })}</span>
+          <span>✓ {t('checkout.frictionHonest', { defaultValue: scope === 'tr' ? 'Net ve dürüst rehberlik' : 'Clear, honest guidance' })}</span>
+          <span>✓ {t('checkout.frictionFit', { defaultValue: scope === 'tr' ? 'Uygun değilse söyleriz' : 'If not a fit, we tell you upfront' })}</span>
+        </div>
+
+        {/* Legal Disclaimer */}
+        <p className="text-[10px] text-muted-foreground/60 text-center mt-4 max-w-lg mx-auto leading-relaxed">
+          {t('checkout.legalDisclaimer', { defaultValue: scope === 'tr'
+            ? 'Bu bir dijital danışmanlık hizmetidir. Fiziksel ürün gönderimi yapılmaz. Devam ederek kişiselleştirilmiş danışmanlık hizmeti almayı kabul etmiş olursunuz.'
+            : 'This is a digital consulting service. No physical product will be shipped. By proceeding, you agree to receive a personalized advisory service.' })}
+        </p>
+
+        {/* High-Ticket Upscale Link */}
+        <div className="text-center mt-4">
+          <a
+            href={scope === 'tr' ? '/tr/rabbit-hole' : '/residency/full-support'}
+            className="text-xs text-accent hover:text-accent/80 underline underline-offset-4 transition-colors"
+          >
+            {t('checkout.upscaleLink', { defaultValue: scope === 'tr' ? 'Daha kapsamlı destek mi arıyorsun?' : 'Need full support instead?' })}
+          </a>
+        </div>
+
         {/* WhatsApp Escape Hatch */}
         <div className="text-center mt-8 space-y-1.5">
           <p className="text-xs text-muted-foreground">
