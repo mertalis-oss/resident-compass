@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { BookOpen, Utensils, Languages, Heart, Shield, ArrowRight, Clock, Loader } from 'lucide-react';
+import ComparisonCrossSell from '@/components/service/ComparisonCrossSell';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
 import SEOHead from '@/components/SEOHead';
@@ -188,6 +189,9 @@ export default function SoftPowerPage() {
           )}
         </div>
       </section>
+
+      {/* Comparison & Cross-Sell */}
+      <ComparisonCrossSell currentSlug="muay-thai" />
 
       <footer className="py-16 bg-corporate-navy border-t border-holistic/10">
         <div className="container max-w-5xl px-6 text-center"><span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span></div>
