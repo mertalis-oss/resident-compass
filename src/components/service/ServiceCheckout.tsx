@@ -292,6 +292,7 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
 
         {/* CTA Button */}
         <Button
+          id="checkout-cta-btn"
           size="lg"
           onClick={handleCheckout}
           disabled={!isAgreed || isCheckoutLoading}
