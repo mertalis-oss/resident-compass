@@ -7,6 +7,7 @@ import TrustBar from '@/components/TrustBar';
 import SEOHead from '@/components/SEOHead';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import PlanBForm from '@/components/PlanBForm';
+import ComparisonCrossSell from '@/components/service/ComparisonCrossSell';
 import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
 import ExpectationOutcome from '@/components/service/ExpectationOutcome';
@@ -112,6 +113,9 @@ export default function ExpeditionsPage() {
           )}
         </div>
       </section>
+
+      {/* Comparison & Cross-Sell */}
+      <ComparisonCrossSell currentSlug="expedition-jungle" />
 
       {/* Legal */}
       <section className="py-8 bg-card border-t border-border">
