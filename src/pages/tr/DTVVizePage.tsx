@@ -13,7 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import type { Service } from '@/pages/ServicePage';
 
-const DTV_SERVICE_SLUG = 'dtv-thailand';
+const DTV_SERVICE_SLUG = 'dtv-vize';
 
 const processSteps = [
   { step: 1, titleKey: 'dtvVize.proc1Title', descKey: 'dtvVize.proc1Desc' },
