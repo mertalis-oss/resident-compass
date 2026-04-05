@@ -284,7 +284,7 @@ export default function ServicePage() {
 
       <ServiceDeliveryInfo service={service} />
 
-      <ServiceUpsell currentService={service} />
+      <ComparisonCrossSell currentSlug={service.slug} />
 
       <PlanBForm serviceId={service.id} />
 
