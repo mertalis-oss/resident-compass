@@ -13,6 +13,7 @@ import TrustBlock from '@/components/service/TrustBlock';
 import SocialProofMini from '@/components/service/SocialProofMini';
 import FOMOBlock from '@/components/service/FOMOBlock';
 import PlanBForm from '@/components/PlanBForm';
+import ComparisonCrossSell from '@/components/service/ComparisonCrossSell';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
 import { useServiceFetch } from '@/hooks/useServiceFetch';
 import { Button } from '@/components/ui/button';
@@ -193,6 +194,9 @@ export default function DTVVizePage() {
           )}
         </div>
       </section>
+
+      {/* 12. COMPARISON & CROSS-SELL */}
+      <ComparisonCrossSell currentSlug="dtv-vize" />
 
       <footer className="py-16 bg-corporate-navy border-t border-holistic/10">
         <div className="container max-w-5xl px-6 text-center">

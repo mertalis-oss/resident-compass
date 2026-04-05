@@ -7,6 +7,7 @@ import TrustBar from '@/components/TrustBar';
 import SEOHead from '@/components/SEOHead';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import PlanBForm from '@/components/PlanBForm';
+import ComparisonCrossSell from '@/components/service/ComparisonCrossSell';
 import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
 import ExpectationOutcome from '@/components/service/ExpectationOutcome';
@@ -146,6 +147,9 @@ export default function NomadIncubatorPage() {
           )}
         </div>
       </section>
+
+      {/* Comparison & Cross-Sell */}
+      <ComparisonCrossSell currentSlug="nomad-incubator" />
 
       <footer className="py-16 bg-corporate-navy border-t border-holistic/10">
         <div className="container max-w-5xl px-6 text-center"><span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span></div>

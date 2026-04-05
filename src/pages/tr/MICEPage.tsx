@@ -6,6 +6,7 @@ import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
 import SEOHead from '@/components/SEOHead';
 import PlanBForm from '@/components/PlanBForm';
+import ComparisonCrossSell from '@/components/service/ComparisonCrossSell';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
@@ -113,6 +114,8 @@ export default function MICEPage() {
         </div>
       </section>
 
+      {/* Comparison & Cross-Sell */}
+      <ComparisonCrossSell currentSlug="mice-corporate" />
       {/* WhatsApp CTA */}
       <section className="py-20 lg:py-32 bg-foreground text-background grain-overlay">
         <div className="container mx-auto px-6 lg:px-12 text-center">

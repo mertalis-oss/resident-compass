@@ -523,14 +523,38 @@ export default function MobilityAssessment() {
                       </p>
                     )}
 
+                    {/* Psychological Bridges */}
+                    <div className="space-y-3 pt-2">
+                      <p className="text-sm text-foreground font-medium font-body">
+                        {t('quiz.bridge1', { defaultValue: 'Based on your answers, this is the most efficient path for your situation.' })}
+                      </p>
+                      <p className="text-sm text-muted-foreground font-body italic">
+                        {t('quiz.bridge2', { defaultValue: 'Most people in your situation choose this.' })}
+                      </p>
+                      <p className="text-xs text-accent/80 font-body">
+                        {t('quiz.bridge3', { defaultValue: 'Why this fits you: Based on your budget, urgency, and income.' })}
+                      </p>
+                    </div>
+
                     {/* Main CTA */}
                     <div className="pt-4 space-y-4">
                       <Button
                         size="lg"
                         onClick={() => {
                           trackPostHogEvent('cta_clicked', { source: 'quiz_result', service: recommendation.slug, score }, true);
+                          const targetPath = `/residency/${recommendation.slug}?source=quiz&recommendation=${recommendation.tier}`;
                           setTimeout(() => {
-                            try { navigate(`/residency/${recommendation.slug}?checkout=true`); } catch { window.location.href = `/residency/${recommendation.slug}?checkout=true`; }
+                            try {
+                              navigate(targetPath);
+                              // Scroll to top first, then to #checkout after DOM render
+                              window.scrollTo({ top: 0 });
+                              setTimeout(() => {
+                                const el = document.getElementById('checkout') || document.getElementById('checkout-section');
+                                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                              }, 600);
+                            } catch {
+                              window.location.href = targetPath;
+                            }
                           }, 150);
                         }}
                         className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto transition-all duration-500 ease-out hover:scale-[1.02]"

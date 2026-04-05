@@ -16,7 +16,7 @@ import ServiceFAQ from '@/components/service/ServiceFAQ';
 import ServiceDeliveryInfo from '@/components/service/ServiceDeliveryInfo';
 import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
 import ServiceBundleItems from '@/components/service/ServiceBundleItems';
-import ServiceUpsell from '@/components/service/ServiceUpsell';
+import ComparisonCrossSell from '@/components/service/ComparisonCrossSell';
 import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceFallback from '@/components/service/ServiceFallback';
 import ServiceFooter from '@/components/service/ServiceFooter';
@@ -284,7 +284,7 @@ export default function ServicePage() {
 
       <ServiceDeliveryInfo service={service} />
 
-      <ServiceUpsell currentService={service} />
+      <ComparisonCrossSell currentSlug={service.slug} />
 
       <PlanBForm serviceId={service.id} />
 
