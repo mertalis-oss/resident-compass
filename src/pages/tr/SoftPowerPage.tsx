@@ -13,7 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import type { Service } from '@/pages/ServicePage';
 
-const SOFT_POWER_SLUG = 'soft-power-training';
+const SOFT_POWER_SLUG = 'muay-thai';
 
 const courses = [
   { icon: Shield, title: 'Muay Thai Eğitim Programı', duration: '1-6 Ay', visa: 'ED Visa / DTV Visa', transition: 'Eğitim vizesinden oturma iznine geçiş imkânı', desc: "Tayland'ın en köklü kamplarında profesyonel eğitim. Vize süreci dahil.", slug: 'muay-thai-training' },
