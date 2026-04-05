@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Building2, Users, Calendar, Globe, MessageCircle, Loader } from 'lucide-react';
@@ -9,11 +9,10 @@ import PlanBForm from '@/components/PlanBForm';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
-import { supabase } from '@/integrations/supabase/client';
+import { useServiceFetch } from '@/hooks/useServiceFetch';
 import { trackPostHogEvent } from '@/lib/posthog';
 import { buildWhatsAppUrl } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
-import type { Service } from '@/pages/ServicePage';
 
 const MICE_SLUG = 'mice-corporate';
 
@@ -26,35 +25,18 @@ const features = [
 
 export default function MICEPage() {
   const { t } = useTranslation();
-  const [service, setService] = useState<Service | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const { service, isLoading, hasError } = useServiceFetch(MICE_SLUG);
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const fetchIdRef = useRef(0);
 
-  const whatsappUrl = buildWhatsAppUrl('Sayfa: MICE | Domain: ' + window.location.hostname + ' | Merhaba, etkinliğimizi planlamak istiyoruz.');
+  const whatsappUrl = buildWhatsAppUrl('Sayfa: MICE | Domain: ' + (typeof window !== 'undefined' ? window.location.hostname : '') + ' | Merhaba, etkinliğimizi planlamak istiyoruz.');
   const handleWhatsAppClick = () => {
     trackPostHogEvent('whatsapp_click', { source: 'mice_page' }, true);
     setTimeout(() => window.open(whatsappUrl, '_blank'), 150);
   };
 
-  useEffect(() => {
-    const currentId = ++fetchIdRef.current;
-    setIsLoading(true); setHasError(false); setService(null);
-    supabase.from('services').select('*').eq('slug', MICE_SLUG).eq('is_active', true).maybeSingle()
-      .then(({ data, error }) => {
-        if (currentId !== fetchIdRef.current) return;
-        if (error) { console.error('[MICE] Fetch error:', error); setHasError(true); setIsLoading(false); return; }
-        if (data) setService(data as unknown as Service);
-        setIsLoading(false);
-      });
-  }, []);
-
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
 
-  const isValid = service && service.id && service.stripe_price_id;
-  if (hasError || !isValid) {
-    if (!hasError) console.error('[MICE] Invalid service data:', service);
+  if (hasError || !service) {
     return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="MICE" /></div>;
   }
 
@@ -63,9 +45,6 @@ export default function MICEPage() {
       <SEOHead title="Kurumsal Etkinlik & MICE — Plan B Asia" description="Tayland'da kurumsal etkinlik, konferans ve team-building." schemaType="Service" serviceName="MICE & Kurumsal Etkinlik" />
       <FocusedNavbar />
       <TrustBar />
-
-      {/* CHECKOUT FIRST */}
-      <ServiceCheckout service={service} />
 
       {/* Hero */}
       <section className="relative min-h-[85vh] flex items-center grain-overlay">
@@ -84,12 +63,17 @@ export default function MICEPage() {
               <span className="block text-accent">Asya'da Planlayalım.</span>
             </h1>
             <p className="text-lg text-background/80 max-w-xl mb-10">Konferans, team-building, incentive turları. Uçtan uca organizasyon.</p>
-            <button onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">
+            <button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">
               <MessageCircle className="w-4 h-4" /> Hemen Başla
             </button>
           </motion.div>
         </div>
       </section>
+
+      {/* CHECKOUT */}
+      <div id="checkout">
+        <ServiceCheckout service={service} />
+      </div>
 
       {/* Features */}
       <section className="py-20 lg:py-32 bg-background">
@@ -108,14 +92,14 @@ export default function MICEPage() {
         </div>
       </section>
 
-      {/* PlanBForm — repurposed */}
+      {/* PlanBForm */}
       <section className="py-20 bg-card border-t border-border">
         <div className="container max-w-2xl px-6">
           <h2 className="heading-section text-center mb-4">Ücretsiz Uygunluk Kontrolü</h2>
           {formSubmitted ? (
             <div className="text-center py-10 space-y-6">
               <p className="text-lg font-heading text-foreground">Uygunluk ihtimaliniz yüksek. Süreci başlatmak için hemen yukarıdan danışmanlık paketini satın alabilirsiniz.</p>
-              <Button onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Danışmanlık Paketini Satın Al ↑</Button>
+              <Button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Danışmanlık Paketini Satın Al ↑</Button>
             </div>
           ) : (
             <PlanBForm serviceId={service.id} onSubmitSuccess={() => setFormSubmitted(true)} />
@@ -137,7 +121,7 @@ export default function MICEPage() {
       <footer className="py-16 bg-corporate-navy border-t border-holistic/10">
         <div className="container max-w-5xl px-6 text-center"><span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span></div>
       </footer>
-      <StickyMobileCTA onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} />
+      <StickyMobileCTA onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} />
     </div>
   );
 }

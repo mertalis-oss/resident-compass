@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Building2, Globe, Calculator, Users, Zap, Shield, ArrowRight, CheckCircle, Home, Briefcase, Heart, MapPin, Loader } from 'lucide-react';
+import { Building2, Globe, Calculator, Users, Zap, ArrowRight, CheckCircle, Home, Briefcase, Heart, MapPin, Loader } from 'lucide-react';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
 import SEOHead from '@/components/SEOHead';
@@ -9,9 +9,8 @@ import StickyMobileCTA from '@/components/StickyMobileCTA';
 import PlanBForm from '@/components/PlanBForm';
 import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
-import { supabase } from '@/integrations/supabase/client';
+import { useServiceFetch } from '@/hooks/useServiceFetch';
 import { Button } from '@/components/ui/button';
-import type { Service } from '@/pages/ServicePage';
 
 const NOMAD_SLUG = 'nomad-incubator';
 
@@ -33,29 +32,12 @@ const fullLifeItems = [
 
 export default function NomadIncubatorPage() {
   const { t } = useTranslation();
-  const [service, setService] = useState<Service | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const { service, isLoading, hasError } = useServiceFetch(NOMAD_SLUG);
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const fetchIdRef = useRef(0);
-
-  useEffect(() => {
-    const currentId = ++fetchIdRef.current;
-    setIsLoading(true); setHasError(false); setService(null);
-    supabase.from('services').select('*').eq('slug', NOMAD_SLUG).eq('is_active', true).maybeSingle()
-      .then(({ data, error }) => {
-        if (currentId !== fetchIdRef.current) return;
-        if (error) { console.error('[Nomad] Fetch error:', error); setHasError(true); setIsLoading(false); return; }
-        if (data) setService(data as unknown as Service);
-        setIsLoading(false);
-      });
-  }, []);
 
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
 
-  const isValid = service && service.id && service.stripe_price_id;
-  if (hasError || !isValid) {
-    if (!hasError) console.error('[Nomad] Invalid service data:', service);
+  if (hasError || !service) {
     return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Nomad Incubator" /></div>;
   }
 
@@ -64,9 +46,6 @@ export default function NomadIncubatorPage() {
       <SEOHead title={t('nomad.seoTitle', { defaultValue: 'Dijital Göçebe Kuluçka — Plan B Asia' })} description={t('nomad.seoDesc', { defaultValue: 'Şirket kurulumu, vergi optimizasyonu, ikinci pasaport.' })} />
       <FocusedNavbar />
       <TrustBar />
-
-      {/* CHECKOUT FIRST */}
-      <ServiceCheckout service={service} />
 
       {/* Hero */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden">
@@ -87,12 +66,17 @@ export default function NomadIncubatorPage() {
             <div className="bg-accent/10 border border-accent/20 px-6 py-4 mb-10 max-w-xl">
               <p className="text-background font-heading text-lg">{t('nomad.outcomeStatement', { defaultValue: "Asya'da 30 gün içinde tamamen kurulu bir hayat." })}</p>
             </div>
-            <button onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">
+            <button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">
               {t('nomad.ctaJoin', { defaultValue: 'Kuluçkaya Katıl' })} <ArrowRight className="w-4 h-4" />
             </button>
           </motion.div>
         </div>
       </section>
+
+      {/* CHECKOUT */}
+      <div id="checkout">
+        <ServiceCheckout service={service} />
+      </div>
 
       {/* 360° Life Setup */}
       <section className="py-20 lg:py-28 bg-card border-b border-border">
@@ -137,14 +121,14 @@ export default function NomadIncubatorPage() {
         </div>
       </section>
 
-      {/* PlanBForm — repurposed */}
+      {/* PlanBForm */}
       <section className="py-20 bg-card border-t border-border">
         <div className="container max-w-2xl px-6">
           <h2 className="heading-section text-center mb-4">Ücretsiz Uygunluk Kontrolü</h2>
           {formSubmitted ? (
             <div className="text-center py-10 space-y-6">
               <p className="text-lg font-heading text-foreground">Uygunluk ihtimaliniz yüksek. Süreci başlatmak için hemen yukarıdan danışmanlık paketini satın alabilirsiniz.</p>
-              <Button onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Danışmanlık Paketini Satın Al ↑</Button>
+              <Button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Danışmanlık Paketini Satın Al ↑</Button>
             </div>
           ) : (
             <PlanBForm serviceId={service.id} onSubmitSuccess={() => setFormSubmitted(true)} />
@@ -155,7 +139,7 @@ export default function NomadIncubatorPage() {
       <footer className="py-16 bg-corporate-navy border-t border-holistic/10">
         <div className="container max-w-5xl px-6 text-center"><span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span></div>
       </footer>
-      <StickyMobileCTA onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} />
+      <StickyMobileCTA onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} />
     </div>
   );
 }

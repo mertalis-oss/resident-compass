@@ -2,22 +2,52 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDomainScope } from '@/hooks/useDomainScope';
-import { Button } from '@/components/ui/button';
-import { Menu, X, Globe } from 'lucide-react';
+import { Menu, X, Globe, ChevronDown } from 'lucide-react';
 import logoDark from '@/assets/Dark_Seffaf.png';
 import logoWhite from '@/assets/White_Seffaf.png';
 
-const TR_NAV_ITEMS = [
-  { to: '/tr/dtv-vize', label: 'Vize & Oturum' },
-  { to: '/tr/nomad-incubator', label: 'Kuluçka' },
-  { to: '/tr/soft-power', label: 'Eğitim & Yaşam' },
-  { to: '/tr/expeditions', label: 'Keşifler' },
-  { to: '/tr/mice', label: 'Kurumsal' },
-] as const;
+interface NavGroup {
+  label: string;
+  items: { to: string; label: string }[];
+}
+
+const TR_NAV_GROUPS: NavGroup[] = [
+  {
+    label: 'Vizeler',
+    items: [
+      { to: '/tr/dtv-vize', label: 'Tayland DTV' },
+    ],
+  },
+  {
+    label: 'Yaşam',
+    items: [
+      { to: '/tr/soft-power', label: 'Soft Power / Eğitim' },
+      { to: '/tr/expeditions', label: 'Keşifler' },
+      { to: '/tr/nomad-incubator', label: 'Kuluçka Merkezi' },
+      { to: '/tr/mice', label: 'Kurumsal / MICE' },
+    ],
+  },
+];
+
+const EN_NAV_GROUPS: NavGroup[] = [
+  {
+    label: 'Visas',
+    items: [
+      { to: '/residency/dtv-thailand', label: 'Thailand DTV' },
+    ],
+  },
+  {
+    label: 'Lifestyle',
+    items: [
+      { to: '/wellness/thailand-retreat', label: 'Wellness' },
+      { to: '/expeditions/ha-giang-motor-expedition', label: 'Expeditions' },
+      { to: '/corporate-retreats/mice-thailand', label: 'Corporate / MICE' },
+    ],
+  },
+];
 
 const langs = [
   { code: 'en', label: 'EN' },
-  { code: 'tr', label: 'TR' },
   { code: 'hi', label: 'HI' },
 ] as const;
 
@@ -27,6 +57,7 @@ export default function FocusedNavbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -34,21 +65,13 @@ export default function FocusedNavbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Force TR language on TR domain before first render flicker
   useEffect(() => {
     if (scope === 'tr' && i18n.language !== 'tr') {
       i18n.changeLanguage('tr');
     }
   }, [scope, i18n]);
 
-  const navLinks = scope === 'tr'
-    ? TR_NAV_ITEMS.map(item => ({ to: item.to, label: item.label }))
-    : [
-        { to: '/residency/dtv-thailand', label: t('nav.residency') },
-        { to: '/wellness/thailand-retreat', label: t('nav.wellness') },
-        { to: '/corporate-retreats/mice-thailand', label: t('nav.corporate') },
-        { to: '/expeditions/ha-giang-motor-expedition', label: t('nav.expeditions') },
-      ];
+  const navGroups = scope === 'tr' ? TR_NAV_GROUPS : EN_NAV_GROUPS;
 
   return (
     <nav
@@ -58,23 +81,37 @@ export default function FocusedNavbar() {
     >
       <div className="container flex items-center justify-between h-16 md:h-20">
         <Link to={scope === 'tr' ? '/tr' : '/'}>
-          <img
-            src={logoWhite}
-            alt="Plan B Asia"
-            className="h-9 md:h-10 transition-all duration-500"
-          />
+          <img src={logoWhite} alt="Plan B Asia" className="h-9 md:h-10 transition-all duration-500" />
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="text-sm font-medium text-holistic/80 hover:text-holistic transition-colors duration-300"
+        <div className="hidden lg:flex items-center gap-6">
+          {navGroups.map((group) => (
+            <div
+              key={group.label}
+              className="relative group"
+              onMouseEnter={() => setOpenGroup(group.label)}
+              onMouseLeave={() => setOpenGroup(null)}
             >
-              {link.label}
-            </Link>
+              <button className="flex items-center gap-1 text-sm font-medium text-holistic/80 hover:text-holistic transition-colors duration-300 py-2">
+                {group.label}
+                <ChevronDown className="h-3.5 w-3.5" />
+              </button>
+              {openGroup === group.label && (
+                <div className="absolute top-full left-0 mt-0 py-2 bg-corporate-navy/95 backdrop-blur-md border border-border/20 rounded-md shadow-xl min-w-[200px] z-50">
+                  {group.items.map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className="block px-4 py-2.5 text-sm text-holistic/70 hover:text-holistic hover:bg-holistic/5 transition-colors"
+                      onClick={() => setOpenGroup(null)}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
 
           {/* Language Switcher — only on global domain */}
@@ -89,7 +126,7 @@ export default function FocusedNavbar() {
               </button>
               {langOpen && (
                 <div className="absolute top-full right-0 mt-2 py-1 bg-card border border-border rounded-md shadow-xl min-w-[60px]">
-                  {langs.filter(l => l.code !== 'tr').map((l) => (
+                  {langs.map((l) => (
                     <button
                       key={l.code}
                       onClick={() => { i18n.changeLanguage(l.code); setLangOpen(false); }}
@@ -104,35 +141,45 @@ export default function FocusedNavbar() {
               )}
             </div>
           )}
-
-          {/* Login accessible only via direct URL — invisible to public */}
         </div>
 
         {/* Mobile Toggle */}
-        <button
-          className="lg:hidden text-holistic"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
+        <button className="lg:hidden text-holistic" onClick={() => setMobileOpen(!mobileOpen)}>
           {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="lg:hidden bg-corporate-navy border-t border-border/20 px-6 py-6 space-y-4">
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              onClick={() => setMobileOpen(false)}
-              className="block text-sm font-medium text-holistic/80 hover:text-holistic py-2"
-            >
-              {link.label}
-            </Link>
+        <div className="lg:hidden bg-corporate-navy border-t border-border/20 px-6 py-6 space-y-2">
+          {navGroups.map((group) => (
+            <div key={group.label}>
+              <button
+                onClick={() => setOpenGroup(openGroup === group.label ? null : group.label)}
+                className="flex items-center justify-between w-full text-sm font-medium text-holistic/80 hover:text-holistic py-2"
+              >
+                {group.label}
+                <ChevronDown className={`h-4 w-4 transition-transform ${openGroup === group.label ? 'rotate-180' : ''}`} />
+              </button>
+              {openGroup === group.label && (
+                <div className="pl-4 space-y-1">
+                  {group.items.map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => setMobileOpen(false)}
+                      className="block text-sm text-holistic/60 hover:text-holistic py-2"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
           {scope === 'global' && (
-            <div className="flex gap-2 pt-2">
-              {langs.filter(l => l.code !== 'tr').map((l) => (
+            <div className="flex gap-2 pt-4 border-t border-border/20">
+              {langs.map((l) => (
                 <button
                   key={l.code}
                   onClick={() => { i18n.changeLanguage(l.code); }}
@@ -147,7 +194,6 @@ export default function FocusedNavbar() {
               ))}
             </div>
           )}
-          {/* Login accessible only via direct URL — invisible to public */}
         </div>
       )}
     </nav>
