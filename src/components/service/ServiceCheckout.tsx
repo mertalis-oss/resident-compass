@@ -55,6 +55,9 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     window.__checkout_lock = true;
     window.__state[sessionKey.current][stateKey] = true;
     setIsCheckoutLoading(true);
+    // Force-disable the button DOM element immediately to prevent any race
+    const btn = document.querySelector('#checkout-cta-btn') as HTMLButtonElement | null;
+    if (btn) btn.disabled = true;
 
     const slowTimer = setTimeout(() => {
       if (window.__checkout_lock) {
@@ -289,6 +292,7 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
 
         {/* CTA Button */}
         <Button
+          id="checkout-cta-btn"
           size="lg"
           onClick={handleCheckout}
           disabled={!isAgreed || isCheckoutLoading}
