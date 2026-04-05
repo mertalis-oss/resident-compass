@@ -13,7 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import type { Service } from '@/pages/ServicePage';
 
-const EXPEDITIONS_SLUG = 'expeditions-sea';
+const EXPEDITIONS_SLUG = 'expedition-jungle';
 
 const expeditions = [
   { title: 'Ha Giang Motor Expedition', location: 'Vietnam — Ha Giang', duration: '4-7 Gün', desc: "Vietnam'ın en dramatik dağ yollarında rehberli motosiklet ekspedisyonu.", highlight: 'En Popüler' },
