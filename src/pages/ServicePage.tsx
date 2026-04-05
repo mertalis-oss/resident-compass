@@ -21,6 +21,10 @@ import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceFallback from '@/components/service/ServiceFallback';
 import ServiceFooter from '@/components/service/ServiceFooter';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
+import ExpectationOutcome from '@/components/service/ExpectationOutcome';
+import TrustBlock from '@/components/service/TrustBlock';
+import SocialProofMini from '@/components/service/SocialProofMini';
+import FOMOBlock from '@/components/service/FOMOBlock';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { AlertTriangle } from 'lucide-react';
@@ -258,17 +262,27 @@ export default function ServicePage() {
 
       <ServiceHero service={service} />
 
-      <ServiceFeatures service={service} />
+      <ExpectationOutcome />
+
+      <TrustBlock />
+
+      <SocialProofMini />
+
+      <FOMOBlock service={service} />
+
+      <div id="checkout">
+        <ServiceCheckout service={service} />
+      </div>
 
       <ServiceWhoIsFor />
+
+      <ServiceFeatures service={service} />
 
       <ServiceFAQ service={service} />
 
       <ServiceBundleItems service={service} />
 
       <ServiceDeliveryInfo service={service} />
-
-      <ServiceCheckout service={service} />
 
       <ServiceUpsell currentService={service} />
 
