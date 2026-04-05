@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Shield, Clock, ChevronDown, Loader } from 'lucide-react';
@@ -10,12 +10,10 @@ import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
 import PlanBForm from '@/components/PlanBForm';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
-import { supabase } from '@/integrations/supabase/client';
+import { useServiceFetch } from '@/hooks/useServiceFetch';
 import { Button } from '@/components/ui/button';
-import type { Service } from '@/pages/ServicePage';
 
 const DTV_SERVICE_SLUG = 'dtv-vize';
-const FETCH_TIMEOUT_MS = 8000;
 
 const processSteps = [
   { step: 1, titleKey: 'dtvVize.proc1Title', descKey: 'dtvVize.proc1Desc' },
@@ -35,90 +33,10 @@ const faqs = [
 const formatPrice = (price: number, currency: string) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(price);
 
-/**
- * Strict validation: exactly 1 record, slug matches, price_id starts with "price_"
- */
-function isValidService(data: any, expectedSlug: string): data is Service {
-  return (
-    data &&
-    typeof data === 'object' &&
-    typeof data.id === 'string' &&
-    data.id.length > 0 &&
-    data.slug === expectedSlug &&
-    typeof data.stripe_price_id === 'string' &&
-    data.stripe_price_id.startsWith('price_')
-  );
-}
-
 export default function DTVVizePage() {
   const { t } = useTranslation();
-  const [service, setService] = useState<Service | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-  const [errorDetail, setErrorDetail] = useState('');
+  const { service, isLoading, hasError } = useServiceFetch(DTV_SERVICE_SLUG);
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const fetchIdRef = useRef(0);
-
-  useEffect(() => {
-    const currentId = ++fetchIdRef.current;
-    setIsLoading(true);
-    setHasError(false);
-    setService(null);
-    setErrorDetail('');
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-
-    supabase
-      .from('services')
-      .select('*')
-      .eq('slug', DTV_SERVICE_SLUG)
-      .eq('is_active', true)
-      .abortSignal(controller.signal)
-      .then(({ data, error }) => {
-        clearTimeout(timeout);
-        if (currentId !== fetchIdRef.current) return; // stale
-
-        if (error) {
-          const msg = controller.signal.aborted
-            ? `TIMEOUT: Fetch did not resolve within ${FETCH_TIMEOUT_MS}ms`
-            : `FETCH_ERROR: ${error.message}`;
-          console.error(`[DTV] ${msg}`);
-          setErrorDetail(msg);
-          setHasError(true);
-          setIsLoading(false);
-          return;
-        }
-
-        // Strict: exactly 1 row
-        if (!data || data.length !== 1) {
-          const msg = `HARD_FAIL: Expected exactly 1 record for slug="${DTV_SERVICE_SLUG}", got ${data?.length ?? 0}`;
-          console.error(`[DTV] ${msg}`);
-          setErrorDetail(msg);
-          setHasError(true);
-          setIsLoading(false);
-          return;
-        }
-
-        const record = data[0];
-        if (!isValidService(record, DTV_SERVICE_SLUG)) {
-          const msg = `VALIDATION_FAIL: slug=${record?.slug}, price_id=${record?.stripe_price_id}`;
-          console.error(`[DTV] ${msg}`);
-          setErrorDetail(msg);
-          setHasError(true);
-          setIsLoading(false);
-          return;
-        }
-
-        setService(record as unknown as Service);
-        setIsLoading(false);
-      });
-
-    return () => {
-      clearTimeout(timeout);
-      controller.abort();
-    };
-  }, []);
 
   // STATE A: Strict Loading
   if (isLoading) {
@@ -207,7 +125,7 @@ export default function DTVVizePage() {
         </div>
       </section>
 
-      {/* ===== PRICE DISPLAY (anchor before checkout) ===== */}
+      {/* ===== PRICE DISPLAY ===== */}
       <section className="py-12 bg-background text-center">
         <p className="font-heading text-4xl md:text-5xl text-accent mb-2">
           {formatPrice(service.price, service.currency || 'USD')}

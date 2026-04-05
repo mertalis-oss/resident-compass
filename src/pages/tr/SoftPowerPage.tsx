@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { BookOpen, Utensils, Languages, Heart, Shield, ArrowRight, Clock, Loader } from 'lucide-react';
@@ -9,9 +9,8 @@ import StickyMobileCTA from '@/components/StickyMobileCTA';
 import PlanBForm from '@/components/PlanBForm';
 import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
-import { supabase } from '@/integrations/supabase/client';
+import { useServiceFetch } from '@/hooks/useServiceFetch';
 import { Button } from '@/components/ui/button';
-import type { Service } from '@/pages/ServicePage';
 
 const SOFT_POWER_SLUG = 'muay-thai';
 
@@ -24,37 +23,12 @@ const courses = [
 
 export default function SoftPowerPage() {
   const { t } = useTranslation();
-  const [service, setService] = useState<Service | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const { service, isLoading, hasError } = useServiceFetch(SOFT_POWER_SLUG);
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const fetchIdRef = useRef(0);
-
-  useEffect(() => {
-    const currentId = ++fetchIdRef.current;
-    setIsLoading(true);
-    setHasError(false);
-    setService(null);
-
-    supabase
-      .from('services')
-      .select('*')
-      .eq('slug', SOFT_POWER_SLUG)
-      .eq('is_active', true)
-      .maybeSingle()
-      .then(({ data, error }) => {
-        if (currentId !== fetchIdRef.current) return;
-        if (error) { console.error('[SoftPower] Fetch error:', error); setHasError(true); setIsLoading(false); return; }
-        if (data) setService(data as unknown as Service);
-        setIsLoading(false);
-      });
-  }, []);
 
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
 
-  const isValid = service && service.id && service.stripe_price_id;
-  if (hasError || !isValid) {
-    if (!hasError) console.error('[SoftPower] Invalid service data:', service);
+  if (hasError || !service) {
     return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Soft Power" /></div>;
   }
 
@@ -63,9 +37,6 @@ export default function SoftPowerPage() {
       <SEOHead title="Asya'da Eğitim ve Yaşam Paketleri — Plan B Asia" description="Muay Thai, mutfak sanatları, dil programları ve wellness eğitimleri." schemaType="Service" serviceName="Soft Power Eğitim Paketleri" />
       <FocusedNavbar />
       <TrustBar />
-
-      {/* CHECKOUT FIRST */}
-      <ServiceCheckout service={service} />
 
       {/* Hero */}
       <section className="relative min-h-[85vh] flex items-center grain-overlay">
@@ -84,12 +55,17 @@ export default function SoftPowerPage() {
               <span className="block text-accent">Özel Eğitim ve Yasal Kalış Paketleri.</span>
             </h1>
             <p className="text-lg text-background/80 max-w-xl mb-10">Her program kendi fiyatlandırması ve başvuru süreci olan bağımsız bir hizmettir.</p>
-            <button onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">
+            <button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">
               Hemen Başla <ArrowRight className="w-4 h-4" />
             </button>
           </motion.div>
         </div>
       </section>
+
+      {/* CHECKOUT */}
+      <div id="checkout">
+        <ServiceCheckout service={service} />
+      </div>
 
       {/* Courses Grid */}
       <section className="py-20 lg:py-32 bg-background">
@@ -125,7 +101,7 @@ export default function SoftPowerPage() {
         </div>
       </section>
 
-      {/* PlanBForm — repurposed */}
+      {/* PlanBForm */}
       <section className="py-20 bg-background border-t border-border">
         <div className="container max-w-2xl px-6">
           <h2 className="heading-section text-center mb-4">Ücretsiz Uygunluk Kontrolü</h2>
@@ -133,7 +109,7 @@ export default function SoftPowerPage() {
           {formSubmitted ? (
             <div className="text-center py-10 space-y-6">
               <p className="text-lg font-heading text-foreground">Uygunluk ihtimaliniz yüksek. Süreci başlatmak için hemen yukarıdan danışmanlık paketini satın alabilirsiniz.</p>
-              <Button onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Danışmanlık Paketini Satın Al ↑</Button>
+              <Button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Danışmanlık Paketini Satın Al ↑</Button>
             </div>
           ) : (
             <PlanBForm serviceId={service.id} onSubmitSuccess={() => setFormSubmitted(true)} />
@@ -146,7 +122,7 @@ export default function SoftPowerPage() {
           <span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span>
         </div>
       </footer>
-      <StickyMobileCTA onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })} />
+      <StickyMobileCTA onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} />
     </div>
   );
 }
