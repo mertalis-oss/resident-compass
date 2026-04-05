@@ -8,6 +8,11 @@ import SEOHead from '@/components/SEOHead';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import PlanBForm from '@/components/PlanBForm';
 import ServiceCheckout from '@/components/service/ServiceCheckout';
+import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
+import ExpectationOutcome from '@/components/service/ExpectationOutcome';
+import TrustBlock from '@/components/service/TrustBlock';
+import SocialProofMini from '@/components/service/SocialProofMini';
+import FOMOBlock from '@/components/service/FOMOBlock';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
 import { useServiceFetch } from '@/hooks/useServiceFetch';
 import { Button } from '@/components/ui/button';
@@ -26,10 +31,7 @@ export default function ExpeditionsPage() {
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
-
-  if (hasError || !service) {
-    return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Expeditions" /></div>;
-  }
+  if (hasError || !service) return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Expeditions" /></div>;
 
   return (
     <div className="min-h-screen bg-background">
@@ -37,7 +39,7 @@ export default function ExpeditionsPage() {
       <FocusedNavbar />
       <TrustBar />
 
-      {/* Hero */}
+      {/* 1. Hero */}
       <section className="relative min-h-[85vh] flex items-center grain-overlay">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop')` }} />
@@ -49,24 +51,28 @@ export default function ExpeditionsPage() {
               <Mountain className="w-4 h-4 text-accent" />
               <span className="text-sm text-background/90 tracking-wide">Keşif Operasyonları</span>
             </div>
-            <h1 className="heading-display text-background mb-6">
-              Güneydoğu Asya'nın
-              <span className="block text-accent">Keşfedilmemiş Rotaları.</span>
-            </h1>
+            <h1 className="heading-display text-background mb-6">Güneydoğu Asya'nın<span className="block text-accent">Keşfedilmemiş Rotaları.</span></h1>
             <p className="text-lg text-background/80 max-w-xl mb-10">Lisanslı ve rehberli ekspedisyonlar.</p>
-            <button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">
-              Hemen Başla <ArrowRight className="w-4 h-4" />
-            </button>
+            <button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">Hemen Başla <ArrowRight className="w-4 h-4" /></button>
           </motion.div>
         </div>
       </section>
 
-      {/* CHECKOUT */}
-      <div id="checkout">
-        <ServiceCheckout service={service} />
-      </div>
+      {/* 2-4 */}
+      <ExpectationOutcome />
+      <TrustBlock />
+      <SocialProofMini />
 
-      {/* Safety */}
+      {/* 5. FOMO */}
+      <FOMOBlock service={service} />
+
+      {/* 6. CHECKOUT */}
+      <div id="checkout"><ServiceCheckout service={service} /></div>
+
+      {/* 7. WHO IS FOR */}
+      <ServiceWhoIsFor />
+
+      {/* 8. Content — Safety + Grid */}
       <section className="py-6 bg-accent/5 border-y border-accent/20">
         <div className="container mx-auto px-6 lg:px-12 flex items-center justify-center gap-3">
           <Shield className="w-5 h-5 text-accent flex-shrink-0" />
@@ -74,7 +80,6 @@ export default function ExpeditionsPage() {
         </div>
       </section>
 
-      {/* Expeditions Grid */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="text-center mb-16"><p className="caption-editorial text-accent mb-4">Rotalar</p><h2 className="heading-section mb-4">Aktif Ekspedisyonlar</h2></div>

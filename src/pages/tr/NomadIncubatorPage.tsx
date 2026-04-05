@@ -8,6 +8,11 @@ import SEOHead from '@/components/SEOHead';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import PlanBForm from '@/components/PlanBForm';
 import ServiceCheckout from '@/components/service/ServiceCheckout';
+import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
+import ExpectationOutcome from '@/components/service/ExpectationOutcome';
+import TrustBlock from '@/components/service/TrustBlock';
+import SocialProofMini from '@/components/service/SocialProofMini';
+import FOMOBlock from '@/components/service/FOMOBlock';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
 import { useServiceFetch } from '@/hooks/useServiceFetch';
 import { Button } from '@/components/ui/button';
@@ -36,10 +41,7 @@ export default function NomadIncubatorPage() {
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
-
-  if (hasError || !service) {
-    return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Nomad Incubator" /></div>;
-  }
+  if (hasError || !service) return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Nomad Incubator" /></div>;
 
   return (
     <div className="min-h-screen bg-background">
@@ -47,7 +49,7 @@ export default function NomadIncubatorPage() {
       <FocusedNavbar />
       <TrustBar />
 
-      {/* Hero */}
+      {/* 1. Hero */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-foreground" />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `linear-gradient(to right, hsl(var(--accent)) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--accent)) 1px, transparent 1px)`, backgroundSize: '60px 60px' }} />
@@ -73,12 +75,21 @@ export default function NomadIncubatorPage() {
         </div>
       </section>
 
-      {/* CHECKOUT */}
-      <div id="checkout">
-        <ServiceCheckout service={service} />
-      </div>
+      {/* 2-4 */}
+      <ExpectationOutcome />
+      <TrustBlock />
+      <SocialProofMini />
 
-      {/* 360° Life Setup */}
+      {/* 5. FOMO */}
+      <FOMOBlock service={service} />
+
+      {/* 6. CHECKOUT */}
+      <div id="checkout"><ServiceCheckout service={service} /></div>
+
+      {/* 7. WHO IS FOR */}
+      <ServiceWhoIsFor />
+
+      {/* 8. Content — 360° Life Setup */}
       <section className="py-20 lg:py-28 bg-card border-b border-border">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">

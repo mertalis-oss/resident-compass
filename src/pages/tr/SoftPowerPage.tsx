@@ -8,6 +8,11 @@ import SEOHead from '@/components/SEOHead';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import PlanBForm from '@/components/PlanBForm';
 import ServiceCheckout from '@/components/service/ServiceCheckout';
+import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
+import ExpectationOutcome from '@/components/service/ExpectationOutcome';
+import TrustBlock from '@/components/service/TrustBlock';
+import SocialProofMini from '@/components/service/SocialProofMini';
+import FOMOBlock from '@/components/service/FOMOBlock';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
 import { useServiceFetch } from '@/hooks/useServiceFetch';
 import { Button } from '@/components/ui/button';
@@ -15,10 +20,10 @@ import { Button } from '@/components/ui/button';
 const SOFT_POWER_SLUG = 'muay-thai';
 
 const courses = [
-  { icon: Shield, title: 'Muay Thai Eğitim Programı', duration: '1-6 Ay', visa: 'ED Visa / DTV Visa', transition: 'Eğitim vizesinden oturma iznine geçiş imkânı', desc: "Tayland'ın en köklü kamplarında profesyonel eğitim. Vize süreci dahil.", slug: 'muay-thai-training' },
-  { icon: Utensils, title: 'Culinary Arts — Mutfak Sanatları', duration: '2 Hafta - 3 Ay', visa: 'ED Visa', transition: 'Sertifika sonrası iş vizesine geçiş danışmanlığı', desc: 'Thai mutfağı ve Güneydoğu Asya gastronomi programları. Uluslararası sertifika.', slug: 'culinary-arts' },
-  { icon: Languages, title: 'Dil Programları (Thai / İngilizce)', duration: '3-12 Ay', visa: 'ED Visa', transition: 'Uzun süreli kalış ve yerel entegrasyon', desc: 'Akredite dil okullarında yoğun program. Vize uzatma desteği dahil.', slug: 'language-programs' },
-  { icon: Heart, title: 'Thai Massage & Wellness Sertifikası', duration: '2-8 Hafta', visa: 'DTV Visa / Tourist + Extension', transition: 'Wellness sektöründe kariyer geçişi', desc: 'Wat Pho akredite masaj ve wellness eğitimi. Uluslararası geçerli sertifika.', slug: 'thai-massage-wellness' },
+  { icon: Shield, title: 'Muay Thai Eğitim Programı', duration: '1-6 Ay', visa: 'ED Visa / DTV Visa', transition: 'Eğitim vizesinden oturma iznine geçiş imkânı', desc: "Tayland'ın en köklü kamplarında profesyonel eğitim. Vize süreci dahil." },
+  { icon: Utensils, title: 'Culinary Arts — Mutfak Sanatları', duration: '2 Hafta - 3 Ay', visa: 'ED Visa', transition: 'Sertifika sonrası iş vizesine geçiş danışmanlığı', desc: 'Thai mutfağı ve Güneydoğu Asya gastronomi programları. Uluslararası sertifika.' },
+  { icon: Languages, title: 'Dil Programları (Thai / İngilizce)', duration: '3-12 Ay', visa: 'ED Visa', transition: 'Uzun süreli kalış ve yerel entegrasyon', desc: 'Akredite dil okullarında yoğun program. Vize uzatma desteği dahil.' },
+  { icon: Heart, title: 'Thai Massage & Wellness Sertifikası', duration: '2-8 Hafta', visa: 'DTV Visa / Tourist + Extension', transition: 'Wellness sektöründe kariyer geçişi', desc: 'Wat Pho akredite masaj ve wellness eğitimi. Uluslararası geçerli sertifika.' },
 ];
 
 export default function SoftPowerPage() {
@@ -27,10 +32,7 @@ export default function SoftPowerPage() {
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
-
-  if (hasError || !service) {
-    return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Soft Power" /></div>;
-  }
+  if (hasError || !service) return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Soft Power" /></div>;
 
   return (
     <div className="min-h-screen bg-background">
@@ -38,7 +40,7 @@ export default function SoftPowerPage() {
       <FocusedNavbar />
       <TrustBar />
 
-      {/* Hero */}
+      {/* 1. Hero */}
       <section className="relative min-h-[85vh] flex items-center grain-overlay">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2020&auto=format&fit=crop')` }} />
@@ -50,24 +52,28 @@ export default function SoftPowerPage() {
               <BookOpen className="w-4 h-4 text-accent" />
               <span className="text-sm text-background/90 tracking-wide">Eğitim & Yaşam Paketleri</span>
             </div>
-            <h1 className="heading-display text-background mb-6">
-              Asya'da Tutkunuzu Yaşayın:
-              <span className="block text-accent">Özel Eğitim ve Yasal Kalış Paketleri.</span>
-            </h1>
+            <h1 className="heading-display text-background mb-6">Asya'da Tutkunuzu Yaşayın:<span className="block text-accent">Özel Eğitim ve Yasal Kalış Paketleri.</span></h1>
             <p className="text-lg text-background/80 max-w-xl mb-10">Her program kendi fiyatlandırması ve başvuru süreci olan bağımsız bir hizmettir.</p>
-            <button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">
-              Hemen Başla <ArrowRight className="w-4 h-4" />
-            </button>
+            <button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">Hemen Başla <ArrowRight className="w-4 h-4" /></button>
           </motion.div>
         </div>
       </section>
 
-      {/* CHECKOUT */}
-      <div id="checkout">
-        <ServiceCheckout service={service} />
-      </div>
+      {/* 2-4. Expectation → Trust → Social Proof */}
+      <ExpectationOutcome />
+      <TrustBlock />
+      <SocialProofMini />
 
-      {/* Courses Grid */}
+      {/* 5. FOMO & Price */}
+      <FOMOBlock service={service} />
+
+      {/* 6. CHECKOUT */}
+      <div id="checkout"><ServiceCheckout service={service} /></div>
+
+      {/* 7. WHO IS FOR */}
+      <ServiceWhoIsFor />
+
+      {/* 8. Content — Courses Grid */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
@@ -118,9 +124,7 @@ export default function SoftPowerPage() {
       </section>
 
       <footer className="py-16 bg-corporate-navy border-t border-holistic/10">
-        <div className="container max-w-5xl px-6 text-center">
-          <span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span>
-        </div>
+        <div className="container max-w-5xl px-6 text-center"><span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span></div>
       </footer>
       <StickyMobileCTA onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} />
     </div>

@@ -8,6 +8,11 @@ import SEOHead from '@/components/SEOHead';
 import PlanBForm from '@/components/PlanBForm';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import ServiceCheckout from '@/components/service/ServiceCheckout';
+import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
+import ExpectationOutcome from '@/components/service/ExpectationOutcome';
+import TrustBlock from '@/components/service/TrustBlock';
+import SocialProofMini from '@/components/service/SocialProofMini';
+import FOMOBlock from '@/components/service/FOMOBlock';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
 import { useServiceFetch } from '@/hooks/useServiceFetch';
 import { trackPostHogEvent } from '@/lib/posthog';
@@ -35,10 +40,7 @@ export default function MICEPage() {
   };
 
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
-
-  if (hasError || !service) {
-    return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="MICE" /></div>;
-  }
+  if (hasError || !service) return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="MICE" /></div>;
 
   return (
     <div className="min-h-screen bg-background">
@@ -46,7 +48,7 @@ export default function MICEPage() {
       <FocusedNavbar />
       <TrustBar />
 
-      {/* Hero */}
+      {/* 1. Hero */}
       <section className="relative min-h-[85vh] flex items-center grain-overlay">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop')` }} />
@@ -58,24 +60,28 @@ export default function MICEPage() {
               <Building2 className="w-4 h-4 text-accent" />
               <span className="text-sm text-background/90 tracking-wide">Kurumsal Çözümler</span>
             </div>
-            <h1 className="heading-display text-background mb-6">
-              Kurumsal Etkinliklerinizi
-              <span className="block text-accent">Asya'da Planlayalım.</span>
-            </h1>
+            <h1 className="heading-display text-background mb-6">Kurumsal Etkinliklerinizi<span className="block text-accent">Asya'da Planlayalım.</span></h1>
             <p className="text-lg text-background/80 max-w-xl mb-10">Konferans, team-building, incentive turları. Uçtan uca organizasyon.</p>
-            <button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" /> Hemen Başla
-            </button>
+            <button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2"><MessageCircle className="w-4 h-4" /> Hemen Başla</button>
           </motion.div>
         </div>
       </section>
 
-      {/* CHECKOUT */}
-      <div id="checkout">
-        <ServiceCheckout service={service} />
-      </div>
+      {/* 2-4 */}
+      <ExpectationOutcome />
+      <TrustBlock />
+      <SocialProofMini />
 
-      {/* Features */}
+      {/* 5. FOMO */}
+      <FOMOBlock service={service} />
+
+      {/* 6. CHECKOUT */}
+      <div id="checkout"><ServiceCheckout service={service} /></div>
+
+      {/* 7. WHO IS FOR */}
+      <ServiceWhoIsFor />
+
+      {/* 8. Content — Features */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="text-center mb-16"><p className="caption-editorial text-accent mb-4">Hizmetler</p><h2 className="heading-section mb-4">Uçtan Uca Kurumsal Çözümler</h2></div>
