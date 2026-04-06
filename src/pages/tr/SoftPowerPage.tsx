@@ -124,6 +124,15 @@ export default function SoftPowerPage() {
       {/* 6. BUNDLE SELECTOR */}
       <BundleSelector bundles={bundles} selected={selectedBundle} onSelect={setSelectedBundle} />
 
+      {/* Badge: Boosts Visa Success */}
+      {selectedBundle && (
+        <div className="flex justify-center mb-2">
+          <span className="inline-flex items-center gap-1.5 bg-accent/10 border border-accent/30 text-accent text-[10px] tracking-[0.2em] uppercase font-medium px-3 py-1 rounded-full">
+            {t('badge.boostsVisa', { defaultValue: 'Vize Şansını Artırır' })}
+          </span>
+        </div>
+      )}
+
       {/* 7. CHECKOUT (id="checkout") — ONLY renders if bundle selected */}
       <div id="checkout">
         {selectedBundle ? (
