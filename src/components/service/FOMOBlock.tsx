@@ -55,6 +55,27 @@ export default function FOMOBlock({ service }: Props) {
             {isTR ? '24 saat içinde başlıyoruz.' : 'We start within 24 hours.'}
           </span>
         </div>
+
+        {/* Micro-Scarcity */}
+        <p className="text-xs text-muted-foreground text-center italic">
+          {isTR
+            ? 'Sınırlı danışmanlık kapasitesi nedeniyle erken başvuru önerilir.'
+            : 'Early application is recommended due to limited consulting capacity.'}
+        </p>
+
+        {/* Outcome Headline & Time-to-Value */}
+        <div className="text-center space-y-1 pt-2">
+          <p className="text-sm font-heading font-semibold text-foreground">
+            {isTR
+              ? "Asya'da yasal kalış ve yeni yaşam planınızı bugün netleştirin."
+              : 'Finalize your legal stay and personalized Asia plan today.'}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {isTR
+              ? 'Satın alma sonrası süreç aynı gün başlar.'
+              : 'The process begins the same day after purchase.'}
+          </p>
+        </div>
       </div>
     </section>
   );

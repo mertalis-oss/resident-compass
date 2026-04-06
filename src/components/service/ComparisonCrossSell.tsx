@@ -130,7 +130,7 @@ export default function ComparisonCrossSell({ currentSlug }: Props) {
                     {card.description}
                   </p>
                   <span className="inline-flex items-center gap-1 text-xs text-accent uppercase tracking-wider">
-                    {t('crossSell.compare', { defaultValue: scope === 'tr' ? 'Bu seçenekle karşılaştır' : 'Compare with this option' })}
+                    {t('crossSell.compare', { defaultValue: scope === 'tr' ? 'Bu seçenekle yaşam planını karşılaştır' : 'Compare your life plan with this option' })}
                     <ArrowRight className="h-3 w-3" />
                   </span>
                 </Link>
