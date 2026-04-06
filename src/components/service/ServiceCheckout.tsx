@@ -315,18 +315,25 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
           {t('checkout.postCtaReassure', { defaultValue: 'İlk adımınız ödeme sonrası hemen başlatılır. Kart bilgileriniz sistemimizde tutulmaz.' })}
         </p>
 
+        {/* Risk Reversal & Micro-Trust */}
+        <p className="text-xs text-muted-foreground text-center mt-4">
+          {scope === 'tr'
+            ? 'Bu bir danışmanlık hizmetidir. Gizli ücret yok. Güvenli ödeme sonrası anında e-posta onayı.'
+            : 'This is a consulting service. No hidden fees. Instant email confirmation upon secure payment.'}
+        </p>
+
         {/* Friction Breakers */}
-        <div className="flex flex-wrap justify-center gap-3 mt-6 text-xs text-muted-foreground">
-          <span>✓ {t('checkout.frictionNoUpsells', { defaultValue: scope === 'tr' ? 'Gereksiz ek satış yok' : 'No unnecessary upsells' })}</span>
-          <span>✓ {t('checkout.frictionHonest', { defaultValue: scope === 'tr' ? 'Net ve dürüst rehberlik' : 'Clear, honest guidance' })}</span>
-          <span>✓ {t('checkout.frictionFit', { defaultValue: scope === 'tr' ? 'Uygun değilse söyleriz' : 'If not a fit, we tell you upfront' })}</span>
+        <div className="flex flex-wrap justify-center gap-3 mt-4 text-xs text-muted-foreground">
+          <span>✓ {scope === 'tr' ? 'Gereksiz ek satış yok' : 'No unnecessary upsells'}</span>
+          <span>✓ {scope === 'tr' ? 'Net ve dürüst rehberlik' : 'Clear, honest guidance'}</span>
+          <span>✓ {scope === 'tr' ? 'Uygun değilse söyleriz' : 'If not a fit, we tell you upfront'}</span>
         </div>
 
         {/* Legal Disclaimer */}
         <p className="text-[10px] text-muted-foreground/60 text-center mt-4 max-w-lg mx-auto leading-relaxed">
-          {t('checkout.legalDisclaimer', { defaultValue: scope === 'tr'
+          {scope === 'tr'
             ? 'Bu bir dijital danışmanlık hizmetidir. Fiziksel ürün gönderimi yapılmaz. Devam ederek kişiselleştirilmiş danışmanlık hizmeti almayı kabul etmiş olursunuz.'
-            : 'This is a digital consulting service. No physical product will be shipped. By proceeding, you agree to receive a personalized advisory service.' })}
+            : 'This is a digital consulting service. No physical product will be shipped. By proceeding, you agree to receive a personalized advisory service.'}
         </p>
 
         {/* High-Ticket Upscale Link */}

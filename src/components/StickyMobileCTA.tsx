@@ -74,7 +74,7 @@ export default function StickyMobileCTA({ id, onClick, disabled, loading, classN
       >
         {loading
           ? t('checkout.processing', { defaultValue: 'İşleniyor...' })
-          : t('stickyCta.label', { defaultValue: 'Başvurumu Güvenceye Al' })}
+          : t('stickyCta.label', { defaultValue: scope === 'tr' ? 'Asya Planımı Başlat' : 'Start My Asia Plan' })}
       </Button>
     </div>
   );

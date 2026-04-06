@@ -564,6 +564,9 @@ export default function MobilityAssessment() {
                       <p className="text-xs text-muted-foreground font-body">
                         {t('quiz.secureCheckout', { defaultValue: 'Secure checkout. Instant confirmation.' })}
                       </p>
+                      <p className="text-xs text-accent/80 font-body font-medium">
+                        {t('quiz.resultsPersonalized', { defaultValue: 'Sonuçlarınız kişiselleştirilmiştir.' })}
+                      </p>
 
                       {/* Alternative (overchoice prevention) */}
                       <div className="pt-6 opacity-60 hover:opacity-100 transition-opacity">

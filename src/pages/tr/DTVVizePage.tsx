@@ -103,8 +103,15 @@ export default function DTVVizePage() {
       {/* 4. SOCIAL PROOF */}
       <SocialProofMini />
 
-      {/* 5. FOMO & PRICE MICROCOPY */}
+      {/* 5. FOMO & PRICE MICROCOPY + Scarcity + Outcome */}
       <FOMOBlock service={service} />
+
+      {/* Badge: Most Popular */}
+      <div className="flex justify-center -mt-4 mb-2">
+        <span className="inline-flex items-center gap-1.5 bg-accent/10 border border-accent/30 text-accent text-[10px] tracking-[0.2em] uppercase font-medium px-3 py-1 rounded-full">
+          {t('badge.mostPopular', { defaultValue: 'En Çok Tercih Edilen' })}
+        </span>
+      </div>
 
       {/* 6. CHECKOUT (id="checkout") */}
       <div id="checkout">
