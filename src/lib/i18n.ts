@@ -57,7 +57,7 @@ const checkoutKeys = {
 
 const successKeys = {
   verifying: 'Verifying your secure payment...',
-  pageTitle: 'Order Confirmed — Plan B Asia',
+  pageTitle: 'Order Confirmed — Plan B Asya',
   title: 'Order Successfully Received',
   dopamine: 'You just removed a major uncertainty from your path.',
   nextStepsLabel: 'What happens now',
@@ -239,7 +239,7 @@ const resources = {
         exploreCta: 'Explore',
         live: { title: 'Live', subtitle: 'Residency', desc: 'Start your new life with a 5-year Thailand DTV visa. Full freedom, limitless opportunity.' },
         explore: { title: 'Explore', subtitle: 'Adventures', desc: 'Vietnam motor tours, hidden beaches, and adrenaline-fuelled expeditions await.' },
-        heal: { title: 'Heal', subtitle: 'Wellness', desc: 'Breath work, wellness retreats, and the healing energy of Koh Phangan.' },
+        heal: { title: 'Heal', subtitle: 'Wellness', desc: 'Breath work, wellness retreats, and the healing energy of Asia.' },
       },
       trustSignals: {
         stats: [
@@ -264,13 +264,13 @@ const resources = {
       },
       founder: {
         quote: 'Mobility is no longer a lifestyle choice. It is a strategic necessity.',
-        attribution: '— Plan B Asia Advisory',
+        attribution: '— Plan B Asya Advisory',
       },
       founderLetter: {
         title: 'A Note from the Founder',
         text: 'Mobility is no longer a lifestyle choice. It is a strategic necessity. We design structured pathways for global citizens seeking stability, renewal, and opportunity.',
         signature: 'Serkan',
-        role: 'Founder, Plan B Asia',
+        role: 'Founder, Plan B Asya',
       },
       network: { title: 'Our Trusted Network', immigration: 'Immigration Lawyers', tax: 'Tax Advisors', medical: 'Private Medical Clinics', resorts: 'Luxury Resorts' },
       services: { title: 'Strategic Verticals', subtitle: 'Tailored programs for founders, families, and global citizens.' },
