@@ -15,10 +15,8 @@ import FOMOBlock from '@/components/service/FOMOBlock';
 import PlanBForm from '@/components/PlanBForm';
 import ComparisonCrossSell from '@/components/service/ComparisonCrossSell';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
-import { useServiceFetch } from '@/hooks/useServiceFetch';
+import { useServicesList } from '@/hooks/useServicesList';
 import { Button } from '@/components/ui/button';
-
-const DTV_SERVICE_SLUG = 'dtv-vize';
 
 const processSteps = [
   { step: 1, titleKey: 'dtvVize.proc1Title', descKey: 'dtvVize.proc1Desc' },
@@ -40,21 +38,22 @@ const formatPrice = (price: number, currency: string) =>
 
 export default function DTVVizePage() {
   const { t } = useTranslation();
-  const { service, isLoading, hasError } = useServiceFetch(DTV_SERVICE_SLUG);
+  const { services, isLoading, hasError } = useServicesList('residency', 'tr');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   if (isLoading) {
     return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
   }
 
-  if (hasError || !service) {
+  if (hasError || services.length === 0) {
     return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="DTV Vize" /></div>;
   }
 
-  {/* STRICT LAYOUT: Hero → Expectation → Trust → Social Proof → FOMO/Price → Checkout → WhoIsFor → Content → FAQ → PlanBForm */}
+  const anchorService = services[0];
+
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title={t('dtvVize.seoTitle', { defaultValue: 'Tayland DTV Vizesi — Plan B Asia' })} description={t('dtvVize.seoDesc', { defaultValue: "Tayland'da 5 yıl yaşama ve çalışma özgürlüğü." })} />
+      <SEOHead title={t('dtvVize.seoTitle', { defaultValue: 'Tayland DTV Vizesi — Plan B Asya' })} description={t('dtvVize.seoDesc', { defaultValue: "Tayland'da 5 yıl yaşama ve çalışma özgürlüğü." })} />
       <FocusedNavbar />
       <TrustBar />
 
@@ -76,8 +75,7 @@ export default function DTVVizePage() {
             </h1>
             <p className="text-lg text-background/80 max-w-xl mb-8">{t('dtvVize.heroDesc', { defaultValue: 'Dijital göçebeler için tasarlanan DTV vizesi ile 180 gün kalış hakkı, sınırsız giriş-çıkış ve 5 yıllık geçerlilik.' })}</p>
             <div className="mb-8">
-              <p className="font-heading text-3xl md:text-4xl text-accent mb-2">{formatPrice(service.price, service.currency || 'USD')}</p>
-              <p className="text-sm text-background/60">{t('dtvVize.priceNote', { defaultValue: '45 dakikalık stratejik danışmanlık görüşmesi' })}</p>
+              <p className="text-sm text-background/60">{t('dtvVize.priceNote', { defaultValue: 'Danışmanlık paketleri aşağıda listelenmektedir' })}</p>
             </div>
             <div className="flex items-center gap-3 mb-10">
               <Clock className="w-5 h-5 text-accent" />
@@ -103,19 +101,24 @@ export default function DTVVizePage() {
       {/* 4. SOCIAL PROOF */}
       <SocialProofMini />
 
-      {/* 5. FOMO & PRICE MICROCOPY + Scarcity + Outcome */}
-      <FOMOBlock service={service} />
+      {/* 5. FOMO & PRICE MICROCOPY */}
+      <FOMOBlock service={anchorService} />
 
-      {/* Badge: Most Popular */}
-      <div className="flex justify-center -mt-4 mb-2">
-        <span className="inline-flex items-center gap-1.5 bg-accent/10 border border-accent/30 text-accent text-[10px] tracking-[0.2em] uppercase font-medium px-3 py-1 rounded-full">
-          {t('badge.mostPopular', { defaultValue: 'En Çok Tercih Edilen' })}
-        </span>
-      </div>
-
-      {/* 6. CHECKOUT (id="checkout") */}
+      {/* 6. CHECKOUT GRID (id="checkout") — ALL residency services */}
       <div id="checkout">
-        <ServiceCheckout service={service} />
+        <section className="section-editorial border-t border-border py-16">
+          <div className="container mx-auto px-6 lg:px-12">
+            <div className="text-center mb-10">
+              <p className="caption-editorial text-accent mb-2">{t('dtvVize.packagesLabel', { defaultValue: 'Danışmanlık Paketleri' })}</p>
+              <h2 className="heading-section">{t('dtvVize.packagesTitle', { defaultValue: 'İhtiyacınıza Uygun Paketi Seçin' })}</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+              {services.map((s) => (
+                <ServiceCheckout key={s.id} service={s} />
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
 
       {/* 7. TRUST STATS */}
@@ -140,7 +143,7 @@ export default function DTVVizePage() {
       {/* 8. WHO IS THIS FOR */}
       <ServiceWhoIsFor />
 
-      {/* 9. PROCESS (Content) */}
+      {/* 9. PROCESS */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
@@ -197,7 +200,7 @@ export default function DTVVizePage() {
               <Button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Danışmanlık Paketini Satın Al ↑</Button>
             </div>
           ) : (
-            <PlanBForm serviceId={service.id} onSubmitSuccess={() => setFormSubmitted(true)} />
+            <PlanBForm serviceId={anchorService.id} onSubmitSuccess={() => setFormSubmitted(true)} />
           )}
         </div>
       </section>
