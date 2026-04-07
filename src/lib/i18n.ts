@@ -363,7 +363,7 @@ const resources = {
       nav: { residency: 'Oturma İzni', wellness: 'Sağlık', corporate: 'Kurumsal', expeditions: 'Keşifler', getStarted: 'Başlayın' },
       trustBar: { secure: 'Güvenli süreç', noHidden: 'Gizli ücret yok', realHuman: 'Gerçek insan desteği' },
       hero: {
-        title: 'Plan B Asia',
+        title: 'Plan B Asya',
         subtitle: 'Sadece Bir Seyahat Değil, Yeni Bir Başlangıç.',
         hook: 'Global bir yaşam kurmak ve sınırları aşmak için en güvenli, yasal ve stratejik yol haritanızı çıkarıyoruz.',
         cta: 'Stratejik Plana Başlayın',
@@ -385,9 +385,9 @@ const resources = {
         label: 'Kapılar',
         headline: 'Hangi yolculuğa hazırsın?',
         exploreCta: 'Keşfet',
-        live: { title: 'Yaşa', subtitle: 'Oturma İzni', desc: '5 yıllık Tayland DTV vizesiyle yeni hayatına başla.' },
-        explore: { title: 'Keşfet', subtitle: 'Maceralar', desc: 'Vietnam motor turları, gizli plajlar ve adrenalin dolu maceralar.' },
-        heal: { title: 'Yenilen', subtitle: 'Sağlık', desc: 'Breath work, wellness retreat\'leri ve Koh Phangan\'ın şifa enerjisi.' },
+        live: { title: 'Yaşa', subtitle: 'Oturma İzni', desc: 'Vize seçeneklerini değerlendir. Yeni yaşamına hemen başla.' },
+        explore: { title: 'Keşfet', subtitle: 'Maceralar', desc: 'Motor turları, gizli plajlar ve adrenalin dolu maceralar.' },
+        heal: { title: 'Yenilen', subtitle: 'Sağlık', desc: 'Breath work, wellness retreat\'leri ve Asya\'nın şifa enerjisi.' },
       },
       trustSignals: {
         stats: [
