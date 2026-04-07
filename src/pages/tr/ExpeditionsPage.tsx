@@ -15,10 +15,8 @@ import TrustBlock from '@/components/service/TrustBlock';
 import SocialProofMini from '@/components/service/SocialProofMini';
 import FOMOBlock from '@/components/service/FOMOBlock';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
-import { useServiceFetch } from '@/hooks/useServiceFetch';
+import { useServicesList } from '@/hooks/useServicesList';
 import { Button } from '@/components/ui/button';
-
-const EXPEDITIONS_SLUG = 'expedition-jungle';
 
 const expeditions = [
   { title: 'Ha Giang Motor Expedition', location: 'Vietnam — Ha Giang', duration: '4-7 Gün', desc: "Vietnam'ın en dramatik dağ yollarında rehberli motosiklet ekspedisyonu.", highlight: 'En Popüler' },
@@ -28,15 +26,16 @@ const expeditions = [
 
 export default function ExpeditionsPage() {
   const { t } = useTranslation();
-  const { service, isLoading, hasError } = useServiceFetch(EXPEDITIONS_SLUG);
+  const { services, isLoading, hasError } = useServicesList('expeditions', 'tr');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
-  if (hasError || !service) return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Expeditions" /></div>;
+
+  const hasServices = services.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title="Keşif Ekspedisyonları — Plan B Asia" description="Güneydoğu Asya'da rehberli motor ve keşif ekspedisyonları." schemaType="Service" serviceName="Keşif Ekspedisyonları" />
+      <SEOHead title="Keşif Ekspedisyonları — Plan B Asya" description="Güneydoğu Asya'da rehberli motor ve keşif ekspedisyonları." schemaType="Service" serviceName="Keşif Ekspedisyonları" />
       <FocusedNavbar />
       <TrustBar />
 
@@ -64,11 +63,29 @@ export default function ExpeditionsPage() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5. FOMO */}
-      <FOMOBlock service={service} />
+      {/* 5-6 FOMO + CHECKOUT — only if services exist */}
+      {hasServices && (
+        <>
+          <FOMOBlock service={services[0]} />
+          <div id="checkout">
+            <section className="section-editorial border-t border-border py-16">
+              <div className="container mx-auto px-6 lg:px-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                  {services.map((s) => (
+                    <ServiceCheckout key={s.id} service={s} />
+                  ))}
+                </div>
+              </div>
+            </section>
+          </div>
+        </>
+      )}
 
-      {/* 6. CHECKOUT */}
-      <div id="checkout"><ServiceCheckout service={service} /></div>
+      {!hasServices && (
+        <div id="checkout">
+          <ServiceUpdateFallback context="Expeditions" />
+        </div>
+      )}
 
       {/* 7. WHO IS FOR */}
       <ServiceWhoIsFor />
@@ -105,11 +122,10 @@ export default function ExpeditionsPage() {
           <h2 className="heading-section text-center mb-4">Ücretsiz Uygunluk Kontrolü</h2>
           {formSubmitted ? (
             <div className="text-center py-10 space-y-6">
-              <p className="text-lg font-heading text-foreground">Uygunluk ihtimaliniz yüksek. Süreci başlatmak için hemen yukarıdan danışmanlık paketini satın alabilirsiniz.</p>
-              <Button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Danışmanlık Paketini Satın Al ↑</Button>
+              <p className="text-lg font-heading text-foreground">Talebiniz alınmıştır. En kısa sürede sizinle iletişime geçeceğiz.</p>
             </div>
           ) : (
-            <PlanBForm serviceId={service.id} onSubmitSuccess={() => setFormSubmitted(true)} />
+            <PlanBForm serviceId={services[0]?.id} onSubmitSuccess={() => setFormSubmitted(true)} />
           )}
         </div>
       </section>

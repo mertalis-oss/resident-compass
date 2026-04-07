@@ -15,12 +15,10 @@ import TrustBlock from '@/components/service/TrustBlock';
 import SocialProofMini from '@/components/service/SocialProofMini';
 import FOMOBlock from '@/components/service/FOMOBlock';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
-import { useServiceFetch } from '@/hooks/useServiceFetch';
+import { useServicesList } from '@/hooks/useServicesList';
 import { Button } from '@/components/ui/button';
 
-const NOMAD_SLUG = 'nomad-incubator';
-
-const services = [
+const serviceItems = [
   { icon: Building2, titleKey: 'nomad.s1Title', subtitleKey: 'nomad.s1Sub', descKey: 'nomad.s1Desc', features: ['Estonya e-Residency başvurusu', 'ABD Wyoming/Delaware LLC', 'Singapur Pte. Ltd.', 'Dubai Serbest Bölge şirketi'] },
   { icon: Calculator, titleKey: 'nomad.s2Title', subtitleKey: 'nomad.s2Sub', descKey: 'nomad.s2Desc', features: ['Vergi mukimliği analizi', 'Çifte vergilendirme önleme', 'Kripto & yatırım geliri planlaması', 'Türkiye çıkış stratejisi'] },
   { icon: Globe, titleKey: 'nomad.s3Title', subtitleKey: 'nomad.s3Sub', descKey: 'nomad.s3Desc', features: ['Karayip CBI programları', 'Portekiz/İspanya Golden Visa', 'Soy bağı (İtalya, İrlanda)', 'Tayland Elite Visa'] },
@@ -38,15 +36,17 @@ const fullLifeItems = [
 
 export default function NomadIncubatorPage() {
   const { t } = useTranslation();
-  const { service, isLoading, hasError } = useServiceFetch(NOMAD_SLUG);
+  // Nomad Incubator service is inactive, but we can show residency services as related
+  const { services, isLoading, hasError } = useServicesList('residency', 'tr');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
-  if (hasError || !service) return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Nomad Incubator" /></div>;
+
+  const hasServices = services.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title={t('nomad.seoTitle', { defaultValue: 'Dijital Göçebe Kuluçka — Plan B Asia' })} description={t('nomad.seoDesc', { defaultValue: 'Şirket kurulumu, vergi optimizasyonu, ikinci pasaport.' })} />
+      <SEOHead title={t('nomad.seoTitle', { defaultValue: 'Dijital Göçebe Kuluçka — Plan B Asya' })} description={t('nomad.seoDesc', { defaultValue: 'Şirket kurulumu, vergi optimizasyonu, ikinci pasaport.' })} />
       <FocusedNavbar />
       <TrustBar />
 
@@ -81,11 +81,30 @@ export default function NomadIncubatorPage() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5. FOMO */}
-      <FOMOBlock service={service} />
+      {/* 5-6. FOMO + CHECKOUT */}
+      {hasServices && (
+        <>
+          <FOMOBlock service={services[0]} />
+          <div id="checkout">
+            <section className="section-editorial border-t border-border py-16">
+              <div className="container mx-auto px-6 lg:px-12">
+                <div className="text-center mb-10">
+                  <p className="caption-editorial text-accent mb-2">{t('nomad.relatedPackages', { defaultValue: 'İlgili Danışmanlık Paketleri' })}</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                  {services.map((s) => (
+                    <ServiceCheckout key={s.id} service={s} />
+                  ))}
+                </div>
+              </div>
+            </section>
+          </div>
+        </>
+      )}
 
-      {/* 6. CHECKOUT */}
-      <div id="checkout"><ServiceCheckout service={service} /></div>
+      {!hasServices && (
+        <div id="checkout"><ServiceUpdateFallback context="Nomad Incubator" /></div>
+      )}
 
       {/* 7. WHO IS FOR */}
       <ServiceWhoIsFor />
@@ -114,7 +133,7 @@ export default function NomadIncubatorPage() {
         <div className="container mx-auto px-6 lg:px-12">
           <div className="text-center mb-16"><p className="caption-editorial text-accent mb-4">{t('nomad.servicesLabel', { defaultValue: 'Hizmetler' })}</p><h2 className="heading-section mb-4">{t('nomad.servicesTitle', { defaultValue: 'Kuluçka Programı' })}</h2></div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {services.map((svc, i) => (
+            {serviceItems.map((svc, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
                 className="group bg-card p-8 lg:p-10 border border-border hover:border-accent/30 transition-all duration-500">
                 <div className="flex items-start gap-4 mb-6">
@@ -143,7 +162,7 @@ export default function NomadIncubatorPage() {
               <Button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Danışmanlık Paketini Satın Al ↑</Button>
             </div>
           ) : (
-            <PlanBForm serviceId={service.id} onSubmitSuccess={() => setFormSubmitted(true)} />
+            <PlanBForm serviceId={services[0]?.id} onSubmitSuccess={() => setFormSubmitted(true)} />
           )}
         </div>
       </section>

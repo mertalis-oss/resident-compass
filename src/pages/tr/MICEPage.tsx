@@ -15,12 +15,10 @@ import TrustBlock from '@/components/service/TrustBlock';
 import SocialProofMini from '@/components/service/SocialProofMini';
 import FOMOBlock from '@/components/service/FOMOBlock';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
-import { useServiceFetch } from '@/hooks/useServiceFetch';
+import { useServicesList } from '@/hooks/useServicesList';
 import { trackPostHogEvent } from '@/lib/posthog';
 import { buildWhatsAppUrl } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
-
-const MICE_SLUG = 'mice-corporate';
 
 const features = [
   { icon: Calendar, title: 'Etkinlik Planlama', desc: "A'dan Z'ye kurumsal etkinlik organizasyonu." },
@@ -31,7 +29,7 @@ const features = [
 
 export default function MICEPage() {
   const { t } = useTranslation();
-  const { service, isLoading, hasError } = useServiceFetch(MICE_SLUG);
+  const { services, isLoading, hasError } = useServicesList('corporate-retreats', 'tr');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const whatsappUrl = buildWhatsAppUrl('Sayfa: MICE | Domain: ' + (typeof window !== 'undefined' ? window.location.hostname : '') + ' | Merhaba, etkinliğimizi planlamak istiyoruz.');
@@ -41,11 +39,13 @@ export default function MICEPage() {
   };
 
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
-  if (hasError || !service) return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="MICE" /></div>;
+
+  // MICE services may be inactive — show lead-gen fallback with WhatsApp
+  const hasServices = services.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title="Kurumsal Etkinlik & MICE — Plan B Asia" description="Tayland'da kurumsal etkinlik, konferans ve team-building." schemaType="Service" serviceName="MICE & Kurumsal Etkinlik" />
+      <SEOHead title="Kurumsal Etkinlik & MICE — Plan B Asya" description="Tayland'da kurumsal etkinlik, konferans ve team-building." schemaType="Service" serviceName="MICE & Kurumsal Etkinlik" />
       <FocusedNavbar />
       <TrustBar />
 
@@ -63,7 +63,7 @@ export default function MICEPage() {
             </div>
             <h1 className="heading-display text-background mb-6">Kurumsal Etkinliklerinizi<span className="block text-accent">Asya'da Planlayalım.</span></h1>
             <p className="text-lg text-background/80 max-w-xl mb-10">Konferans, team-building, incentive turları. Uçtan uca organizasyon.</p>
-            <button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2"><MessageCircle className="w-4 h-4" /> Hemen Başla</button>
+            <button onClick={handleWhatsAppClick} className="btn-luxury-gold inline-flex items-center gap-2"><MessageCircle className="w-4 h-4" /> Hemen Başla</button>
           </motion.div>
         </div>
       </section>
@@ -73,11 +73,23 @@ export default function MICEPage() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5. FOMO */}
-      <FOMOBlock service={service} />
-
-      {/* 6. CHECKOUT */}
-      <div id="checkout"><ServiceCheckout service={service} /></div>
+      {/* 5-6. FOMO + CHECKOUT — only if services exist */}
+      {hasServices && (
+        <>
+          <FOMOBlock service={services[0]} />
+          <div id="checkout">
+            <section className="section-editorial border-t border-border py-16">
+              <div className="container mx-auto px-6 lg:px-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                  {services.map((s) => (
+                    <ServiceCheckout key={s.id} service={s} />
+                  ))}
+                </div>
+              </div>
+            </section>
+          </div>
+        </>
+      )}
 
       {/* 7. WHO IS FOR */}
       <ServiceWhoIsFor />
@@ -105,17 +117,18 @@ export default function MICEPage() {
           <h2 className="heading-section text-center mb-4">Ücretsiz Uygunluk Kontrolü</h2>
           {formSubmitted ? (
             <div className="text-center py-10 space-y-6">
-              <p className="text-lg font-heading text-foreground">Uygunluk ihtimaliniz yüksek. Süreci başlatmak için hemen yukarıdan danışmanlık paketini satın alabilirsiniz.</p>
-              <Button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Danışmanlık Paketini Satın Al ↑</Button>
+              <p className="text-lg font-heading text-foreground">Talebiniz alınmıştır. En kısa sürede sizinle iletişime geçeceğiz.</p>
+              <Button onClick={handleWhatsAppClick} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">WhatsApp ile İletişime Geçin</Button>
             </div>
           ) : (
-            <PlanBForm serviceId={service.id} onSubmitSuccess={() => setFormSubmitted(true)} />
+            <PlanBForm serviceId={services[0]?.id} onSubmitSuccess={() => setFormSubmitted(true)} />
           )}
         </div>
       </section>
 
       {/* Comparison & Cross-Sell */}
       <ComparisonCrossSell currentSlug="mice-corporate" />
+
       {/* WhatsApp CTA */}
       <section className="py-20 lg:py-32 bg-foreground text-background grain-overlay">
         <div className="container mx-auto px-6 lg:px-12 text-center">
@@ -130,7 +143,7 @@ export default function MICEPage() {
       <footer className="py-16 bg-corporate-navy border-t border-holistic/10">
         <div className="container max-w-5xl px-6 text-center"><span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span></div>
       </footer>
-      <StickyMobileCTA onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} />
+      <StickyMobileCTA onClick={handleWhatsAppClick} />
     </div>
   );
 }

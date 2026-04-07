@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { BookOpen, Utensils, Languages, Heart, Shield, ArrowRight, Clock, Loader } from 'lucide-react';
@@ -16,11 +16,8 @@ import SocialProofMini from '@/components/service/SocialProofMini';
 import FOMOBlock from '@/components/service/FOMOBlock';
 import BundleSelector from '@/components/service/BundleSelector';
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
-import { supabase } from '@/integrations/supabase/client';
+import { useServicesList } from '@/hooks/useServicesList';
 import { Button } from '@/components/ui/button';
-import type { Service } from '@/pages/ServicePage';
-
-const BUNDLE_SLUGS = ['thai-language-6m', 'english-language-6m', 'thai-immersion-9m', 'english-mastery-12m'];
 
 const courses = [
   { icon: Shield, title: 'Muay Thai Eğitim Programı', duration: '1-6 Ay', visa: 'ED Visa / DTV Visa', transition: 'Eğitim vizesinden oturma iznine geçiş imkânı', desc: "Tayland'ın en köklü kamplarında profesyonel eğitim. Vize süreci dahil." },
@@ -31,66 +28,16 @@ const courses = [
 
 export default function SoftPowerPage() {
   const { t } = useTranslation();
-  const [bundles, setBundles] = useState<Service[]>([]);
-  const [selectedBundle, setSelectedBundle] = useState<Service | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const { services: bundles, isLoading, hasError } = useServicesList('soft-power', 'tr');
+  const [selectedBundle, setSelectedBundle] = useState<any>(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const fetchIdRef = useRef(0);
-
-  useEffect(() => {
-    const currentFetchId = ++fetchIdRef.current;
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 8000);
-
-    (async () => {
-      try {
-        const { data, error } = await supabase
-          .from('services')
-          .select('*')
-          .in('slug', BUNDLE_SLUGS)
-          .eq('is_active', true)
-          .abortSignal(controller.signal);
-
-        clearTimeout(timer);
-        if (currentFetchId !== fetchIdRef.current) return;
-
-        if (error || !data || data.length === 0) {
-          setHasError(true);
-          setIsLoading(false);
-          return;
-        }
-
-        // Validate all have valid stripe_price_id
-        const valid = (data as unknown as Service[]).filter(
-          (s) => s.stripe_price_id && s.stripe_price_id.startsWith('price_')
-        );
-
-        if (valid.length === 0) {
-          setHasError(true);
-          setIsLoading(false);
-          return;
-        }
-
-        setBundles(valid);
-        setIsLoading(false);
-      } catch {
-        clearTimeout(timer);
-        if (currentFetchId !== fetchIdRef.current) return;
-        setHasError(true);
-        setIsLoading(false);
-      }
-    })();
-
-    return () => { controller.abort(); clearTimeout(timer); };
-  }, []);
 
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
   if (hasError || bundles.length === 0) return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><ServiceUpdateFallback context="Soft Power" /></div>;
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title="Asya'da Eğitim ve Yaşam Paketleri — Plan B Asia" description="Muay Thai, mutfak sanatları, dil programları ve wellness eğitimleri." schemaType="Service" serviceName="Soft Power Eğitim Paketleri" />
+      <SEOHead title="Asya'da Eğitim ve Yaşam Paketleri — Plan B Asya" description="Muay Thai, mutfak sanatları, dil programları ve wellness eğitimleri." schemaType="Service" serviceName="Soft Power Eğitim Paketleri" />
       <FocusedNavbar />
       <TrustBar />
 
@@ -118,13 +65,12 @@ export default function SoftPowerPage() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5. FOMO & Price — show selected bundle or first */}
+      {/* 5. FOMO */}
       <FOMOBlock service={selectedBundle || bundles[0]} />
 
       {/* 6. BUNDLE SELECTOR */}
       <BundleSelector bundles={bundles} selected={selectedBundle} onSelect={setSelectedBundle} />
 
-      {/* Badge: Boosts Visa Success */}
       {selectedBundle && (
         <div className="flex justify-center mb-2">
           <span className="inline-flex items-center gap-1.5 bg-accent/10 border border-accent/30 text-accent text-[10px] tracking-[0.2em] uppercase font-medium px-3 py-1 rounded-full">
@@ -133,7 +79,7 @@ export default function SoftPowerPage() {
         </div>
       )}
 
-      {/* 7. CHECKOUT (id="checkout") — ONLY renders if bundle selected */}
+      {/* 7. CHECKOUT (id="checkout") */}
       <div id="checkout">
         {selectedBundle ? (
           <ServiceCheckout service={selectedBundle} />
@@ -179,7 +125,7 @@ export default function SoftPowerPage() {
       {/* Legal */}
       <section className="py-12 bg-card border-y border-border">
         <div className="container mx-auto px-6 lg:px-12 text-center">
-          <p className="text-xs text-muted-foreground max-w-2xl mx-auto leading-relaxed">Her program kendi fiyatlandırması ve başvuru süreci olan bağımsız bir hizmettir. Plan B Asia resmi danışmanlık ve yönlendirme hizmeti sunmaktadır.</p>
+          <p className="text-xs text-muted-foreground max-w-2xl mx-auto leading-relaxed">Her program kendi fiyatlandırması ve başvuru süreci olan bağımsız bir hizmettir. Plan B Asya resmi danışmanlık ve yönlendirme hizmeti sunmaktadır.</p>
         </div>
       </section>
 
@@ -200,7 +146,7 @@ export default function SoftPowerPage() {
       </section>
 
       {/* Comparison & Cross-Sell */}
-      <ComparisonCrossSell currentSlug="muay-thai" />
+      <ComparisonCrossSell currentSlug="soft-power" />
 
       <footer className="py-16 bg-corporate-navy border-t border-holistic/10">
         <div className="container max-w-5xl px-6 text-center"><span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">© {new Date().getFullYear()} Atropox OÜ</span></div>
