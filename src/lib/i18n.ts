@@ -57,7 +57,7 @@ const checkoutKeys = {
 
 const successKeys = {
   verifying: 'Verifying your secure payment...',
-  pageTitle: 'Order Confirmed — Plan B Asia',
+  pageTitle: 'Order Confirmed — Plan B Asya',
   title: 'Order Successfully Received',
   dopamine: 'You just removed a major uncertainty from your path.',
   nextStepsLabel: 'What happens now',
@@ -128,7 +128,7 @@ const checkoutKeysTr: Record<string, string> = {
 
 const successKeysTr: Record<string, string> = {
   verifying: 'Güvenli ödemeniz doğrulanıyor...',
-  pageTitle: 'Sipariş Onaylandı — Plan B Asia',
+  pageTitle: 'Sipariş Onaylandı — Plan B Asya',
   title: 'Siparişiniz Başarıyla Alındı',
   dopamine: 'Az önce yolunuzdaki büyük bir belirsizliği ortadan kaldırdınız.',
   nextStepsLabel: 'Şimdi ne olacak',
@@ -215,7 +215,7 @@ const resources = {
       nav: { residency: 'Residency', wellness: 'Wellness', corporate: 'Corporate', expeditions: 'Expeditions', getStarted: 'Get Started' },
       trustBar: { secure: 'Secure process', noHidden: 'No hidden fees', realHuman: 'Real human support' },
       hero: {
-        title: 'Plan B Asia',
+        title: 'Plan B Asya',
         subtitle: 'Architecting Sovereign Mobility for Founders and Global Citizens.',
         hook: 'We design the safest, legal, and most strategic roadmap for building a global life and crossing borders.',
         cta: 'Begin Strategic Plan',
@@ -239,7 +239,7 @@ const resources = {
         exploreCta: 'Explore',
         live: { title: 'Live', subtitle: 'Residency', desc: 'Start your new life with a 5-year Thailand DTV visa. Full freedom, limitless opportunity.' },
         explore: { title: 'Explore', subtitle: 'Adventures', desc: 'Vietnam motor tours, hidden beaches, and adrenaline-fuelled expeditions await.' },
-        heal: { title: 'Heal', subtitle: 'Wellness', desc: 'Breath work, wellness retreats, and the healing energy of Koh Phangan.' },
+        heal: { title: 'Heal', subtitle: 'Wellness', desc: 'Breath work, wellness retreats, and the healing energy of Asia.' },
       },
       trustSignals: {
         stats: [
@@ -264,13 +264,13 @@ const resources = {
       },
       founder: {
         quote: 'Mobility is no longer a lifestyle choice. It is a strategic necessity.',
-        attribution: '— Plan B Asia Advisory',
+        attribution: '— Plan B Asya Advisory',
       },
       founderLetter: {
         title: 'A Note from the Founder',
         text: 'Mobility is no longer a lifestyle choice. It is a strategic necessity. We design structured pathways for global citizens seeking stability, renewal, and opportunity.',
         signature: 'Serkan',
-        role: 'Founder, Plan B Asia',
+        role: 'Founder, Plan B Asya',
       },
       network: { title: 'Our Trusted Network', immigration: 'Immigration Lawyers', tax: 'Tax Advisors', medical: 'Private Medical Clinics', resorts: 'Luxury Resorts' },
       services: { title: 'Strategic Verticals', subtitle: 'Tailored programs for founders, families, and global citizens.' },
@@ -290,7 +290,7 @@ const resources = {
       testimonials: {
         title: 'Client Perspectives',
         items: [
-          { quote: 'Plan B Asia transformed our relocation from a logistical nightmare into a structured, sovereign pathway. Their legal framework gave us complete confidence.', author: 'M.K.', role: 'Tech Founder, Berlin' },
+          { quote: 'Plan B Asya transformed our relocation from a logistical nightmare into a structured, sovereign pathway. Their legal framework gave us complete confidence.', author: 'M.K.', role: 'Tech Founder, Berlin' },
           { quote: 'The level of discretion and professionalism is unmatched. They understand the needs of global founders navigating complex tax environments.', author: 'A.R.', role: 'Serial Entrepreneur, Dubai' },
           { quote: 'From visa strategy to wellness integration — they designed a complete lifestyle architecture for our family\'s move to Thailand.', author: 'S.L.', role: 'Portfolio Manager, London' },
           { quote: 'Their corporate retreat infrastructure in Southeast Asia is world-class. Every detail was handled with precision and confidentiality.', author: 'J.W.', role: 'CEO, Singapore' },
@@ -363,7 +363,7 @@ const resources = {
       nav: { residency: 'Oturma İzni', wellness: 'Sağlık', corporate: 'Kurumsal', expeditions: 'Keşifler', getStarted: 'Başlayın' },
       trustBar: { secure: 'Güvenli süreç', noHidden: 'Gizli ücret yok', realHuman: 'Gerçek insan desteği' },
       hero: {
-        title: 'Plan B Asia',
+        title: 'Plan B Asya',
         subtitle: 'Sadece Bir Seyahat Değil, Yeni Bir Başlangıç.',
         hook: 'Global bir yaşam kurmak ve sınırları aşmak için en güvenli, yasal ve stratejik yol haritanızı çıkarıyoruz.',
         cta: 'Stratejik Plana Başlayın',
@@ -385,9 +385,9 @@ const resources = {
         label: 'Kapılar',
         headline: 'Hangi yolculuğa hazırsın?',
         exploreCta: 'Keşfet',
-        live: { title: 'Yaşa', subtitle: 'Oturma İzni', desc: '5 yıllık Tayland DTV vizesiyle yeni hayatına başla.' },
-        explore: { title: 'Keşfet', subtitle: 'Maceralar', desc: 'Vietnam motor turları, gizli plajlar ve adrenalin dolu maceralar.' },
-        heal: { title: 'Yenilen', subtitle: 'Sağlık', desc: 'Breath work, wellness retreat\'leri ve Koh Phangan\'ın şifa enerjisi.' },
+        live: { title: 'Yaşa', subtitle: 'Oturma İzni', desc: 'Vize seçeneklerini değerlendir. Yeni yaşamına hemen başla.' },
+        explore: { title: 'Keşfet', subtitle: 'Maceralar', desc: 'Motor turları, gizli plajlar ve adrenalin dolu maceralar.' },
+        heal: { title: 'Yenilen', subtitle: 'Sağlık', desc: 'Breath work, wellness retreat\'leri ve Asya\'nın şifa enerjisi.' },
       },
       trustSignals: {
         stats: [
@@ -412,13 +412,13 @@ const resources = {
       },
       founder: {
         quote: 'Mobilite artık bir yaşam tarzı tercihi değil. Stratejik bir zorunluluktur.',
-        attribution: '— Plan B Asia Danışmanlık',
+        attribution: '— Plan B Asya Danışmanlık',
       },
       founderLetter: {
         title: 'Kurucudan Bir Not',
         text: 'Mobilite artık bir yaşam tarzı tercihi değil. Stratejik bir zorunluluktur.',
         signature: 'Serkan',
-        role: 'Kurucu, Plan B Asia',
+        role: 'Kurucu, Plan B Asya',
       },
       network: { title: 'Güvenilir Ağımız', immigration: 'Göçmenlik Avukatları', tax: 'Vergi Danışmanları', medical: 'Özel Tıp Klinikleri', resorts: 'Lüks Tatil Köyleri' },
       services: { title: 'Stratejik Dikey Alanlar', subtitle: 'Kurucular, aileler ve küresel vatandaşlar için özel programlar.' },
@@ -436,7 +436,7 @@ const resources = {
         success: 'Başvurunuz alınmıştır. Concierge ekibimiz en kısa sürede sizinle iletişime geçecektir.',
       },
       quiz: {
-        seoTitle: 'Stratejik Mobilite Değerlendirmesi — Plan B Asia',
+        seoTitle: 'Stratejik Mobilite Değerlendirmesi — Plan B Asya',
         seoDesc: 'Güneydoğu Asya oturma programları için stratejik mobilite indeksinizi değerlendirin.',
         confidentialLabel: 'Gizli Değerlendirme',
         heroTitle: 'Stratejik Mobilite Değerlendirmesi',
