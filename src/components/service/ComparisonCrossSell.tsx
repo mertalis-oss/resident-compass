@@ -46,6 +46,30 @@ const comparisonData: Record<string, { title: string; titleTR: string; desc: str
     desc: "Company formation, tax optimization, and visa processes in Asia involve local regulations that change frequently. Our team handles the complexity so you don't have to.",
     descTR: "Şirket kurulumu, vergi optimizasyonu ve vize süreçleri sık değişen yerel mevzuat içerir. Ekibimiz bu karmaşıklığı sizin yerinize yönetir.",
   },
+  'dtv-thailand': {
+    title: 'Why not Bali or Vietnam?',
+    titleTR: 'Neden Bali ya da Vietnam değil?',
+    desc: "Thailand's DTV visa offers 5-year validity with 180-day stays and unlimited re-entries — no other Southeast Asian country matches this.",
+    descTR: "Tayland DTV vizesi 5 yıl geçerlilik, 180 gün kalış hakkı ve sınırsız giriş-çıkış sunuyor.",
+  },
+  'dtv-thailand-cop': {
+    title: 'Why professional submission support?',
+    titleTR: 'Neden profesyonel başvuru desteği?',
+    desc: 'A single document error can delay or reject your DTV application. Our co-pilot service ensures accuracy and compliance.',
+    descTR: 'Tek bir evrak hatası başvurunuzu geciktirebilir veya reddedebilir. Co-pilot hizmetimiz doğruluk ve uyumluluk sağlar.',
+  },
+  'mice-thailand': {
+    title: 'Why Thailand for your event?',
+    titleTR: 'Etkinliğiniz neden Tayland?',
+    desc: 'World-class venues, cost-effective luxury, and a hospitality culture that makes every event exceptional.',
+    descTR: "Dünya standartında mekanlar, uygun fiyatlı lüks ve benzersiz ağırlama kültürü.",
+  },
+  'ha-giang-motor-expedition': {
+    title: 'Why guided expeditions?',
+    titleTR: 'Neden rehberli ekspedisyon?',
+    desc: 'Licensed operators, local knowledge, and access to restricted routes that independent travelers cannot reach.',
+    descTR: 'Lisanslı operatörler, yerel bilgi ve bağımsız gezginlerin ulaşamayacağı özel rotalar.',
+  },
 };
 
 // Cross-sell cards per page (exactly 2)
