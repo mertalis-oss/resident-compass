@@ -290,7 +290,7 @@ const resources = {
       testimonials: {
         title: 'Client Perspectives',
         items: [
-          { quote: 'Plan B Asia transformed our relocation from a logistical nightmare into a structured, sovereign pathway. Their legal framework gave us complete confidence.', author: 'M.K.', role: 'Tech Founder, Berlin' },
+          { quote: 'Plan B Asya transformed our relocation from a logistical nightmare into a structured, sovereign pathway. Their legal framework gave us complete confidence.', author: 'M.K.', role: 'Tech Founder, Berlin' },
           { quote: 'The level of discretion and professionalism is unmatched. They understand the needs of global founders navigating complex tax environments.', author: 'A.R.', role: 'Serial Entrepreneur, Dubai' },
           { quote: 'From visa strategy to wellness integration — they designed a complete lifestyle architecture for our family\'s move to Thailand.', author: 'S.L.', role: 'Portfolio Manager, London' },
           { quote: 'Their corporate retreat infrastructure in Southeast Asia is world-class. Every detail was handled with precision and confidentiality.', author: 'J.W.', role: 'CEO, Singapore' },
