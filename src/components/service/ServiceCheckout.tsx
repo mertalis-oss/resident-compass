@@ -175,16 +175,24 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
 
   // LEAD-RESCUE FAILSAFE: If no stripe_price_id, placeholder, OR timeout/price error
   if (!service.stripe_price_id || isPlaceholder || showRescue) {
-    const rescueWhatsapp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Merhaba, ' + service.title + ' hizmeti hakkında bilgi almak istiyorum.')}`;
+    const rescueWhatsapp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+      scope === 'tr'
+        ? 'Merhaba, ' + service.title + ' hizmeti hakkında bilgi almak istiyorum.'
+        : 'Hello, I would like to learn more about ' + service.title + '.'
+    )}`;
     return (
       <section id="checkout-section" className="section-editorial border-t border-border">
         <div className="container max-w-2xl px-6 text-center py-16">
           <AlertTriangle className="h-10 w-10 text-accent mx-auto mb-6" />
           <h3 className="font-heading text-xl mb-4">
-            {t('checkout.rescueTitle', { defaultValue: 'Paket şu anda güncelleniyor. Size hemen yardımcı olalım.' })}
+            {scope === 'tr'
+              ? 'Paket şu anda güncelleniyor. Size hemen yardımcı olalım.'
+              : 'This package is currently being updated. Let us help you right away.'}
           </h3>
           <p className="text-sm text-muted-foreground mb-8">
-            {t('checkout.rescueDesc', { defaultValue: 'WhatsApp üzerinden bize ulaşın, en kısa sürede size dönüş yapalım.' })}
+            {scope === 'tr'
+              ? 'WhatsApp üzerinden bize ulaşın, en kısa sürede size dönüş yapalım.'
+              : 'Reach out to us on WhatsApp and we\'ll get back to you shortly.'}
           </p>
           <Button
             size="lg"
@@ -195,7 +203,7 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
             className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
           >
             <MessageCircle className="mr-2 h-4 w-4" />
-            {t('checkout.rescueCta', { defaultValue: 'WhatsApp ile İletişime Geçin' })}
+            {scope === 'tr' ? 'WhatsApp ile İletişime Geçin' : 'Contact Us on WhatsApp'}
           </Button>
         </div>
       </section>
@@ -232,7 +240,7 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
             {formatPrice(service.price, service.currency || 'USD')}
           </p>
           <p className="text-xs text-muted-foreground">
-            {t('checkout.oneTimePayment', { defaultValue: 'Tek seferlik ödeme. Gizli masraf yok.' })}
+            {scope === 'tr' ? 'Tek seferlik ödeme. Gizli masraf yok.' : 'One-time payment. No hidden costs.'}
           </p>
         </div>
 
@@ -256,11 +264,13 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
         {/* Price justification ABOVE CTA */}
         <div className="bg-card border border-border rounded-lg p-5 mb-8 text-center space-y-2">
           <p className="text-sm text-foreground font-medium">
-            {t('checkout.priceJustify', { defaultValue: 'Anında erişim. Bekleme yok. Bu hizmet, durumunuza özel analiz ve yol haritasını içerir.' })}
+            {scope === 'tr'
+              ? 'Anında erişim. Bekleme yok. Bu hizmet, durumunuza özel analiz ve yol haritasını içerir.'
+              : 'Instant access. No waiting. This service includes a personalized analysis and roadmap for your situation.'}
           </p>
           <p className="text-xs text-muted-foreground flex items-center justify-center gap-1.5">
             <Lock className="h-3 w-3" />
-            {t('checkout.stripeSecure', { defaultValue: 'Güvenli ödeme altyapısı (Stripe)' })}
+            {scope === 'tr' ? 'Güvenli ödeme altyapısı (Stripe)' : 'Secure payment infrastructure (Stripe)'}
           </p>
         </div>
 
@@ -287,7 +297,7 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
 
         {/* CRO: Response time + impulse copy */}
         <p className="text-xs text-muted-foreground text-center mb-2">
-          {t('checkout.avgResponseTime', { defaultValue: 'Ortalama geri dönüş: 24 saat' })}
+          {scope === 'tr' ? 'Ortalama geri dönüş: 24 saat' : 'Average response time: 24 hours'}
         </p>
 
         {/* CTA Button */}
@@ -309,10 +319,12 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
 
         {/* Post-CTA reassurance */}
         <p className="text-xs text-muted-foreground text-center mt-2">
-          {t('checkout.readyIn3', { defaultValue: '3 dakika içinde planın hazır' })}
+          {scope === 'tr' ? '3 dakika içinde planın hazır' : 'Your plan ready in 3 minutes'}
         </p>
         <p className="text-xs text-muted-foreground text-center mt-1">
-          {t('checkout.postCtaReassure', { defaultValue: 'İlk adımınız ödeme sonrası hemen başlatılır. Kart bilgileriniz sistemimizde tutulmaz.' })}
+          {scope === 'tr'
+            ? 'İlk adımınız ödeme sonrası hemen başlatılır. Kart bilgileriniz sistemimizde tutulmaz.'
+            : 'Your first step starts immediately after payment. Your card details are not stored in our system.'}
         </p>
 
         {/* Risk Reversal & Micro-Trust */}
@@ -349,14 +361,14 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
         {/* WhatsApp Escape Hatch */}
         <div className="text-center mt-8 space-y-1.5">
           <p className="text-xs text-muted-foreground">
-            {t('checkout.whatsappEscapeLabel', { defaultValue: 'Ödeme öncesi hızlı sorular için' })}
+            {scope === 'tr' ? 'Ödeme öncesi hızlı sorular için' : 'Quick questions before payment?'}
           </p>
           <button onClick={handleWhatsAppClick} className="text-xs text-accent hover:text-accent/80 underline underline-offset-4 transition-colors inline-flex items-center gap-1.5">
             <MessageCircle className="h-3 w-3" />
-            {t('checkout.whatsappEscapeCta', { defaultValue: "WhatsApp'tan yazın" })}
+            {scope === 'tr' ? "WhatsApp'tan yazın" : 'Message us on WhatsApp'}
           </button>
           <p className="text-[10px] text-muted-foreground/60">
-            {t('checkout.whatsappResponseTime', { defaultValue: 'Yanıt süresi: genellikle birkaç dakika' })}
+            {scope === 'tr' ? 'Yanıt süresi: genellikle birkaç dakika' : 'Response time: usually a few minutes'}
           </p>
         </div>
 
