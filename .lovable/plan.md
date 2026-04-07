@@ -1,89 +1,90 @@
 
 
-## Phase 1: Fetch & Render Contract - Plan
+# Phases 2, 3, 4 — Production Patch
 
-### Problem Analysis
+## Phase 2: EN Category Pages + Navbar + Routes
 
-The database has 24 services, but category pages use **single-slug fetching** (`useServiceFetch` enforces "exactly 1 row" validation). This causes pages to fail when:
-- SoftPowerPage hardcodes `BUNDLE_SLUGS = ['thai-language-6m', ...]` but actual DB slugs are `language-thai6`, `language-En6`, etc.
-- MICEPage fetches `mice-corporate` which is `is_active=false`
-- NomadIncubatorPage fetches `nomad-incubator` which is `is_active=false`
-- DTVVizePage only fetches slug `dtv-vize` but there are 2 active TR DTV services (`dtv-vize`, `dtv-vize-ref`) plus `Kapsamlı Yerlesim`
+### 2a. Create `src/pages/en/SoftPowerPageEN.tsx`
+Thin copy of `src/pages/tr/SoftPowerPage.tsx` with these changes:
+- Line 31: `useServicesList('soft-power', 'global')` instead of `'tr'`
+- All Turkish UI strings translated to English (SEO title, course names, section headers, legal text, button labels)
+- Grid wrapped with `min-h-[400px]` per CLS fix
+- Empty state fallback: "Packages currently being updated. Please check back soon."
+- `encodeURIComponent(slug)` used in any dynamic link construction
 
-There is **no `scope` column** in the database. The relevant columns are `category` and `visible_on`.
+### 2b. Create `src/pages/en/NomadIncubatorPageEN.tsx`
+Thin copy of `src/pages/tr/NomadIncubatorPage.tsx` with:
+- `useServicesList('residency', 'global')` instead of `'tr'`
+- All Turkish strings translated to English
+- Same CLS and empty state fixes
 
-### Database State (Active TR Services)
+### 2c. Routes in `src/App.tsx`
+Add 2 imports + 2 routes **above** the existing `/:slug` catch-all (before line 55):
+```
+<Route path="/residency/soft-power" element={<SoftPowerPageEN />} />
+<Route path="/residency/nomad-incubator" element={<NomadIncubatorPageEN />} />
+```
 
-| Category | Slug | Price | Stripe ID |
-|---|---|---|---|
-| residency | dtv-vize | $150 | price_1Sfv... |
-| residency | dtv-vize-ref | $875 | price_1TJS... |
-| residency | Kapsamlı Yerlesim | $5000 | price_1TJ7... |
-| soft-power | language-thai6 | $1350 | price_1TJR... |
-| soft-power | language-En6 | $1499 | price_1TJR... |
-| soft-power | language-thai9-... | $1749 | price_1TJR... |
-| soft-power | language-En12 | $2199 | price_1TJR... |
-| expeditions | expedition-jungle | $0 | placeholder |
-| corporate-retreats | mice-corporate | $0 | inactive |
+### 2d. Navbar (`src/components/FocusedNavbar.tsx`)
+Add to `EN_NAV_GROUPS` Lifestyle items (lines 41-44):
+```
+{ to: '/residency/soft-power', label: 'Soft Power' },
+{ to: '/residency/nomad-incubator', label: 'Nomad Incubator' },
+```
 
-### Implementation Steps
+---
 
-#### 1. Create `useServicesList` hook
-New file: `src/hooks/useServicesList.ts`
-- Accepts a `category` pattern string (e.g. `'residency'`, `'soft-power'`)
-- Accepts a `scope` filter (`'tr' | 'global'`)
-- Fetches using `.ilike('category', categoryPattern).eq('is_active', true).in('visible_on', [scope, 'both']).order('price', { ascending: true })`
-- Filters results to only those with valid `stripe_price_id` starting with `price_`
-- Returns `{ services: Service[], isLoading, hasError, errorDetail }`
-- Includes `console.log("Fetched services for category:", category, "length:", data?.length)`
-- Same 8s timeout + AbortController + race-condition safety as existing hook
+## Phase 3: Hero CRO & Quiet Luxury UI
 
-#### 2. Update DTVVizePage.tsx
-- Replace `useServiceFetch('dtv-vize')` with `useServicesList('residency', 'tr')`
-- Keep existing Hero section (uses first service for price display)
-- Replace single `<ServiceCheckout service={service} />` with a responsive grid:
-  ```
-  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-    {services.map(s => <ServiceCheckout key={s.id} service={s} />)}
-  </div>
-  ```
-- FOMOBlock uses `services[0]` as the anchor service
-- PlanBForm uses `services[0]?.id`
+### 3a. i18n keys (`src/lib/i18n.ts`)
 
-#### 3. Update SoftPowerPage.tsx
-- Replace hardcoded `BUNDLE_SLUGS` fetch with `useServicesList('soft-power', 'tr')`
-- The fetched array directly feeds into `BundleSelector` (already accepts arrays)
-- Remove the broken slug-based fetch logic
+**EN hero block** (line 217):
+- `title`: `'Live Legally in Asia.\nLeave the Bureaucracy to Us.'`
+- Add `ctaMicro: '2 minutes • Instant results'`
+- Add `trustStrip: ['150+ Consultations', 'Applicants from 12 Countries', '24h Avg. Response']`
+- Change `explore`: `'How it Works'`
 
-#### 4. Update MICEPage.tsx
-- Replace `useServiceFetch('mice-corporate')` with `useServicesList('corporate-retreats', 'tr')`
-- Since `mice-corporate` is inactive, this may return 0 services (show WhatsApp lead-gen fallback as it does now)
+**TR hero block** (line 366):
+- `title`: `'Asya\'da Yasal Güvenceyle Yaşayın.\nBürokrasiyi Bize Bırakın.'`
+- Add `ctaMicro: '2 dakika • Anında sonuç'`
+- Add `trustStrip: ['150+ Danışmanlık', '12 Ülkeden Başvuru', '24 Saat Geri Dönüş']`
+- Change `explore`: `'Nasıl Çalışır?'`
 
-#### 5. Update ExpeditionsPage.tsx
-- Replace `useServiceFetch('expedition-jungle')` with `useServicesList('expeditions', 'tr')`
-- `expedition-jungle` has placeholder price ID, so it will be filtered out; fallback UI shown
+### 3b. Hero component (`src/components/home/Hero.tsx`)
 
-#### 6. Update NomadIncubatorPage.tsx
-- Replace `useServiceFetch('nomad-incubator')` with `useServicesList('residency', 'tr')` or keep as lead-gen since service is inactive
+1. **Subtitle** (line ~81): add `font-light leading-[1.6]`
+2. **Hook text** (line ~90): add `font-light leading-[1.6]`
+3. **CTA microcopy**: After the dual CTA motion.div, add muted text `{t('hero.ctaMicro')}` with `text-white/60`
+4. **Secondary CTA** (line ~109): Replace outline classes with glassmorphic: `border border-white/30 bg-white/10 hover:bg-white/20 text-white backdrop-blur-md text-xs tracking-[0.15em] uppercase px-8 py-4 h-auto rounded-md`
+5. **Trust Strip**: After ctaSub, add a `flex-wrap` row with 3 stats from `t('hero.trustStrip', {returnObjects: true})`, each in `text-white/60` separated by `•`
+6. **Scroll indicator** text: already uses `t('hero.explore')` — i18n change handles it
 
-#### 7. Keep `useServiceFetch` intact
-- It is still used by `ServicePage.tsx` (EN dynamic slug routing) which correctly needs single-service fetch
+---
 
-### What This Changes
-- Category pages become **multi-product grids** instead of single-product pages
-- Products are grouped by `category` column (not a non-existent `scope` column)
-- Filtered by `visible_on` matching domain scope
-- Only services with valid `price_` Stripe IDs are rendered
-- Debug logging added for validation
+## Phase 4: Portals Anchor (`src/components/home/Portals.tsx`)
 
-### What This Does NOT Change
-- Core routing, layout hierarchy, or component structure
-- `useServiceFetch` (still used by EN ServicePage)
-- Stripe checkout flow or webhook logic
-- RLS policies or database schema
+Change root `<section>` to:
+```html
+<section id="portals-section" className="scroll-mt-24 section-editorial bg-background">
+```
 
-### Risks & Notes
-- MICE and NomadIncubator services are currently `is_active=false` with placeholder Stripe IDs, so those pages will show fallback UI until you activate them in admin
-- `expedition-jungle` has a placeholder Stripe ID, so it will be filtered out
-- The `Kapsamlı Yerlesim` slug has non-ASCII characters (Turkish) which may cause URL issues if linked directly
+---
+
+## Files Summary
+
+| File | Action |
+|---|---|
+| `src/pages/en/SoftPowerPageEN.tsx` | Create — EN copy, scope='global', CLS fix, empty state |
+| `src/pages/en/NomadIncubatorPageEN.tsx` | Create — EN copy, scope='global', CLS fix, empty state |
+| `src/App.tsx` | Add 2 imports + 2 routes above catch-all |
+| `src/components/FocusedNavbar.tsx` | Add 2 items to EN_NAV_GROUPS |
+| `src/lib/i18n.ts` | Update hero title + add ctaMicro, trustStrip, explore keys |
+| `src/components/home/Hero.tsx` | Typography, glassmorphic CTA, microcopy, trust strip (text-white/60) |
+| `src/components/home/Portals.tsx` | Add `id="portals-section"` + `scroll-mt-24` |
+
+## Not Touched
+- TR category pages (zero modifications)
+- Database (no slug mutations)
+- Stripe logic, webhooks, RLS
+- `useServiceFetch` or `useServicesList`
 
