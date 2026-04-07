@@ -49,27 +49,97 @@ const comparisonData: Record<string, { title: string; titleTR: string; desc: str
 };
 
 // Cross-sell cards per page (exactly 2)
-const crossSellMap: Record<string, CrossSellService[]> = {
-  'dtv-vize': [
-    { title: 'Soft Power Eğitim Paketleri', description: 'Muay Thai, dil ve wellness eğitimleriyle vize uygunluğunuzu güçlendirin.', href: '/tr/soft-power', recommended: true },
-    { title: 'Dijital Göçebe Kuluçka', description: 'Şirket kurulumu, vergi optimizasyonu ve topluluk erişimi.', href: '/tr/nomad-incubator' },
-  ],
-  'muay-thai': [
-    { title: 'Tayland DTV Vizesi', description: '5 yıl geçerli, 180 gün kalış hakkı olan dijital göçebe vizesi.', href: '/tr/dtv-vize', recommended: true },
-    { title: 'Keşif Ekspedisyonları', description: "Güneydoğu Asya'da rehberli motor ve doğa ekspedisyonları.", href: '/tr/expeditions' },
-  ],
-  'mice-corporate': [
-    { title: 'Tayland DTV Vizesi', description: 'Etkinlik sonrası uzun süreli kalış için DTV vizesi danışmanlığı.', href: '/tr/dtv-vize', recommended: true },
-    { title: 'Keşif Ekspedisyonları', description: 'Kurumsal team-building için doğa ekspedisyonları.', href: '/tr/expeditions' },
-  ],
-  'expedition-jungle': [
-    { title: 'Tayland DTV Vizesi', description: "Tayland'da uzun süreli kalış için en avantajlı vize seçeneği.", href: '/tr/dtv-vize', recommended: true },
-    { title: 'Soft Power Eğitim Paketleri', description: 'Muay Thai ve wellness eğitimleriyle kalışınızı anlamlı kılın.', href: '/tr/soft-power' },
-  ],
-  'nomad-incubator': [
-    { title: 'Tayland DTV Vizesi', description: 'İşinizi kurarken yasal kalış hakkınızı güvence altına alın.', href: '/tr/dtv-vize', recommended: true },
-    { title: 'MICE & Kurumsal Etkinlik', description: 'Ekibinizi Tayland\'da buluşturun.', href: '/tr/mice' },
-  ],
+const crossSellMap: Record<string, { tr: CrossSellService[]; en: CrossSellService[] }> = {
+  'dtv-vize': {
+    tr: [
+      { title: 'Soft Power Eğitim Paketleri', description: 'Muay Thai, dil ve wellness eğitimleriyle vize uygunluğunuzu güçlendirin.', href: '/tr/soft-power', recommended: true },
+      { title: 'Dijital Göçebe Kuluçka', description: 'Şirket kurulumu, vergi optimizasyonu ve topluluk erişimi.', href: '/tr/nomad-incubator' },
+    ],
+    en: [
+      { title: 'Soft Power Education Packages', description: 'Strengthen your visa eligibility with Muay Thai, language, and wellness programs.', href: '/residency/dtv-thailand-cop', recommended: true },
+      { title: 'Comprehensive Relocation Support', description: 'End-to-end administrative and operational guidance for your move to Asia.', href: '/residency/Relocation Eng' },
+    ],
+  },
+  'dtv-thailand': {
+    tr: [
+      { title: 'Soft Power Eğitim Paketleri', description: 'Muay Thai, dil ve wellness eğitimleriyle vize uygunluğunuzu güçlendirin.', href: '/tr/soft-power', recommended: true },
+      { title: 'Dijital Göçebe Kuluçka', description: 'Şirket kurulumu, vergi optimizasyonu ve topluluk erişimi.', href: '/tr/nomad-incubator' },
+    ],
+    en: [
+      { title: 'DTV Submission Co-Pilot', description: 'Full document audit, submission support, and accuracy guarantee for your DTV application.', href: '/residency/dtv-thailand-cop', recommended: true },
+      { title: 'Comprehensive Relocation', description: 'End-to-end administrative management for your move to Thailand.', href: '/residency/Relocation Eng' },
+    ],
+  },
+  'dtv-thailand-cop': {
+    tr: [
+      { title: 'DTV Vize Danışmanlık', description: 'Stratejik danışmanlık ile DTV başvurunuzu doğru yapılandırın.', href: '/tr/dtv-vize', recommended: true },
+      { title: 'Soft Power Eğitim', description: 'Dil ve kültür eğitimleriyle vize şansınızı artırın.', href: '/tr/soft-power' },
+    ],
+    en: [
+      { title: 'DTV Strategic Advisory', description: 'Eligibility analysis, document audit, and personalized DTV roadmap.', href: '/residency/dtv-thailand', recommended: true },
+      { title: 'Soft Power Education', description: 'Language and cultural programs that strengthen your visa eligibility.', href: '/residency/dtv-thailand' },
+    ],
+  },
+  'muay-thai': {
+    tr: [
+      { title: 'Tayland DTV Vizesi', description: '5 yıl geçerli, 180 gün kalış hakkı olan dijital göçebe vizesi.', href: '/tr/dtv-vize', recommended: true },
+      { title: 'Keşif Ekspedisyonları', description: "Güneydoğu Asya'da rehberli motor ve doğa ekspedisyonları.", href: '/tr/expeditions' },
+    ],
+    en: [
+      { title: 'Thailand DTV Visa', description: '5-year validity, 180-day stays — the ultimate digital nomad visa.', href: '/residency/dtv-thailand', recommended: true },
+      { title: 'Expedition Adventures', description: 'Guided motorcycle and nature expeditions across Southeast Asia.', href: '/expeditions/ha-giang-motor-expedition' },
+    ],
+  },
+  'mice-corporate': {
+    tr: [
+      { title: 'Tayland DTV Vizesi', description: 'Etkinlik sonrası uzun süreli kalış için DTV vizesi danışmanlığı.', href: '/tr/dtv-vize', recommended: true },
+      { title: 'Keşif Ekspedisyonları', description: 'Kurumsal team-building için doğa ekspedisyonları.', href: '/tr/expeditions' },
+    ],
+    en: [
+      { title: 'Thailand DTV Visa', description: 'Extended stay advisory for post-event residency in Thailand.', href: '/residency/dtv-thailand', recommended: true },
+      { title: 'Expedition Adventures', description: 'Nature expeditions for corporate team-building.', href: '/expeditions/ha-giang-motor-expedition' },
+    ],
+  },
+  'mice-thailand': {
+    tr: [
+      { title: 'Tayland DTV Vizesi', description: 'Etkinlik sonrası uzun süreli kalış için DTV vizesi danışmanlığı.', href: '/tr/dtv-vize', recommended: true },
+      { title: 'Keşif Ekspedisyonları', description: 'Kurumsal team-building için doğa ekspedisyonları.', href: '/tr/expeditions' },
+    ],
+    en: [
+      { title: 'Thailand DTV Visa', description: 'Extended stay advisory for post-event residency.', href: '/residency/dtv-thailand', recommended: true },
+      { title: 'Expedition Adventures', description: 'Nature expeditions for corporate team-building.', href: '/expeditions/ha-giang-motor-expedition' },
+    ],
+  },
+  'expedition-jungle': {
+    tr: [
+      { title: 'Tayland DTV Vizesi', description: "Tayland'da uzun süreli kalış için en avantajlı vize seçeneği.", href: '/tr/dtv-vize', recommended: true },
+      { title: 'Soft Power Eğitim Paketleri', description: 'Muay Thai ve wellness eğitimleriyle kalışınızı anlamlı kılın.', href: '/tr/soft-power' },
+    ],
+    en: [
+      { title: 'Thailand DTV Visa', description: 'The most advantageous visa option for long-term stays in Thailand.', href: '/residency/dtv-thailand', recommended: true },
+      { title: 'Soft Power Education', description: 'Muay Thai and wellness programs to enrich your stay.', href: '/residency/dtv-thailand' },
+    ],
+  },
+  'ha-giang-motor-expedition': {
+    tr: [
+      { title: 'Tayland DTV Vizesi', description: "Tayland'da uzun süreli kalış için en avantajlı vize seçeneği.", href: '/tr/dtv-vize', recommended: true },
+      { title: 'Wellness Retreat', description: 'Holistic wellness deneyimi.', href: '/tr/soft-power' },
+    ],
+    en: [
+      { title: 'Thailand DTV Visa', description: 'Long-term stay visa for digital nomads and remote workers.', href: '/residency/dtv-thailand', recommended: true },
+      { title: 'Thailand Wellness Retreat', description: 'Holistic wellness experience in Koh Phangan.', href: '/wellness/thailand-retreat' },
+    ],
+  },
+  'nomad-incubator': {
+    tr: [
+      { title: 'Tayland DTV Vizesi', description: 'İşinizi kurarken yasal kalış hakkınızı güvence altına alın.', href: '/tr/dtv-vize', recommended: true },
+      { title: 'MICE & Kurumsal Etkinlik', description: 'Ekibinizi Tayland\'da buluşturun.', href: '/tr/mice' },
+    ],
+    en: [
+      { title: 'Thailand DTV Visa', description: 'Secure your legal residency while building your business.', href: '/residency/dtv-thailand', recommended: true },
+      { title: 'Corporate Retreat — MICE', description: 'Bring your team together in Thailand.', href: '/corporate-retreats/mice-thailand' },
+    ],
+  },
 };
 
 export default function ComparisonCrossSell({ currentSlug }: Props) {
