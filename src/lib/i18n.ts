@@ -215,7 +215,7 @@ const resources = {
       nav: { residency: 'Residency', wellness: 'Wellness', corporate: 'Corporate', expeditions: 'Expeditions', getStarted: 'Get Started' },
       trustBar: { secure: 'Secure process', noHidden: 'No hidden fees', realHuman: 'Real human support' },
       hero: {
-        title: 'Plan B Asia',
+        title: 'Plan B Asya',
         subtitle: 'Architecting Sovereign Mobility for Founders and Global Citizens.',
         hook: 'We design the safest, legal, and most strategic roadmap for building a global life and crossing borders.',
         cta: 'Begin Strategic Plan',
