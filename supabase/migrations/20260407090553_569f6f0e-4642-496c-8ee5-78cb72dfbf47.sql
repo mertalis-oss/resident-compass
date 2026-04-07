@@ -1,0 +1,1 @@
+UPDATE services SET visible_on = 'both' WHERE category = 'soft-power' AND is_active = true;
