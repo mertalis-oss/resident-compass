@@ -147,7 +147,10 @@ export default function ComparisonCrossSell({ currentSlug }: Props) {
   const scope = getDomainScope();
 
   const comparison = comparisonData[currentSlug];
-  const cards = crossSellMap[currentSlug] || [];
+  const crossSellEntry = crossSellMap[currentSlug];
+  const cards: CrossSellService[] = crossSellEntry
+    ? (scope === 'tr' ? crossSellEntry.tr : crossSellEntry.en)
+    : [];
 
   if (!comparison && cards.length === 0) return null;
 
