@@ -175,16 +175,24 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
 
   // LEAD-RESCUE FAILSAFE: If no stripe_price_id, placeholder, OR timeout/price error
   if (!service.stripe_price_id || isPlaceholder || showRescue) {
-    const rescueWhatsapp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Merhaba, ' + service.title + ' hizmeti hakkında bilgi almak istiyorum.')}`;
+    const rescueWhatsapp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+      scope === 'tr'
+        ? 'Merhaba, ' + service.title + ' hizmeti hakkında bilgi almak istiyorum.'
+        : 'Hello, I would like to learn more about ' + service.title + '.'
+    )}`;
     return (
       <section id="checkout-section" className="section-editorial border-t border-border">
         <div className="container max-w-2xl px-6 text-center py-16">
           <AlertTriangle className="h-10 w-10 text-accent mx-auto mb-6" />
           <h3 className="font-heading text-xl mb-4">
-            {t('checkout.rescueTitle', { defaultValue: 'Paket şu anda güncelleniyor. Size hemen yardımcı olalım.' })}
+            {scope === 'tr'
+              ? 'Paket şu anda güncelleniyor. Size hemen yardımcı olalım.'
+              : 'This package is currently being updated. Let us help you right away.'}
           </h3>
           <p className="text-sm text-muted-foreground mb-8">
-            {t('checkout.rescueDesc', { defaultValue: 'WhatsApp üzerinden bize ulaşın, en kısa sürede size dönüş yapalım.' })}
+            {scope === 'tr'
+              ? 'WhatsApp üzerinden bize ulaşın, en kısa sürede size dönüş yapalım.'
+              : 'Reach out to us on WhatsApp and we\'ll get back to you shortly.'}
           </p>
           <Button
             size="lg"
@@ -195,7 +203,7 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
             className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
           >
             <MessageCircle className="mr-2 h-4 w-4" />
-            {t('checkout.rescueCta', { defaultValue: 'WhatsApp ile İletişime Geçin' })}
+            {scope === 'tr' ? 'WhatsApp ile İletişime Geçin' : 'Contact Us on WhatsApp'}
           </Button>
         </div>
       </section>
