@@ -29,6 +29,8 @@ import AdminCustomers from "./pages/admin/AdminCustomers";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import LanguageRouter from "./components/LanguageRouter";
+import SoftPowerPageEN from "./pages/en/SoftPowerPageEN";
+import NomadIncubatorPageEN from "./pages/en/NomadIncubatorPageEN";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +54,9 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
+              {/* EN category pages — above catch-all */}
+              <Route path="/residency/soft-power" element={<SoftPowerPageEN />} />
+              <Route path="/residency/nomad-incubator" element={<NomadIncubatorPageEN />} />
               <Route path="/residency/:slug" element={<ServicePage />} />
               <Route path="/wellness/:slug" element={<ServicePage />} />
               <Route path="/corporate-retreats/:slug" element={<ServicePage />} />

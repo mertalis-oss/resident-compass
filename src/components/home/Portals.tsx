@@ -25,7 +25,7 @@ export default function Portals() {
   const { t } = useTranslation();
 
   return (
-    <section className="section-editorial bg-background">
+    <section id="portals-section" className="scroll-mt-24 section-editorial bg-background">
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <motion.div
