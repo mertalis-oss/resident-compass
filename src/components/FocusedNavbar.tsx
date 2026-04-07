@@ -39,6 +39,8 @@ const EN_NAV_GROUPS: NavGroup[] = [
   {
     label: 'Lifestyle',
     items: [
+      { to: '/residency/soft-power', label: 'Soft Power' },
+      { to: '/residency/nomad-incubator', label: 'Nomad Incubator' },
       { to: '/wellness/thailand-retreat', label: 'Wellness' },
       { to: '/expeditions/ha-giang-motor-expedition', label: 'Expeditions' },
       { to: '/corporate-retreats/mice-thailand', label: 'Corporate / MICE' },

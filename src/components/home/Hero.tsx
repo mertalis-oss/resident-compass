@@ -78,7 +78,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
-            className="text-base md:text-lg lg:text-xl text-background/85 mb-3 leading-relaxed max-w-2xl mx-auto"
+            className="text-base md:text-lg lg:text-xl font-light leading-[1.6] text-background/85 mb-3 max-w-2xl mx-auto"
           >
             {t('hero.subtitle')}
           </motion.p>
@@ -87,7 +87,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.05 }}
-            className="text-sm md:text-base text-background/65 max-w-xl mx-auto mb-10 leading-relaxed"
+            className="text-sm md:text-base font-light leading-[1.6] text-background/65 max-w-xl mx-auto mb-10"
           >
             {t('hero.hook')}
           </motion.p>
@@ -97,7 +97,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.2 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-3"
           >
             <Button
               size="lg"
@@ -110,20 +110,44 @@ export default function Hero() {
               size="lg"
               variant="outline"
               onClick={handleSecondaryCTA}
-              className="btn-luxury-outline border-background/30 text-background hover:bg-background/10 hover:text-background text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
+              className="border border-white/30 bg-white/10 hover:bg-white/20 text-white backdrop-blur-md text-xs tracking-[0.15em] uppercase px-8 py-4 h-auto rounded-md"
             >
               {t('hero.ctaSecondary', { defaultValue: 'View Packages' })}
             </Button>
           </motion.div>
 
+          {/* CTA Microcopy */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1.3 }}
+            className="text-xs text-white/60 mb-6"
+          >
+            {t('hero.ctaMicro', { defaultValue: '' })}
+          </motion.p>
+
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1.4 }}
-            className="caption-editorial text-background/50 tracking-[0.3em]"
+            className="caption-editorial text-white/50 tracking-[0.3em]"
           >
             {t('hero.ctaSub')}
           </motion.p>
+
+          {/* Trust Strip */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1.6 }}
+            className="flex items-center justify-center gap-4 flex-wrap mt-8"
+          >
+            {(t('hero.trustStrip', { returnObjects: true, defaultValue: [] }) as string[]).map?.((s, i) => (
+              <span key={i} className="text-xs text-white/60 tracking-wide">
+                {i > 0 && <span className="mr-4">•</span>}{s}
+              </span>
+            ))}
+          </motion.div>
         </motion.div>
       </div>
 
@@ -141,10 +165,10 @@ export default function Hero() {
           transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
           className="flex flex-col items-center gap-3"
         >
-          <span className="text-xs uppercase tracking-[0.25em] text-background/60 group-hover:text-background/80 transition-colors">
+          <span className="text-xs uppercase tracking-[0.25em] text-white/60 group-hover:text-white/80 transition-colors">
             {t('hero.explore', { defaultValue: 'Explore' })}
           </span>
-          <ChevronDown className="w-5 h-5 text-background/60 group-hover:text-background/80 transition-colors" />
+          <ChevronDown className="w-5 h-5 text-white/60 group-hover:text-white/80 transition-colors" />
         </motion.div>
       </motion.button>
     </section>
