@@ -128,7 +128,7 @@ const checkoutKeysTr: Record<string, string> = {
 
 const successKeysTr: Record<string, string> = {
   verifying: 'Güvenli ödemeniz doğrulanıyor...',
-  pageTitle: 'Sipariş Onaylandı — Plan B Asia',
+  pageTitle: 'Sipariş Onaylandı — Plan B Asya',
   title: 'Siparişiniz Başarıyla Alındı',
   dopamine: 'Az önce yolunuzdaki büyük bir belirsizliği ortadan kaldırdınız.',
   nextStepsLabel: 'Şimdi ne olacak',
