@@ -412,13 +412,13 @@ const resources = {
       },
       founder: {
         quote: 'Mobilite artık bir yaşam tarzı tercihi değil. Stratejik bir zorunluluktur.',
-        attribution: '— Plan B Asia Danışmanlık',
+        attribution: '— Plan B Asya Danışmanlık',
       },
       founderLetter: {
         title: 'Kurucudan Bir Not',
         text: 'Mobilite artık bir yaşam tarzı tercihi değil. Stratejik bir zorunluluktur.',
         signature: 'Serkan',
-        role: 'Kurucu, Plan B Asia',
+        role: 'Kurucu, Plan B Asya',
       },
       network: { title: 'Güvenilir Ağımız', immigration: 'Göçmenlik Avukatları', tax: 'Vergi Danışmanları', medical: 'Özel Tıp Klinikleri', resorts: 'Lüks Tatil Köyleri' },
       services: { title: 'Stratejik Dikey Alanlar', subtitle: 'Kurucular, aileler ve küresel vatandaşlar için özel programlar.' },
@@ -436,7 +436,7 @@ const resources = {
         success: 'Başvurunuz alınmıştır. Concierge ekibimiz en kısa sürede sizinle iletişime geçecektir.',
       },
       quiz: {
-        seoTitle: 'Stratejik Mobilite Değerlendirmesi — Plan B Asia',
+        seoTitle: 'Stratejik Mobilite Değerlendirmesi — Plan B Asya',
         seoDesc: 'Güneydoğu Asya oturma programları için stratejik mobilite indeksinizi değerlendirin.',
         confidentialLabel: 'Gizli Değerlendirme',
         heroTitle: 'Stratejik Mobilite Değerlendirmesi',
