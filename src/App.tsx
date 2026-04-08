@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Index from "./pages/Index";
@@ -31,8 +31,18 @@ import AdminRoute from "./components/AdminRoute";
 import LanguageRouter from "./components/LanguageRouter";
 import SoftPowerPageEN from "./pages/en/SoftPowerPageEN";
 import NomadIncubatorPageEN from "./pages/en/NomadIncubatorPageEN";
+import DTVPageEN from "./pages/en/DTVPageEN";
+import ExpeditionsPageEN from "./pages/en/ExpeditionsPageEN";
+import WellnessPageEN from "./pages/en/WellnessPageEN";
+import MICEPageEN from "./pages/en/MICEPageEN";
 
 const queryClient = new QueryClient();
+
+/** 301-equivalent redirect preserving query params + hash */
+function RedirectWithQuery({ to }: { to: string }) {
+  const location = useLocation();
+  return <Navigate to={`${to}${location.search}${location.hash}`} replace />;
+}
 
 const App = () => (
   <HelmetProvider>
@@ -54,9 +64,17 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
-              {/* EN category pages — above catch-all */}
-              <Route path="/residency/soft-power" element={<SoftPowerPageEN />} />
-              <Route path="/residency/nomad-incubator" element={<NomadIncubatorPageEN />} />
+              {/* EN category pages — exact routes above catch-alls */}
+              <Route path="/visas/thailand-dtv" element={<DTVPageEN />} />
+              <Route path="/visas/soft-power" element={<SoftPowerPageEN />} />
+              <Route path="/relocation/nomad-incubator" element={<NomadIncubatorPageEN />} />
+              <Route path="/experiences/expeditions" element={<ExpeditionsPageEN />} />
+              <Route path="/experiences/wellness" element={<WellnessPageEN />} />
+              <Route path="/corporate/mice" element={<MICEPageEN />} />
+              {/* 301-equivalent redirects from old paths */}
+              <Route path="/residency/soft-power" element={<RedirectWithQuery to="/visas/soft-power" />} />
+              <Route path="/residency/nomad-incubator" element={<RedirectWithQuery to="/relocation/nomad-incubator" />} />
+              {/* Dynamic single-service catch-alls */}
               <Route path="/residency/:slug" element={<ServicePage />} />
               <Route path="/wellness/:slug" element={<ServicePage />} />
               <Route path="/corporate-retreats/:slug" element={<ServicePage />} />

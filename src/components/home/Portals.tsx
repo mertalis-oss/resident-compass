@@ -6,17 +6,17 @@ import { useTranslation } from 'react-i18next';
 const portals = [
   {
     id: 'live',
-    href: '/residency/dtv-thailand',
+    href: '/visas/thailand-dtv',
     image: '/images/service-residency.webp',
   },
   {
     id: 'explore',
-    href: '/expeditions/ha-giang-motor-expedition',
+    href: '/experiences/expeditions',
     image: '/images/service-expeditions.webp',
   },
   {
     id: 'heal',
-    href: '/wellness/thailand-retreat',
+    href: '/experiences/wellness',
     image: '/images/service-wellness.webp',
   },
 ];
