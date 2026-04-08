@@ -33,17 +33,27 @@ const EN_NAV_GROUPS: NavGroup[] = [
   {
     label: 'Visas',
     items: [
-      { to: '/residency/dtv-thailand', label: 'Thailand DTV' },
+      { to: '/visas/thailand-dtv', label: 'Thailand DTV' },
+      { to: '/visas/soft-power', label: 'Soft Power' },
     ],
   },
   {
-    label: 'Lifestyle',
+    label: 'Relocation',
     items: [
-      { to: '/residency/soft-power', label: 'Soft Power' },
-      { to: '/residency/nomad-incubator', label: 'Nomad Incubator' },
-      { to: '/wellness/thailand-retreat', label: 'Wellness' },
-      { to: '/expeditions/ha-giang-motor-expedition', label: 'Expeditions' },
-      { to: '/corporate-retreats/mice-thailand', label: 'Corporate / MICE' },
+      { to: '/relocation/nomad-incubator', label: 'Nomad Incubator' },
+    ],
+  },
+  {
+    label: 'Experiences',
+    items: [
+      { to: '/experiences/expeditions', label: 'Expeditions' },
+      { to: '/experiences/wellness', label: 'Wellness' },
+    ],
+  },
+  {
+    label: 'Corporate',
+    items: [
+      { to: '/corporate/mice', label: 'MICE & Events' },
     ],
   },
 ];
@@ -88,33 +98,42 @@ export default function FocusedNavbar() {
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-6">
-          {navGroups.map((group) => (
-            <div
-              key={group.label}
-              className="relative group"
-              onMouseEnter={() => setOpenGroup(group.label)}
-              onMouseLeave={() => setOpenGroup(null)}
-            >
-              <button className="flex items-center gap-1 text-sm font-medium text-holistic/80 hover:text-holistic transition-colors duration-300 py-2">
-                {group.label}
-                <ChevronDown className="h-3.5 w-3.5" />
-              </button>
-              {openGroup === group.label && (
-                <div className="absolute top-full left-0 mt-0 py-2 bg-corporate-navy/95 backdrop-blur-md border border-border/20 rounded-md shadow-xl min-w-[200px] z-50">
-                  {group.items.map((item) => (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      className="block px-4 py-2.5 text-sm text-holistic/70 hover:text-holistic hover:bg-holistic/5 transition-colors"
-                      onClick={() => setOpenGroup(null)}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+          {navGroups.map((group) => {
+            let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
+            return (
+              <div
+                key={group.label}
+                className="relative group"
+                onMouseEnter={() => {
+                  if (hoverTimeout) clearTimeout(hoverTimeout);
+                  hoverTimeout = setTimeout(() => setOpenGroup(group.label), 120);
+                }}
+                onMouseLeave={() => {
+                  if (hoverTimeout) clearTimeout(hoverTimeout);
+                  setOpenGroup((prev) => (prev === group.label ? null : prev));
+                }}
+              >
+                <button className="flex items-center gap-1 text-sm font-medium text-holistic/80 hover:text-holistic transition-colors duration-300 py-2">
+                  {group.label}
+                  <ChevronDown className="h-3.5 w-3.5" />
+                </button>
+                {openGroup === group.label && (
+                  <div className="absolute top-full left-0 mt-0 py-2 bg-corporate-navy/95 backdrop-blur-md border border-border/20 rounded-md shadow-xl min-w-[200px] z-50">
+                    {group.items.map((item) => (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        className="block px-4 py-2.5 text-sm text-holistic/70 hover:text-holistic hover:bg-holistic/5 transition-colors"
+                        onClick={() => setOpenGroup(null)}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
 
           {/* Language Switcher — only on global domain */}
           {scope === 'global' && (

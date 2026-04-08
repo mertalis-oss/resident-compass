@@ -1,0 +1,1 @@
+UPDATE services SET category = 'soft-power' WHERE category = 'Soft Power' AND visible_on = 'global';

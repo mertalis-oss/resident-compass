@@ -80,8 +80,8 @@ const crossSellMap: Record<string, { tr: CrossSellService[]; en: CrossSellServic
       { title: 'Dijital Göçebe Kuluçka', description: 'Şirket kurulumu, vergi optimizasyonu ve topluluk erişimi.', href: '/tr/nomad-incubator' },
     ],
     en: [
-      { title: 'Soft Power Education Packages', description: 'Strengthen your visa eligibility with Muay Thai, language, and wellness programs.', href: '/residency/dtv-thailand-cop', recommended: true },
-      { title: 'Comprehensive Relocation Support', description: 'End-to-end administrative and operational guidance for your move to Asia.', href: '/residency/Relocation Eng' },
+      { title: 'Soft Power Education Packages', description: 'Strengthen your visa eligibility with Muay Thai, language, and wellness programs.', href: '/visas/soft-power', recommended: true },
+      { title: 'Comprehensive Relocation Support', description: 'End-to-end administrative and operational guidance for your move to Asia.', href: '/relocation/nomad-incubator' },
     ],
   },
   'dtv-thailand': {
@@ -90,8 +90,8 @@ const crossSellMap: Record<string, { tr: CrossSellService[]; en: CrossSellServic
       { title: 'Dijital Göçebe Kuluçka', description: 'Şirket kurulumu, vergi optimizasyonu ve topluluk erişimi.', href: '/tr/nomad-incubator' },
     ],
     en: [
-      { title: 'DTV Submission Co-Pilot', description: 'Full document audit, submission support, and accuracy guarantee for your DTV application.', href: '/residency/dtv-thailand-cop', recommended: true },
-      { title: 'Comprehensive Relocation', description: 'End-to-end administrative management for your move to Thailand.', href: '/residency/Relocation Eng' },
+      { title: 'Soft Power Education', description: 'Language and cultural programs that strengthen your visa eligibility.', href: '/visas/soft-power', recommended: true },
+      { title: 'Comprehensive Relocation', description: 'End-to-end administrative management for your move to Thailand.', href: '/relocation/nomad-incubator' },
     ],
   },
   'dtv-thailand-cop': {
@@ -100,8 +100,8 @@ const crossSellMap: Record<string, { tr: CrossSellService[]; en: CrossSellServic
       { title: 'Soft Power Eğitim', description: 'Dil ve kültür eğitimleriyle vize şansınızı artırın.', href: '/tr/soft-power' },
     ],
     en: [
-      { title: 'DTV Strategic Advisory', description: 'Eligibility analysis, document audit, and personalized DTV roadmap.', href: '/residency/dtv-thailand', recommended: true },
-      { title: 'Soft Power Education', description: 'Language and cultural programs that strengthen your visa eligibility.', href: '/residency/dtv-thailand' },
+      { title: 'DTV Strategic Advisory', description: 'Eligibility analysis, document audit, and personalized DTV roadmap.', href: '/visas/thailand-dtv', recommended: true },
+      { title: 'Soft Power Education', description: 'Language and cultural programs that strengthen your visa eligibility.', href: '/visas/soft-power' },
     ],
   },
   'muay-thai': {
@@ -110,8 +110,8 @@ const crossSellMap: Record<string, { tr: CrossSellService[]; en: CrossSellServic
       { title: 'Keşif Ekspedisyonları', description: "Güneydoğu Asya'da rehberli motor ve doğa ekspedisyonları.", href: '/tr/expeditions' },
     ],
     en: [
-      { title: 'Thailand DTV Visa', description: '5-year validity, 180-day stays — the ultimate digital nomad visa.', href: '/residency/dtv-thailand', recommended: true },
-      { title: 'Expedition Adventures', description: 'Guided motorcycle and nature expeditions across Southeast Asia.', href: '/expeditions/ha-giang-motor-expedition' },
+      { title: 'Thailand DTV Visa', description: '5-year validity, 180-day stays — the ultimate digital nomad visa.', href: '/visas/thailand-dtv', recommended: true },
+      { title: 'Expedition Adventures', description: 'Guided motorcycle and nature expeditions across Southeast Asia.', href: '/experiences/expeditions' },
     ],
   },
   'mice-corporate': {
@@ -120,8 +120,8 @@ const crossSellMap: Record<string, { tr: CrossSellService[]; en: CrossSellServic
       { title: 'Keşif Ekspedisyonları', description: 'Kurumsal team-building için doğa ekspedisyonları.', href: '/tr/expeditions' },
     ],
     en: [
-      { title: 'Thailand DTV Visa', description: 'Extended stay advisory for post-event residency in Thailand.', href: '/residency/dtv-thailand', recommended: true },
-      { title: 'Expedition Adventures', description: 'Nature expeditions for corporate team-building.', href: '/expeditions/ha-giang-motor-expedition' },
+      { title: 'Thailand DTV Visa', description: 'Extended stay advisory for post-event residency in Thailand.', href: '/visas/thailand-dtv', recommended: true },
+      { title: 'Expedition Adventures', description: 'Nature expeditions for corporate team-building.', href: '/experiences/expeditions' },
     ],
   },
   'mice-thailand': {
@@ -130,8 +130,8 @@ const crossSellMap: Record<string, { tr: CrossSellService[]; en: CrossSellServic
       { title: 'Keşif Ekspedisyonları', description: 'Kurumsal team-building için doğa ekspedisyonları.', href: '/tr/expeditions' },
     ],
     en: [
-      { title: 'Thailand DTV Visa', description: 'Extended stay advisory for post-event residency.', href: '/residency/dtv-thailand', recommended: true },
-      { title: 'Expedition Adventures', description: 'Nature expeditions for corporate team-building.', href: '/expeditions/ha-giang-motor-expedition' },
+      { title: 'Thailand DTV Visa', description: 'Extended stay advisory for post-event residency.', href: '/visas/thailand-dtv', recommended: true },
+      { title: 'Expedition Adventures', description: 'Nature expeditions for corporate team-building.', href: '/experiences/expeditions' },
     ],
   },
   'expedition-jungle': {
@@ -140,8 +140,8 @@ const crossSellMap: Record<string, { tr: CrossSellService[]; en: CrossSellServic
       { title: 'Soft Power Eğitim Paketleri', description: 'Muay Thai ve wellness eğitimleriyle kalışınızı anlamlı kılın.', href: '/tr/soft-power' },
     ],
     en: [
-      { title: 'Thailand DTV Visa', description: 'The most advantageous visa option for long-term stays in Thailand.', href: '/residency/dtv-thailand', recommended: true },
-      { title: 'Soft Power Education', description: 'Muay Thai and wellness programs to enrich your stay.', href: '/residency/dtv-thailand' },
+      { title: 'Thailand DTV Visa', description: 'The most advantageous visa option for long-term stays in Thailand.', href: '/visas/thailand-dtv', recommended: true },
+      { title: 'Soft Power Education', description: 'Muay Thai and wellness programs to enrich your stay.', href: '/visas/soft-power' },
     ],
   },
   'ha-giang-motor-expedition': {
@@ -150,8 +150,8 @@ const crossSellMap: Record<string, { tr: CrossSellService[]; en: CrossSellServic
       { title: 'Wellness Retreat', description: 'Holistic wellness deneyimi.', href: '/tr/soft-power' },
     ],
     en: [
-      { title: 'Thailand DTV Visa', description: 'Long-term stay visa for digital nomads and remote workers.', href: '/residency/dtv-thailand', recommended: true },
-      { title: 'Thailand Wellness Retreat', description: 'Holistic wellness experience in Koh Phangan.', href: '/wellness/thailand-retreat' },
+      { title: 'Thailand DTV Visa', description: 'Long-term stay visa for digital nomads and remote workers.', href: '/visas/thailand-dtv', recommended: true },
+      { title: 'Thailand Wellness Retreat', description: 'Holistic wellness experience in Koh Phangan.', href: '/experiences/wellness' },
     ],
   },
   'nomad-incubator': {
@@ -160,8 +160,8 @@ const crossSellMap: Record<string, { tr: CrossSellService[]; en: CrossSellServic
       { title: 'MICE & Kurumsal Etkinlik', description: 'Ekibinizi Tayland\'da buluşturun.', href: '/tr/mice' },
     ],
     en: [
-      { title: 'Thailand DTV Visa', description: 'Secure your legal residency while building your business.', href: '/residency/dtv-thailand', recommended: true },
-      { title: 'Corporate Retreat — MICE', description: 'Bring your team together in Thailand.', href: '/corporate-retreats/mice-thailand' },
+      { title: 'Thailand DTV Visa', description: 'Secure your legal residency while building your business.', href: '/visas/thailand-dtv', recommended: true },
+      { title: 'Corporate Retreat — MICE', description: 'Bring your team together in Thailand.', href: '/corporate/mice' },
     ],
   },
 };
