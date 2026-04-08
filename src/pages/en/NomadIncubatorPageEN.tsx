@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { Building2, Globe, Calculator, Users, Zap, ArrowRight, CheckCircle, Home, Briefcase, Heart, MapPin, Loader } from 'lucide-react';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
@@ -37,13 +38,15 @@ export default function NomadIncubatorPageEN() {
   const { services, isLoading, hasError } = useServicesList('residency', 'global');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
 
   const hasServices = services.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title="Digital Nomad Incubator — Plan B Asia" description="Company formation, tax optimization, second passport." />
+      <SEOHead title="Digital Nomad Incubator — Plan B Asia" description="Company formation, tax optimization, second passport." canonical="https://planbasia.com/relocation/nomad-incubator" />
       <FocusedNavbar />
       <TrustBar />
 
@@ -163,6 +166,19 @@ export default function NomadIncubatorPageEN() {
           ) : (
             <PlanBForm serviceId={services[0]?.id} onSubmitSuccess={() => setFormSubmitted(true)} />
           )}
+        </div>
+      </section>
+
+      {/* Cross-Bridge */}
+      <section className="py-20 lg:py-28 bg-foreground text-background grain-overlay">
+        <div className="container mx-auto px-6 lg:px-12 text-center max-w-2xl">
+          <p className="caption-editorial text-accent mb-4">Peak Performance</p>
+          <h2 className="heading-section text-background mb-4">Peak Performance Environment.</h2>
+          <p className="body-editorial text-background/70 mb-4">Optimize your physical and mental operating system alongside your business infrastructure.</p>
+          <p className="text-xs text-background/50 mb-8">Limited to 10 Founder-level orchestrations per quarter.</p>
+          <Link to="/experiences/wellness" className="btn-luxury-gold inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase">
+            Explore Wellness Protocols <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { BookOpen, Utensils, Languages, Heart, Shield, ArrowRight, Clock, Loader } from 'lucide-react';
 import ComparisonCrossSell from '@/components/service/ComparisonCrossSell';
 import FocusedNavbar from '@/components/FocusedNavbar';
@@ -30,12 +31,14 @@ export default function SoftPowerPageEN() {
   const [selectedBundle, setSelectedBundle] = useState<any>(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
   if (hasError || bundles.length === 0) return <div className="min-h-screen bg-background"><FocusedNavbar /><TrustBar /><div className="py-24 text-center text-muted-foreground">Packages currently being updated. Please check back soon.</div></div>;
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title="Education & Living Packages in Asia — Plan B Asia" description="Muay Thai, culinary arts, language programs and wellness training." schemaType="Service" serviceName="Soft Power Education Packages" />
+      <SEOHead title="Education & Living Packages in Asia — Plan B Asia" description="Muay Thai, culinary arts, language programs and wellness training." canonical="https://planbasia.com/visas/soft-power" schemaType="Service" serviceName="Soft Power Education Packages" />
       <FocusedNavbar />
       <TrustBar />
 
@@ -140,6 +143,18 @@ export default function SoftPowerPageEN() {
           ) : (
             <PlanBForm serviceId={bundles[0]?.id} onSubmitSuccess={() => setFormSubmitted(true)} />
           )}
+        </div>
+      </section>
+
+      {/* Cross-Bridge */}
+      <section className="py-20 lg:py-28 bg-foreground text-background grain-overlay">
+        <div className="container mx-auto px-6 lg:px-12 text-center max-w-2xl">
+          <p className="caption-editorial text-accent mb-4">Next Step</p>
+          <h2 className="heading-section text-background mb-4">Learning is the Beginning. Living is the Goal.</h2>
+          <p className="body-editorial text-background/70 mb-8">Transform your education visa into a permanent island base.</p>
+          <Link to="/relocation/nomad-incubator" className="btn-luxury-gold inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase">
+            Build Your Island Base <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 
