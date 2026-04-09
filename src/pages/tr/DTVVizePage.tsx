@@ -33,8 +33,7 @@ const faqs = [
   { qKey: 'dtvVize.faq6Q', aKey: 'dtvVize.faq6A' },
 ];
 
-const formatPrice = (price: number, currency: string) =>
-  new Intl.NumberFormat('en-US', { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(price);
+import { formatPrice } from '@/lib/formatPrice';
 
 export default function DTVVizePage() {
   const { t } = useTranslation();

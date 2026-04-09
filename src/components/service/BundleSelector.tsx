@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import { formatPrice } from '@/lib/formatPrice';
+import { useDomainScope } from '@/hooks/useDomainScope';
 import type { Service } from '@/pages/ServicePage';
 
 interface Props {
@@ -7,17 +9,15 @@ interface Props {
   onSelect: (bundle: Service) => void;
 }
 
-const formatPrice = (price: number, currency: string) =>
-  new Intl.NumberFormat('tr-TR', { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(price);
-
 export default function BundleSelector({ bundles, selected, onSelect }: Props) {
   const { t } = useTranslation();
+  const scope = useDomainScope();
 
   return (
     <section className="py-12 bg-card border-y border-border">
       <div className="container max-w-2xl px-6">
         <p className="text-sm text-muted-foreground text-center mb-8 leading-relaxed">
-          {t('softPower.bundleIntro', { defaultValue: "İstediğiniz lokasyonda anlaşmalı olduğumuz dil okullarıyla Tayland'da hem yasal kalış hakkınızı güvence altına alıyor hem de yeni bir dil ve kültür deneyimi yaşamanızı sağlıyoruz." })}
+          {t('softPower.bundleIntro')}
         </p>
         <div className="space-y-3">
           {bundles.map((bundle) => {
@@ -47,7 +47,9 @@ export default function BundleSelector({ bundles, selected, onSelect }: Props) {
                     </div>
                   </div>
                   <p className="font-heading text-lg text-accent flex-shrink-0 ml-4">
-                    {formatPrice(bundle.price, bundle.currency || 'USD')}
+                    <span className="whitespace-nowrap">
+                      {formatPrice(bundle.price, bundle.currency || 'USD', scope)}
+                    </span>
                   </p>
                 </div>
               </button>
@@ -56,7 +58,7 @@ export default function BundleSelector({ bundles, selected, onSelect }: Props) {
         </div>
         {!selected && (
           <p className="text-xs text-destructive/70 text-center mt-4">
-            {t('softPower.bundleRequired', { defaultValue: 'Devam etmek için bir paket seçmelisiniz.' })}
+            {t('softPower.bundleRequired')}
           </p>
         )}
       </div>

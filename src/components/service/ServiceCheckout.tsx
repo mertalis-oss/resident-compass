@@ -6,6 +6,7 @@ import { trackPostHogEvent } from '@/lib/posthog';
 import { normalizeEmail } from '@/lib/emailNormalize';
 import { safeGet, cleanupFallback } from '@/lib/safeStorage';
 import { getDomainScope } from '@/hooks/useDomainScope';
+import { renderPrice, resolveCurrency } from '@/lib/formatPrice';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -71,8 +72,8 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     const slowTimer = setTimeout(() => {
       if (window.__checkout_lock) {
         toast({
-          title: t('checkout.stillProcessing', { defaultValue: 'Still processing...' }),
-          description: t('checkout.connectionSlow', { defaultValue: 'Connection is slow. Please wait...' }),
+          title: t('checkout.stillProcessing'),
+          description: t('checkout.connectionSlow'),
         });
       }
     }, 8000);
@@ -130,8 +131,8 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
         } else {
           toast({
             variant: 'destructive',
-            title: t('checkout.errorTitle', { defaultValue: 'Checkout Error' }),
-            description: t('checkout.errorDesc', { defaultValue: 'Something went wrong. Please try again.' }),
+            title: t('checkout.errorTitle'),
+            description: t('checkout.errorDesc'),
           });
           setIsAgreed(false);
         }
@@ -151,8 +152,8 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
       if (window.__state?.[sessionKey.current]) delete window.__state[sessionKey.current][stateKey];
       toast({
         variant: 'destructive',
-        title: t('checkout.connectionError', { defaultValue: 'Connection Error' }),
-        description: t('checkout.connectionErrorDesc', { defaultValue: 'Please check your connection and try again.' }),
+        title: t('checkout.connectionError'),
+        description: t('checkout.connectionErrorDesc'),
       });
       setIsAgreed(false);
     } finally {
@@ -222,19 +223,17 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
         onClick={() => document.getElementById('checkout-section')?.scrollIntoView({ behavior: 'smooth' })}
         className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
       >
-        {t('service.ctaStart', { defaultValue: 'Start Your Process' })}
+        {t('service.ctaStart')}
       </Button>
     );
   }
 
-  const currencyLabel = (service.currency || 'USD').toUpperCase();
-
-  const formatPrice = (price: number, currency: string) =>
-    new Intl.NumberFormat(scope === 'tr' ? 'tr-TR' : 'en-US', { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(price);
-
-  const priceDisplay = service.price
-    ? formatPrice(service.price, service.currency || 'USD')
-    : null;
+  const { display: priceDisplay, isPrivate, resolvedCurrency } = renderPrice(
+    service.price,
+    service.currency || 'USD',
+    scope
+  );
+  const currencyLabel = resolvedCurrency;
 
   return (
     <>
@@ -247,11 +246,11 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
               <p className="text-muted-foreground text-sm mb-4">{service.short_description}</p>
             )}
             <div className="border-t border-accent/20 my-4" />
-            {priceDisplay ? (
-              <p className="font-heading text-3xl md:text-4xl text-accent mb-4">{priceDisplay}</p>
+            {isPrivate ? (
+              <p className="font-heading text-lg text-accent mb-4">{priceDisplay}</p>
             ) : (
-              <p className="font-heading text-lg text-accent mb-4">
-                {scope === 'tr' ? 'Özel Danışmanlık' : 'Private Engagement'}
+              <p className="font-heading text-3xl md:text-4xl text-accent mb-4">
+                <span className="whitespace-nowrap">{priceDisplay}</span>
               </p>
             )}
             <Button
@@ -277,8 +276,8 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
             <DialogHeader>
               <DialogTitle className="font-heading text-xl">
                 {service.title}
-                {priceDisplay && (
-                  <span className="block text-accent text-2xl mt-1">{priceDisplay}</span>
+                {!isPrivate && (
+                  <span className="block text-accent text-2xl mt-1 whitespace-nowrap">{priceDisplay}</span>
                 )}
               </DialogTitle>
             </DialogHeader>
@@ -286,18 +285,18 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
             {/* Stripe trust badge */}
             <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mt-6 mb-4">
               <CreditCard className="h-3.5 w-3.5" />
-              <span>{t('checkout.stripeTrust', { defaultValue: `Processed securely in ${currencyLabel} by Stripe`, currencyLabel })}</span>
+              <span>{t('checkout.stripeTrust', { currencyLabel })}</span>
             </div>
 
             {/* Micro-trust signals */}
             <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground mb-6">
-              <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {t('checkout.microTime', { defaultValue: 'Takes less than 2 minutes' })}</span>
-              <span className="flex items-center gap-1"><Lock className="h-3.5 w-3.5" /> {t('checkout.microSecure', { defaultValue: 'Secure Stripe checkout' })}</span>
-              <span className="flex items-center gap-1"><Shield className="h-3.5 w-3.5" /> {t('checkout.microCountries', { defaultValue: '12+ countries served' })}</span>
+              <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {t('checkout.microTime')}</span>
+              <span className="flex items-center gap-1"><Lock className="h-3.5 w-3.5" /> {t('checkout.microSecure')}</span>
+              <span className="flex items-center gap-1"><Shield className="h-3.5 w-3.5" /> {t('checkout.microCountries')}</span>
             </div>
 
             <p className="text-center text-sm text-muted-foreground italic mb-8">
-              {t('checkout.hesitationKiller', { defaultValue: "You don't need to have everything figured out. That's exactly why this exists." })}
+              {t('checkout.hesitationKiller')}
             </p>
 
             {/* Price justification */}
@@ -321,15 +320,15 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
                 onCheckedChange={(checked) => setIsAgreed(checked === true)}
               />
               <label htmlFor="terms-agree" className="text-sm text-foreground cursor-pointer leading-snug">
-                {t('checkout.agreementLabel', { defaultValue: 'I agree to the Terms of Service, Privacy Policy, and Refund Policy. I understand this is an advisory service and government decisions are independent.' })}
+                {t('checkout.agreementLabel')}
               </label>
             </div>
             <p className="text-xs text-muted-foreground ml-7 mb-2">
-              {t('checkout.legalReinforce', { defaultValue: 'By proceeding, you confirm you understand the scope of the service.' })}
+              {t('checkout.legalReinforce')}
             </p>
             {!isAgreed && (
               <p className="text-xs text-destructive/70 ml-7 mb-6">
-                {t('checkout.mustAccept', { defaultValue: 'You must accept the terms before proceeding.' })}
+                {t('checkout.mustAccept')}
               </p>
             )}
 
@@ -347,25 +346,25 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
             {/* What happens next */}
             <div className="mt-8 space-y-4">
               <p className="caption-editorial text-muted-foreground mb-4">
-                {t('checkout.whatsNextLabel', { defaultValue: 'What happens next' })}
+                {t('checkout.whatsNextLabel')}
               </p>
               <div className="flex items-start gap-3">
                 <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/10 text-accent text-xs flex items-center justify-center font-bold">1</span>
-                <p className="text-sm text-foreground">{t('checkout.step1', { defaultValue: 'Secure Payment' })}</p>
+                <p className="text-sm text-foreground">{t('checkout.step1')}</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/10 text-accent text-xs flex items-center justify-center font-bold">2</span>
-                <p className="text-sm text-foreground">{t('checkout.step2', { defaultValue: 'We contact you via WhatsApp / Email (Within 24h)' })}</p>
+                <p className="text-sm text-foreground">{t('checkout.step2')}</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/10 text-accent text-xs flex items-center justify-center font-bold">3</span>
-                <p className="text-sm text-foreground">{t('checkout.step3', { defaultValue: 'Personalized process starts' })}</p>
+                <p className="text-sm text-foreground">{t('checkout.step3')}</p>
               </div>
             </div>
 
             {/* Real human */}
             <p className="text-sm text-muted-foreground text-center mt-8 leading-relaxed">
-              {t('checkout.realHuman', { defaultValue: "You'll be speaking with a real expert, not an automated system. If this service is not a fit for your situation, we will guide you to the right next step. You're one step away from getting clarity." })}
+              {t('checkout.realHuman')}
             </p>
 
             {/* Legal Disclaimer */}
@@ -388,13 +387,7 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
               disabled={!isAgreed || isCheckoutLoading}
               className="w-full btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
             >
-              {isCheckoutLoading
-                ? (scope === 'tr'
-                  ? t('checkout.redirectingTR', { defaultValue: 'Yönlendiriliyorsunuz...' })
-                  : t('checkout.redirectingEN', { defaultValue: 'Redirecting...' }))
-                : (scope === 'tr'
-                  ? t('checkout.ctaLabelTR', { defaultValue: 'Güvenli Ödemeye Geç' })
-                  : t('checkout.ctaLabelEN', { defaultValue: 'Continue to Secure Payment' }))}
+              {isCheckoutLoading ? t('checkout.redirecting') : t('checkout.ctaLabel')}
             </Button>
             <p className="text-xs text-muted-foreground text-center mt-2">
               {scope === 'tr' ? '3 dakika içinde planın hazır' : 'Your plan ready in 3 minutes'}
