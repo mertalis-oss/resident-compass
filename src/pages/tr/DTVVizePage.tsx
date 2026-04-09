@@ -33,7 +33,7 @@ const faqs = [
   { qKey: 'dtvVize.faq6Q', aKey: 'dtvVize.faq6A' },
 ];
 
-import { formatPrice } from '@/lib/formatPrice';
+
 
 export default function DTVVizePage() {
   const { t } = useTranslation();
