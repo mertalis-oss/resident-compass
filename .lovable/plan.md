@@ -1,96 +1,122 @@
 
 
-# Batch 2.5 — Advisory Card + Interstitial Modal
+# Batch 2.5 Final — formatPrice Utility + i18n Keys + Global Pricing Audit
 
-## 4 Files to Modify
+## 8 Files Changed
 
-### 1. `src/components/home/Testimonials.tsx` (1 line)
-- Line 11: `if (scope === 'tr') return null;` → `if (scope !== 'tr') return null;`
+### 1. `src/hooks/useDomainScope.ts` — Type fix
+- Change `'tr' | 'global'` → `'tr' | 'en'`
+- Change fallback `return 'global'` → `return 'en'` (line 4)
+- Change final return `'tr' : 'global'` → `'tr' : 'en'` (line 13)
 
-### 2. `src/components/home/TrustSignals.tsx`
-- Wrap the stats grid (lines 25-43) in `{scope === 'tr' && (…)}` — TR keeps its 4 animated pillars
-- Add EN-only block: a simple centered `<p>` with `15+ Years International Experience · Multi-Country Execution · Private Advisory Model` — no counters, no motion
-- Trust strip section (lines 45-69) unchanged for both scopes
+### 2. `src/lib/formatPrice.ts` — NEW single source of truth
 
-### 3. `src/pages/en/DTVPageEN.tsx` (line 119)
-- Remove `xl:grid-cols-3` → keep `grid-cols-1 md:grid-cols-2 gap-8`
+```ts
+import type { DomainScope } from '@/hooks/useDomainScope';
 
-### 4. `src/components/service/ServiceCheckout.tsx` — Major restructure (lines 230-401)
+const VALID_CURRENCIES = ['USD', 'EUR'];
 
-**New imports:** `Dialog, DialogContent, DialogHeader, DialogTitle` from `@/components/ui/dialog`
+export function resolveCurrency(
+  currency: string | null | undefined,
+  scope: DomainScope
+): string {
+  const normalized = (currency || '').toUpperCase();
+  return VALID_CURRENCIES.includes(normalized) ? normalized : (scope === 'tr' ? 'USD' : 'EUR');
+}
 
-**New state:** `const [modalOpen, setModalOpen] = useState(false)`
+export function formatPrice(price: number, currency: string, scope: DomainScope): string {
+  const safeCurrency = resolveCurrency(currency, scope);
+  return new Intl.NumberFormat(scope === 'tr' ? 'tr-TR' : 'en-US', {
+    style: 'currency',
+    currency: safeCurrency,
+    currencyDisplay: 'narrowSymbol',
+    useGrouping: true,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(price);
+}
 
-**Lines 230-401 replaced with two layers:**
-
-**Layer 1 — Advisory Card (rendered inline)**
-```
-<section id="checkout-section" className="section-editorial border-t border-border">
-  <div className="container max-w-2xl px-6">
-    <div className="bg-card/80 backdrop-blur-sm border border-border rounded-lg
-                    shadow-sm hover:shadow-md transition-shadow duration-200 ease-out
-                    p-6 md:p-8">
-      <h2 className="font-heading text-xl md:text-2xl mb-3">{service.title}</h2>
-      {service.short_description && <p className="text-muted-foreground text-sm mb-4">...</p>}
-      <div className="border-t border-accent/20 my-4" />
-      <!-- Price: formatPrice() or "Private Engagement" / "Özel Danışmanlık" if price is 0/falsy -->
-      <Button className="w-full h-12" onClick={() => setModalOpen(true)}>
-        "Initialize Protocol" (EN) / "Süreci Başlat" (TR)
-      </Button>
-      <p className="text-xs text-muted-foreground text-center mt-2">
-        "Private advisory — no automated processing" / "Kişiye özel danışmanlık — otomatik işlem yok"
-      </p>
-    </div>
-  </div>
-</section>
-```
-
-**Layer 2 — Interstitial Modal**
-```
-<Dialog open={modalOpen} onOpenChange={(open) => {
-  if (!open) { setIsAgreed(false); setIsCheckoutLoading(false); setShowRescue(false); }
-  setModalOpen(open);
-}}>
-  <DialogContent className="p-0 overflow-hidden max-w-[560px]">
-    <!-- Inner scroll wrapper -->
-    <div className="max-h-[80vh] overflow-y-auto p-6 md:p-8 pb-32">
-      <DialogHeader>
-        <DialogTitle className="font-heading text-xl">{service.title}</DialogTitle>
-      </DialogHeader>
-      <!-- ALL existing checkout content from lines 247-397 moved here:
-           Stripe trust badge, micro-trust signals, hesitation killer,
-           price justification box, terms checkbox, legal agreement,
-           WhatsApp escape, "what happens next" steps, legal disclaimer,
-           real human text -->
-    </div>
-    <!-- Sticky CTA footer (solid bg, no transparency artifacts) -->
-    <div className="sticky bottom-0 z-10 bg-card border-t border-border pt-4 pb-4 px-6 md:px-8">
-      <p className="text-xs text-muted-foreground text-center mb-2">response time copy</p>
-      <Button id="checkout-cta-btn" ... onClick={handleCheckout} disabled={!isAgreed || isCheckoutLoading}>
-        CTA label (same scope logic)
-      </Button>
-      <p className="text-xs text-muted-foreground text-center mt-2">post-CTA reassurance</p>
-    </div>
-  </DialogContent>
-</Dialog>
+export function renderPrice(
+  price: number | null | undefined,
+  currency: string,
+  scope: DomainScope
+): { display: string; isPrivate: boolean; resolvedCurrency: string } {
+  const resolvedCurrency = resolveCurrency(currency, scope);
+  if (price == null || price === 0) {
+    return {
+      display: scope === 'tr' ? 'Özel Danışmanlık' : 'Private Engagement',
+      isPrivate: true,
+      resolvedCurrency,
+    };
+  }
+  return {
+    display: formatPrice(price, currency, scope),
+    isPrivate: false,
+    resolvedCurrency,
+  };
+}
 ```
 
-**Key architectural details:**
-- `DialogContent` uses `p-0 overflow-hidden` (Radix-safe — no direct overflow-y-auto on the content root)
-- Inner wrapper handles scroll with `max-h-[80vh] overflow-y-auto` + `pb-32` for sticky footer clearance
-- Sticky footer uses solid `bg-card` (no transparency) to prevent contrast artifacts on Safari
-- `onOpenChange` resets `isAgreed`, `isCheckoutLoading`, `showRescue` when closing → fresh slate every open
-- Radix Dialog natively handles body scroll lock (Safari safe), focus trap, ESC close, and focus return to trigger
-- No custom focus management wrappers needed — preserving Radix's native A11y behavior
+Key design decisions:
+- **No hooks** — pure functions only, scope always passed as parameter (Guard 1)
+- **No `window` access** — components resolve scope via `useDomainScope()` hook and pass it in (Guard 2)
+- **NaN-safe** — uses `price == null || price === 0` instead of `!price` (Guard 3)
+- `resolveCurrency` exported separately for `stripeTrust` label sync (Currency Label Consistency)
 
-**Preserved unchanged (zero modifications):**
-- Lines 1-229: all imports, types, state, `handleCheckout`, WhatsApp helpers, lead-rescue failsafe, mirror variant, `formatPrice`
-- All TR/EN scope branching text preserved exactly inside the modal
+### 3. `src/lib/i18n.ts` — Add missing keys
 
-## Not Touched
-- All TR pages, TR navigation, TR routes
-- Stripe logic, webhooks, RLS, edge functions
-- Hero.tsx, i18n.ts, StickyMobileCTA, FocusedNavbar
-- `useServiceFetch`, `useServicesList` hooks
+**EN `checkoutKeys`** (after line 55): add `stripeTrust`, `connectionSlow`, `ctaLabel`, `redirecting`
+
+**TR `checkoutKeysTr`** (after line 126): add `mustAccept`, `stripeTrust`, `connectionSlow`, `ctaLabel`, `redirecting`
+
+**HI `checkoutKeysHi`** (after line 194): add `mustAccept`, `stripeTrust`, `connectionSlow`, `ctaLabel`, `redirecting`
+
+**EN translation** (~line 305, alongside `service`/`checkout`): add `softPower: { bundleIntro, bundleRequired }`
+
+**TR translation** (~line 430, alongside existing keys): add `softPower: { bundleIntro, bundleRequired }`
+
+### 4. `src/components/service/ServiceCheckout.tsx`
+- Import `renderPrice`, `resolveCurrency` from `@/lib/formatPrice`
+- Remove inline `formatPrice` (lines 232-233)
+- Replace `priceDisplay` with `renderPrice(service.price, service.currency || 'USD', scope)`
+- Derive `currencyLabel` from `resolveCurrency(service.currency, scope)` — same resolved value feeds both price and `stripeTrust` text
+- Wrap numeric price in `<span className="whitespace-nowrap">` — skip `whitespace-nowrap` when `isPrivate` (Guard 4)
+- Remove all `defaultValue` fallbacks from `t()` calls that now have keys in i18n.ts
+- Replace CTA labels: `t('checkout.redirecting')` / `t('checkout.ctaLabel')` — remove scope branching since i18n resolves by language
+
+### 5. `src/components/service/BundleSelector.tsx`
+- Import `formatPrice` from `@/lib/formatPrice`, `useDomainScope` from hook
+- Remove inline `formatPrice` (lines 10-11)
+- Add `const scope = useDomainScope()` inside component
+- Call `formatPrice(bundle.price, bundle.currency || 'USD', scope)`
+- Wrap price in `<span className="whitespace-nowrap">`
+- Remove `defaultValue` from `t('softPower.bundleIntro')` and `t('softPower.bundleRequired')`
+
+### 6. `src/components/service/ServiceHero.tsx`
+- Import `renderPrice` from `@/lib/formatPrice`, `useDomainScope` from hook
+- Remove inline `formatPrice` (lines 6-13)
+- Add `const scope = useDomainScope()` inside component
+- Use `renderPrice(service.price, service.currency || 'USD', scope)`
+- If `isPrivate`: show label with `font-heading text-lg` (no `whitespace-nowrap`), hide price anchor lines
+- If not `isPrivate`: show price with `whitespace-nowrap`, keep anchor lines
+
+### 7. `src/components/service/FOMOBlock.tsx`
+- Import `renderPrice` from `@/lib/formatPrice`, `useDomainScope` from hook
+- Remove inline `formatPrice` (lines 6-7)
+- Replace `isTR` (from `i18n.language`) with `const scope = useDomainScope()` and `scope === 'tr'`
+- Use `renderPrice(service.price, service.currency || 'USD', scope)`
+- If `isPrivate`: show label text, maintain container structure
+- If not `isPrivate`: show price with `whitespace-nowrap`
+
+### 8. `src/pages/tr/DTVVizePage.tsx`
+- Import `formatPrice` from `@/lib/formatPrice`
+- Remove inline `formatPrice` (lines 36-37)
+- Pass `'tr'` as scope explicitly in all calls
+
+## NOT Modified
+- Admin files (internal tools — not customer-facing)
+- All TR page components except DTVVizePage formatPrice swap
+- Routing, Stripe edge functions, webhooks, RLS
+- Dialog/Radix A11y behavior
 - No new dependencies
 
