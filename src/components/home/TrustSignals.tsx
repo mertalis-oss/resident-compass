@@ -21,26 +21,35 @@ export default function TrustSignals() {
   return (
     <section className="py-24 lg:py-32 bg-secondary">
       <div className="container mx-auto px-6 lg:px-12">
-        {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-20 lg:mb-32">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="text-center"
-            >
-              <p className="font-heading text-4xl md:text-5xl lg:text-6xl font-medium mb-2 text-accent">
-                {stat.value}
-              </p>
-              <p className="caption-editorial text-muted-foreground">
-                {stat.label}
-              </p>
-            </motion.div>
-          ))}
-        </div>
+        {/* Stats — TR only */}
+        {scope === 'tr' && (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-20 lg:mb-32">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="text-center"
+              >
+                <p className="font-heading text-4xl md:text-5xl lg:text-6xl font-medium mb-2 text-accent">
+                  {stat.value}
+                </p>
+                <p className="caption-editorial text-muted-foreground">
+                  {stat.label}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        )}
+
+        {/* EN — Minimal trust line */}
+        {scope !== 'tr' && (
+          <p className="text-center text-sm text-muted-foreground tracking-wide mb-20 lg:mb-32">
+            15+ Years International Experience · Multi-Country Execution · Private Advisory Model
+          </p>
+        )}
 
         {/* Trust Strip — text-only, no fake logos */}
         <motion.div

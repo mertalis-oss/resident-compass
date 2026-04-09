@@ -8,7 +8,7 @@ export default function Testimonials() {
   const scope = getDomainScope();
 
   // Hide testimonials on TR domain until real reviews are added
-  if (scope === 'tr') return null;
+  if (scope !== 'tr') return null;
 
   const items = t('testimonials.items', { returnObjects: true }) as { quote: string; author: string; role: string }[];
 
