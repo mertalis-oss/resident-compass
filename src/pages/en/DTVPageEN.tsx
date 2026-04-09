@@ -116,7 +116,7 @@ export default function DTVPageEN() {
                 <p className="caption-editorial text-accent mb-2">Advisory Packages</p>
                 <h2 className="heading-section">Select Your Strategic Pathway</h2>
               </div>
-              <div className="min-h-[400px] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+              <div className="min-h-[400px] grid grid-cols-1 md:grid-cols-2 gap-8">
                 {services.map((s) => (
                   <ServiceCheckout key={s.id} service={s} />
                 ))}

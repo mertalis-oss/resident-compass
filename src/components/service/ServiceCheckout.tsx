@@ -9,6 +9,7 @@ import { getDomainScope } from '@/hooks/useDomainScope';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Shield, Clock, Lock, CreditCard, MessageCircle, AlertTriangle } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 import type { Service } from '@/pages/ServicePage';
@@ -28,7 +29,6 @@ interface Props {
   variant?: 'full' | 'mirror';
 }
 
-// WhatsApp number centralized in @/lib/constants
 const scope = getDomainScope();
 
 export default function ServiceCheckout({ service, variant = 'full' }: Props) {
@@ -37,15 +37,25 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
   const [isAgreed, setIsAgreed] = useState(false);
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const [showRescue, setShowRescue] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const sessionKey = useRef(window.__session_id || `s_${Date.now()}`);
+
+  const handleModalChange = (open: boolean) => {
+    if (!open) {
+      setIsAgreed(false);
+      setIsCheckoutLoading(false);
+      setShowRescue(false);
+    }
+    setModalOpen(open);
+  };
 
   const showLeadRescue = () => {
     setShowRescue(true);
     setIsCheckoutLoading(false);
     window.__checkout_lock = false;
   };
+
   const handleCheckout = async () => {
-    // Session-scoped click guard
     const stateKey = `checkout_${service.slug}`;
     window.__state = window.__state || {};
     window.__state[sessionKey.current] = window.__state[sessionKey.current] || {};
@@ -55,7 +65,6 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     window.__checkout_lock = true;
     window.__state[sessionKey.current][stateKey] = true;
     setIsCheckoutLoading(true);
-    // Force-disable the button DOM element immediately to prevent any race
     const btn = document.querySelector('#checkout-cta-btn') as HTMLButtonElement | null;
     if (btn) btn.disabled = true;
 
@@ -75,14 +84,12 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
       const leadEmail = normalizeEmail(safeGet('planb_lead_email'));
       const recommendedService = safeGet('planb_last_recommendation') || '';
 
-      // Scoped CTA double-fire guard
       window.__cta_fired = window.__cta_fired || {};
       if (!window.__cta_fired[service.slug]) {
         window.__cta_fired[service.slug] = true;
         trackPostHogEvent('checkout_started', { service_id: service.id, service_title: service.title }, true);
       }
 
-      // STEP 5: Promise.race with 5s timeout
       const checkoutPromise = supabase.functions.invoke('create-checkout-session', {
         body: {
           service_id: service.id,
@@ -106,7 +113,6 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
       try {
         result = await Promise.race([checkoutPromise, timeoutPromise]) as any;
       } catch (timeoutErr) {
-        // Timeout or price error → show lead-rescue failsafe
         if (window.__cta_fired) delete window.__cta_fired[service.slug];
         if (window.__state?.[sessionKey.current]) delete window.__state[sessionKey.current][stateKey];
         showLeadRescue();
@@ -167,13 +173,12 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
     }, 150);
   };
 
-  // STEP 7.5: Stripe placeholder detection
   const isPlaceholder = service.stripe_price_id && (/xxx|placeholder/i.test(service.stripe_price_id) || !service.stripe_price_id.startsWith('price_'));
   if (isPlaceholder) {
     console.warn('STRIPE PLACEHOLDER DETECTED:', service.stripe_price_id, '— Real price_id needed from Stripe Dashboard.');
   }
 
-  // LEAD-RESCUE FAILSAFE: If no stripe_price_id, placeholder, OR timeout/price error
+  // LEAD-RESCUE FAILSAFE
   if (!service.stripe_price_id || isPlaceholder || showRescue) {
     const rescueWhatsapp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
       scope === 'tr'
@@ -227,175 +232,176 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
   const formatPrice = (price: number, currency: string) =>
     new Intl.NumberFormat(scope === 'tr' ? 'tr-TR' : 'en-US', { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(price);
 
+  const priceDisplay = service.price
+    ? formatPrice(service.price, service.currency || 'USD')
+    : null;
+
   return (
-    <section id="checkout-section" className="section-editorial border-t border-border">
-      <div className="container max-w-2xl px-6">
-        {/* Service & Price Card */}
-        <div className="text-center mb-10">
-          <h2 className="font-heading text-2xl md:text-3xl mb-3">{service.title}</h2>
-          {service.short_description && (
-            <p className="text-muted-foreground text-sm mb-6 max-w-lg mx-auto">{service.short_description}</p>
-          )}
-          <p className="font-heading text-4xl md:text-5xl text-accent mb-2">
-            {formatPrice(service.price, service.currency || 'USD')}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {scope === 'tr' ? 'Tek seferlik ödeme. Gizli masraf yok.' : 'One-time payment. No hidden costs.'}
-          </p>
-        </div>
-
-        {/* Stripe trust badge */}
-        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-6">
-          <CreditCard className="h-3.5 w-3.5" />
-          <span>{t('checkout.stripeTrust', { defaultValue: `Processed securely in ${currencyLabel} by Stripe`, currencyLabel })}</span>
-        </div>
-
-        {/* Micro-trust signals */}
-        <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground mb-8">
-          <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {t('checkout.microTime', { defaultValue: 'Takes less than 2 minutes' })}</span>
-          <span className="flex items-center gap-1"><Lock className="h-3.5 w-3.5" /> {t('checkout.microSecure', { defaultValue: 'Secure Stripe checkout' })}</span>
-          <span className="flex items-center gap-1"><Shield className="h-3.5 w-3.5" /> {t('checkout.microCountries', { defaultValue: '12+ countries served' })}</span>
-        </div>
-
-        <p className="text-center text-sm text-muted-foreground italic mb-10">
-          {t('checkout.hesitationKiller', { defaultValue: "You don't need to have everything figured out. That's exactly why this exists." })}
-        </p>
-
-        {/* Price justification ABOVE CTA */}
-        <div className="bg-card border border-border rounded-lg p-5 mb-8 text-center space-y-2">
-          <p className="text-sm text-foreground font-medium">
-            {scope === 'tr'
-              ? 'Anında erişim. Bekleme yok. Bu hizmet, durumunuza özel analiz ve yol haritasını içerir.'
-              : 'Instant access. No waiting. This service includes a personalized analysis and roadmap for your situation.'}
-          </p>
-          <p className="text-xs text-muted-foreground flex items-center justify-center gap-1.5">
-            <Lock className="h-3 w-3" />
-            {scope === 'tr' ? 'Güvenli ödeme altyapısı (Stripe)' : 'Secure payment infrastructure (Stripe)'}
-          </p>
-        </div>
-
-        {/* Legal agreement */}
-        <div className="flex items-start gap-3 mb-3">
-          <Checkbox
-            id="terms-agree"
-            checked={isAgreed}
-            onCheckedChange={(checked) => setIsAgreed(checked === true)}
-          />
-          <label htmlFor="terms-agree" className="text-sm text-foreground cursor-pointer leading-snug">
-            {t('checkout.agreementLabel', { defaultValue: 'I agree to the Terms of Service, Privacy Policy, and Refund Policy. I understand this is an advisory service and government decisions are independent.' })}
-          </label>
-        </div>
-        <p className="text-xs text-muted-foreground ml-7 mb-2">
-          {t('checkout.legalReinforce', { defaultValue: 'By proceeding, you confirm you understand the scope of the service.' })}
-        </p>
-        {!isAgreed && (
-          <p className="text-xs text-destructive/70 ml-7 mb-8">
-            {t('checkout.mustAccept', { defaultValue: 'You must accept the terms before proceeding.' })}
-          </p>
-        )}
-        {isAgreed && <div className="mb-4" />}
-
-        {/* CRO: Response time + impulse copy */}
-        <p className="text-xs text-muted-foreground text-center mb-2">
-          {scope === 'tr' ? 'Ortalama geri dönüş: 24 saat' : 'Average response time: 24 hours'}
-        </p>
-
-        {/* CTA Button */}
-        <Button
-          id="checkout-cta-btn"
-          size="lg"
-          onClick={handleCheckout}
-          disabled={!isAgreed || isCheckoutLoading}
-          className="w-full btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
-        >
-          {isCheckoutLoading
-            ? (scope === 'tr'
-              ? t('checkout.redirectingTR', { defaultValue: 'Yönlendiriliyorsunuz...' })
-              : t('checkout.redirectingEN', { defaultValue: 'Redirecting...' }))
-            : (scope === 'tr'
-              ? t('checkout.ctaLabelTR', { defaultValue: 'Güvenli Ödemeye Geç' })
-              : t('checkout.ctaLabelEN', { defaultValue: 'Continue to Secure Payment' }))}
-        </Button>
-
-        {/* Post-CTA reassurance */}
-        <p className="text-xs text-muted-foreground text-center mt-2">
-          {scope === 'tr' ? '3 dakika içinde planın hazır' : 'Your plan ready in 3 minutes'}
-        </p>
-        <p className="text-xs text-muted-foreground text-center mt-1">
-          {scope === 'tr'
-            ? 'İlk adımınız ödeme sonrası hemen başlatılır. Kart bilgileriniz sistemimizde tutulmaz.'
-            : 'Your first step starts immediately after payment. Your card details are not stored in our system.'}
-        </p>
-
-        {/* Risk Reversal & Micro-Trust */}
-        <p className="text-xs text-muted-foreground text-center mt-4">
-          {scope === 'tr'
-            ? 'Bu bir danışmanlık hizmetidir. Gizli ücret yok. Güvenli ödeme sonrası anında e-posta onayı.'
-            : 'This is a consulting service. No hidden fees. Instant email confirmation upon secure payment.'}
-        </p>
-
-        {/* Friction Breakers */}
-        <div className="flex flex-wrap justify-center gap-3 mt-4 text-xs text-muted-foreground">
-          <span>✓ {scope === 'tr' ? 'Gereksiz ek satış yok' : 'No unnecessary upsells'}</span>
-          <span>✓ {scope === 'tr' ? 'Net ve dürüst rehberlik' : 'Clear, honest guidance'}</span>
-          <span>✓ {scope === 'tr' ? 'Uygun değilse söyleriz' : 'If not a fit, we tell you upfront'}</span>
-        </div>
-
-        {/* Legal Disclaimer */}
-        <p className="text-[10px] text-muted-foreground/60 text-center mt-4 max-w-lg mx-auto leading-relaxed">
-          {scope === 'tr'
-            ? 'Bu bir dijital danışmanlık hizmetidir. Fiziksel ürün gönderimi yapılmaz. Devam ederek kişiselleştirilmiş danışmanlık hizmeti almayı kabul etmiş olursunuz.'
-            : 'This is a digital consulting service. No physical product will be shipped. By proceeding, you agree to receive a personalized advisory service.'}
-        </p>
-
-        {/* High-Ticket Upscale Link */}
-        <div className="text-center mt-4">
-          <a
-            href={scope === 'tr' ? '/tr/rabbit-hole' : '/residency/full-support'}
-            className="text-xs text-accent hover:text-accent/80 underline underline-offset-4 transition-colors"
-          >
-            {t('checkout.upscaleLink', { defaultValue: scope === 'tr' ? 'Daha kapsamlı destek mi arıyorsun?' : 'Need full support instead?' })}
-          </a>
-        </div>
-
-        {/* WhatsApp Escape Hatch */}
-        <div className="text-center mt-8 space-y-1.5">
-          <p className="text-xs text-muted-foreground">
-            {scope === 'tr' ? 'Ödeme öncesi hızlı sorular için' : 'Quick questions before payment?'}
-          </p>
-          <button onClick={handleWhatsAppClick} className="text-xs text-accent hover:text-accent/80 underline underline-offset-4 transition-colors inline-flex items-center gap-1.5">
-            <MessageCircle className="h-3 w-3" />
-            {scope === 'tr' ? "WhatsApp'tan yazın" : 'Message us on WhatsApp'}
-          </button>
-          <p className="text-[10px] text-muted-foreground/60">
-            {scope === 'tr' ? 'Yanıt süresi: genellikle birkaç dakika' : 'Response time: usually a few minutes'}
-          </p>
-        </div>
-
-        {/* What happens next */}
-        <div className="mt-10 space-y-4">
-          <p className="caption-editorial text-muted-foreground mb-4">
-            {t('checkout.whatsNextLabel', { defaultValue: 'What happens next' })}
-          </p>
-          <div className="flex items-start gap-3">
-            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/10 text-accent text-xs flex items-center justify-center font-bold">1</span>
-            <p className="text-sm text-foreground">{t('checkout.step1', { defaultValue: 'Secure Payment' })}</p>
-          </div>
-          <div className="flex items-start gap-3">
-            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/10 text-accent text-xs flex items-center justify-center font-bold">2</span>
-            <p className="text-sm text-foreground">{t('checkout.step2', { defaultValue: 'We contact you via WhatsApp / Email (Within 24h)' })}</p>
-          </div>
-          <div className="flex items-start gap-3">
-            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/10 text-accent text-xs flex items-center justify-center font-bold">3</span>
-            <p className="text-sm text-foreground">{t('checkout.step3', { defaultValue: 'Personalized process starts' })}</p>
+    <>
+      {/* LAYER 1 — Advisory Card */}
+      <section id="checkout-section" className="section-editorial border-t border-border">
+        <div className="container max-w-2xl px-6">
+          <div className="bg-card/80 backdrop-blur-sm border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 ease-out p-6 md:p-8">
+            <h2 className="font-heading text-xl md:text-2xl mb-3">{service.title}</h2>
+            {service.short_description && (
+              <p className="text-muted-foreground text-sm mb-4">{service.short_description}</p>
+            )}
+            <div className="border-t border-accent/20 my-4" />
+            {priceDisplay ? (
+              <p className="font-heading text-3xl md:text-4xl text-accent mb-4">{priceDisplay}</p>
+            ) : (
+              <p className="font-heading text-lg text-accent mb-4">
+                {scope === 'tr' ? 'Özel Danışmanlık' : 'Private Engagement'}
+              </p>
+            )}
+            <Button
+              className="w-full h-12"
+              onClick={() => setModalOpen(true)}
+            >
+              {scope === 'tr' ? 'Süreci Başlat' : 'Initialize Protocol'}
+            </Button>
+            <p className="text-xs text-muted-foreground text-center mt-2">
+              {scope === 'tr'
+                ? 'Kişiye özel danışmanlık — otomatik işlem yok'
+                : 'Private advisory — no automated processing'}
+            </p>
           </div>
         </div>
+      </section>
 
-        {/* Real human & risk reversal */}
-        <p className="text-sm text-muted-foreground text-center mt-8 leading-relaxed">
-          {t('checkout.realHuman', { defaultValue: "You'll be speaking with a real expert, not an automated system. If this service is not a fit for your situation, we will guide you to the right next step. You're one step away from getting clarity." })}
-        </p>
-      </div>
-    </section>
+      {/* LAYER 2 — Interstitial Modal */}
+      <Dialog open={modalOpen} onOpenChange={handleModalChange}>
+        <DialogContent className="p-0 overflow-hidden max-w-[560px]">
+          {/* Scrollable inner wrapper */}
+          <div className="max-h-[80vh] overflow-y-auto p-6 md:p-8 pb-32">
+            <DialogHeader>
+              <DialogTitle className="font-heading text-xl">
+                {service.title}
+                {priceDisplay && (
+                  <span className="block text-accent text-2xl mt-1">{priceDisplay}</span>
+                )}
+              </DialogTitle>
+            </DialogHeader>
+
+            {/* Stripe trust badge */}
+            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mt-6 mb-4">
+              <CreditCard className="h-3.5 w-3.5" />
+              <span>{t('checkout.stripeTrust', { defaultValue: `Processed securely in ${currencyLabel} by Stripe`, currencyLabel })}</span>
+            </div>
+
+            {/* Micro-trust signals */}
+            <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground mb-6">
+              <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {t('checkout.microTime', { defaultValue: 'Takes less than 2 minutes' })}</span>
+              <span className="flex items-center gap-1"><Lock className="h-3.5 w-3.5" /> {t('checkout.microSecure', { defaultValue: 'Secure Stripe checkout' })}</span>
+              <span className="flex items-center gap-1"><Shield className="h-3.5 w-3.5" /> {t('checkout.microCountries', { defaultValue: '12+ countries served' })}</span>
+            </div>
+
+            <p className="text-center text-sm text-muted-foreground italic mb-8">
+              {t('checkout.hesitationKiller', { defaultValue: "You don't need to have everything figured out. That's exactly why this exists." })}
+            </p>
+
+            {/* Price justification */}
+            <div className="bg-card border border-border rounded-lg p-5 mb-6 text-center space-y-2">
+              <p className="text-sm text-foreground font-medium">
+                {scope === 'tr'
+                  ? 'Anında erişim. Bekleme yok. Bu hizmet, durumunuza özel analiz ve yol haritasını içerir.'
+                  : 'Instant access. No waiting. This service includes a personalized analysis and roadmap for your situation.'}
+              </p>
+              <p className="text-xs text-muted-foreground flex items-center justify-center gap-1.5">
+                <Lock className="h-3 w-3" />
+                {scope === 'tr' ? 'Güvenli ödeme altyapısı (Stripe)' : 'Secure payment infrastructure (Stripe)'}
+              </p>
+            </div>
+
+            {/* Legal agreement */}
+            <div className="flex items-start gap-3 mb-3">
+              <Checkbox
+                id="terms-agree"
+                checked={isAgreed}
+                onCheckedChange={(checked) => setIsAgreed(checked === true)}
+              />
+              <label htmlFor="terms-agree" className="text-sm text-foreground cursor-pointer leading-snug">
+                {t('checkout.agreementLabel', { defaultValue: 'I agree to the Terms of Service, Privacy Policy, and Refund Policy. I understand this is an advisory service and government decisions are independent.' })}
+              </label>
+            </div>
+            <p className="text-xs text-muted-foreground ml-7 mb-2">
+              {t('checkout.legalReinforce', { defaultValue: 'By proceeding, you confirm you understand the scope of the service.' })}
+            </p>
+            {!isAgreed && (
+              <p className="text-xs text-destructive/70 ml-7 mb-6">
+                {t('checkout.mustAccept', { defaultValue: 'You must accept the terms before proceeding.' })}
+              </p>
+            )}
+
+            {/* WhatsApp Escape Hatch */}
+            <div className="text-center mt-6 space-y-1.5">
+              <p className="text-xs text-muted-foreground">
+                {scope === 'tr' ? 'Ödeme öncesi hızlı sorular için' : 'Quick questions before payment?'}
+              </p>
+              <button onClick={handleWhatsAppClick} className="text-xs text-accent hover:text-accent/80 underline underline-offset-4 transition-colors inline-flex items-center gap-1.5">
+                <MessageCircle className="h-3 w-3" />
+                {scope === 'tr' ? "WhatsApp'tan yazın" : 'Message us on WhatsApp'}
+              </button>
+            </div>
+
+            {/* What happens next */}
+            <div className="mt-8 space-y-4">
+              <p className="caption-editorial text-muted-foreground mb-4">
+                {t('checkout.whatsNextLabel', { defaultValue: 'What happens next' })}
+              </p>
+              <div className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/10 text-accent text-xs flex items-center justify-center font-bold">1</span>
+                <p className="text-sm text-foreground">{t('checkout.step1', { defaultValue: 'Secure Payment' })}</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/10 text-accent text-xs flex items-center justify-center font-bold">2</span>
+                <p className="text-sm text-foreground">{t('checkout.step2', { defaultValue: 'We contact you via WhatsApp / Email (Within 24h)' })}</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/10 text-accent text-xs flex items-center justify-center font-bold">3</span>
+                <p className="text-sm text-foreground">{t('checkout.step3', { defaultValue: 'Personalized process starts' })}</p>
+              </div>
+            </div>
+
+            {/* Real human */}
+            <p className="text-sm text-muted-foreground text-center mt-8 leading-relaxed">
+              {t('checkout.realHuman', { defaultValue: "You'll be speaking with a real expert, not an automated system. If this service is not a fit for your situation, we will guide you to the right next step. You're one step away from getting clarity." })}
+            </p>
+
+            {/* Legal Disclaimer */}
+            <p className="text-[10px] text-muted-foreground/60 text-center mt-4 max-w-lg mx-auto leading-relaxed">
+              {scope === 'tr'
+                ? 'Bu bir dijital danışmanlık hizmetidir. Fiziksel ürün gönderimi yapılmaz. Devam ederek kişiselleştirilmiş danışmanlık hizmeti almayı kabul etmiş olursunuz.'
+                : 'This is a digital consulting service. No physical product will be shipped. By proceeding, you agree to receive a personalized advisory service.'}
+            </p>
+          </div>
+
+          {/* Sticky CTA footer — solid bg, no transparency artifacts */}
+          <div className="sticky bottom-0 z-10 bg-card border-t border-border pt-4 pb-4 px-6 md:px-8">
+            <p className="text-xs text-muted-foreground text-center mb-2">
+              {scope === 'tr' ? 'Ortalama geri dönüş: 24 saat' : 'Average response time: 24 hours'}
+            </p>
+            <Button
+              id="checkout-cta-btn"
+              size="lg"
+              onClick={handleCheckout}
+              disabled={!isAgreed || isCheckoutLoading}
+              className="w-full btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
+            >
+              {isCheckoutLoading
+                ? (scope === 'tr'
+                  ? t('checkout.redirectingTR', { defaultValue: 'Yönlendiriliyorsunuz...' })
+                  : t('checkout.redirectingEN', { defaultValue: 'Redirecting...' }))
+                : (scope === 'tr'
+                  ? t('checkout.ctaLabelTR', { defaultValue: 'Güvenli Ödemeye Geç' })
+                  : t('checkout.ctaLabelEN', { defaultValue: 'Continue to Secure Payment' }))}
+            </Button>
+            <p className="text-xs text-muted-foreground text-center mt-2">
+              {scope === 'tr' ? '3 dakika içinde planın hazır' : 'Your plan ready in 3 minutes'}
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
