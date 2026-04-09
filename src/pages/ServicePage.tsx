@@ -144,7 +144,7 @@ export default function ServicePage() {
           .select('*')
           .eq('slug', slug!)
           .eq('is_active', true)
-          .in('visible_on', [scope, 'both'])
+          .in('visible_on', [scope === 'tr' ? 'tr' : 'global', 'both'])
           .maybeSingle();
 
         if (controller.signal.aborted) return;
@@ -159,7 +159,7 @@ export default function ServicePage() {
             .from('services')
             .select('*')
             .eq('is_active', true)
-            .in('visible_on', [scope, 'both'])
+            .in('visible_on', [scope === 'tr' ? 'tr' : 'global', 'both'])
             .limit(3);
 
           const elapsed = Date.now() - start;

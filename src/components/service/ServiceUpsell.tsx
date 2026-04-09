@@ -18,7 +18,7 @@ export default function ServiceUpsell({ currentService }: { currentService: Serv
         .from('services')
         .select('*')
         .eq('is_active', true)
-        .in('visible_on', [scope, 'both'])
+        .in('visible_on', [scope === 'tr' ? 'tr' : 'global', 'both'])
         .neq('id', currentService.id)
         .limit(3);
       if (data) setServices(data as unknown as Service[]);

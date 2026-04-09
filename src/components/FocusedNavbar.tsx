@@ -136,7 +136,7 @@ export default function FocusedNavbar() {
           })}
 
           {/* Language Switcher — only on global domain */}
-          {scope === 'global' && (
+          {scope === 'en' && (
             <div className="relative">
               <button
                 onClick={() => setLangOpen(!langOpen)}
@@ -198,7 +198,7 @@ export default function FocusedNavbar() {
               )}
             </div>
           ))}
-          {scope === 'global' && (
+          {scope === 'en' && (
             <div className="flex gap-2 pt-4 border-t border-border/20">
               {langs.map((l) => (
                 <button
