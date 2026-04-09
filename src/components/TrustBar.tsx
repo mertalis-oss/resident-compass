@@ -24,15 +24,15 @@ export default function TrustBar() {
           <>
             <span className="flex items-center gap-1.5">
               <Shield className="h-3 w-3 text-primary" />
-              {t('trustBar.secure', { defaultValue: 'Secure & Confidential Process' })}
+              15+ Years International Experience
             </span>
             <span className="hidden sm:flex items-center gap-1.5">
               <Globe className="h-3 w-3 text-primary" />
-              {t('trustBar.noHidden', { defaultValue: '10+ Years of Operations' })}
+              Multi-Country Execution
             </span>
             <span className="flex items-center gap-1.5">
               <UserCheck className="h-3 w-3 text-primary" />
-              {t('trustBar.realHuman', { defaultValue: 'Real Expert Support' })}
+              Private Advisory Model
             </span>
           </>
         )}

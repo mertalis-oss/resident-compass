@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&display=swap&font-display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -14,35 +14,35 @@
     --font-heading: 'Playfair Display', Georgia, serif;
     --font-body: 'Inter', system-ui, sans-serif;
 
-    /* Core Palette — Nature Distilled / Quiet Luxury */
-    --background: 40 20% 97%;
-    --foreground: 30 10% 15%;
+    /* Core Palette — Quiet Luxury / Sovereign */
+    --background: 40 33% 96%;
+    --foreground: 160 30% 12%;
 
-    --card: 40 15% 95%;
-    --card-foreground: 30 10% 15%;
+    --card: 40 25% 94%;
+    --card-foreground: 160 30% 12%;
 
-    --popover: 40 15% 95%;
-    --popover-foreground: 30 10% 15%;
+    --popover: 40 25% 94%;
+    --popover-foreground: 160 30% 12%;
 
-    /* Primary — Deep Forest */
-    --primary: 160 25% 25%;
-    --primary-foreground: 40 20% 97%;
+    /* Primary — Deep Emerald */
+    --primary: 160 48% 16%;
+    --primary-foreground: 40 33% 96%;
 
-    /* Secondary — Stone */
-    --secondary: 40 12% 90%;
-    --secondary-foreground: 30 10% 15%;
+    /* Secondary — Warm Stone */
+    --secondary: 40 20% 91%;
+    --secondary-foreground: 160 30% 12%;
 
-    /* Muted — Soft Stone */
-    --muted: 40 10% 88%;
-    --muted-foreground: 30 8% 45%;
+    /* Muted — Soft Cream */
+    --muted: 40 15% 89%;
+    --muted-foreground: 160 10% 42%;
 
-    /* Accent — Terracotta Clay */
-    --accent: 25 55% 50%;
+    /* Accent — Muted Gold (restrained use only) */
+    --accent: 38 45% 50%;
     --accent-foreground: 0 0% 100%;
 
     /* Gold — Muted Amber */
-    --gold: 38 50% 48%;
-    --gold-foreground: 40 20% 97%;
+    --gold: 38 45% 50%;
+    --gold-foreground: 40 33% 96%;
 
     /* Teal — From Logo */
     --teal: 175 35% 45%;
@@ -56,9 +56,9 @@
     --success-foreground: 0 0% 100%;
 
     /* Borders & Inputs */
-    --border: 40 12% 85%;
-    --input: 40 12% 85%;
-    --ring: 25 55% 50%;
+    --border: 40 15% 85%;
+    --input: 40 15% 85%;
+    --ring: 160 48% 16%;
 
     --radius: 0.25rem;
 

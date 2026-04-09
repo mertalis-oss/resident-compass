@@ -3,6 +3,7 @@ import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { buildWhatsAppUrl } from '@/lib/constants';
 import heroImage from '@/assets/hero-beach.jpg';
 
 export default function Hero() {
@@ -15,7 +16,12 @@ export default function Hero() {
   };
 
   const handlePrimaryCTA = () => {
-    navigate(isTR ? '/tr/mobility-assessment' : '/mobility-assessment');
+    if (isTR) {
+      navigate('/tr/mobility-assessment');
+    } else {
+      const url = buildWhatsAppUrl('Page: Homepage Hero | Intent: strategic-review | Domain: planbasia.com');
+      try { window.open(url, '_blank'); } catch { window.location.href = url; }
+    }
   };
 
   const handleSecondaryCTA = () => {
