@@ -1,30 +1,37 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Clock, ShieldCheck, Zap, Lock } from 'lucide-react';
+import { renderPrice } from '@/lib/formatPrice';
+import { useDomainScope } from '@/hooks/useDomainScope';
 import type { Service } from '@/pages/ServicePage';
-
-const formatPrice = (price: number, currency: string) =>
-  new Intl.NumberFormat('en-US', { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(price);
 
 interface Props {
   service: Service;
 }
 
-/**
- * FOMO Badge + Price Microcopy + Urgency — placed directly above checkout.
- */
 export default function FOMOBlock({ service }: Props) {
-  const { i18n } = useTranslation();
-  const isTR = i18n.language === 'tr';
+  const { t } = useTranslation();
+  const scope = useDomainScope();
+  const isTR = scope === 'tr';
+
+  const { display: priceDisplay, isPrivate } = renderPrice(
+    service.price,
+    service.currency || 'USD',
+    scope
+  );
 
   return (
     <section className="py-10 md:py-14 bg-background">
       <div className="container max-w-2xl px-6 space-y-6">
         {/* Price */}
         <div className="text-center">
-          <p className="font-heading text-4xl md:text-5xl text-accent mb-2">
-            {formatPrice(service.price, service.currency || 'USD')}
-          </p>
+          {isPrivate ? (
+            <p className="font-heading text-xl md:text-2xl text-accent mb-2">{priceDisplay}</p>
+          ) : (
+            <p className="font-heading text-4xl md:text-5xl text-accent mb-2">
+              <span className="whitespace-nowrap">{priceDisplay}</span>
+            </p>
+          )}
         </div>
 
         {/* FOMO Badge */}
