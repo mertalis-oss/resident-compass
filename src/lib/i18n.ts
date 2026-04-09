@@ -53,6 +53,10 @@ const checkoutKeys = {
   connectionError: 'Connection Error',
   connectionErrorDesc: 'Please check your connection and try again.',
   mustAccept: 'You must accept the terms before proceeding.',
+  stripeTrust: 'Processed securely in {{currencyLabel}} by Stripe',
+  connectionSlow: 'Connection is slow. Please wait...',
+  ctaLabel: 'Continue to Secure Payment',
+  redirecting: 'Redirecting...',
 };
 
 const successKeys = {
@@ -124,6 +128,11 @@ const checkoutKeysTr: Record<string, string> = {
   errorDesc: 'Bir şeyler yanlış gitti. Lütfen tekrar deneyin.',
   connectionError: 'Bağlantı Hatası',
   connectionErrorDesc: 'Lütfen bağlantınızı kontrol edin ve tekrar deneyin.',
+  mustAccept: 'Devam etmek için şartları kabul etmelisiniz.',
+  stripeTrust: '{{currencyLabel}} üzerinden Stripe ile güvenli ödeme',
+  connectionSlow: 'Bağlantı yavaş. Lütfen bekleyin...',
+  ctaLabel: 'Güvenli Ödemeye Geç',
+  redirecting: 'Yönlendiriliyorsunuz...',
 };
 
 const successKeysTr: Record<string, string> = {
@@ -192,6 +201,11 @@ const checkoutKeysHi: Record<string, string> = {
   errorDesc: 'कुछ गलत हो गया। कृपया पुनः प्रयास करें।',
   connectionError: 'कनेक्शन त्रुटि',
   connectionErrorDesc: 'कृपया अपना कनेक्शन जांचें और पुनः प्रयास करें।',
+  mustAccept: 'आगे बढ़ने से पहले शर्तें स्वीकार करें।',
+  stripeTrust: '{{currencyLabel}} में Stripe द्वारा सुरक्षित भुगतान',
+  connectionSlow: 'कनेक्शन धीमा है। कृपया प्रतीक्षा करें...',
+  ctaLabel: 'सुरक्षित भुगतान पर जाएं',
+  redirecting: 'रीडायरेक्ट हो रहा है...',
 };
 
 const successKeysHi: Record<string, string> = {
@@ -302,6 +316,10 @@ const resources = {
       footer: { privacy: 'Privacy', terms: 'Terms', refund: 'Refund Policy', contact: 'Contact' },
       concierge: { label: 'Speak with Concierge' },
       notFound: { message: 'The page you are looking for does not exist.', cta: 'Return to Strategic Overview' },
+      softPower: {
+        bundleIntro: 'We partner with accredited language schools across Thailand, securing your legal stay while immersing you in a new language and culture.',
+        bundleRequired: 'Please select a package to continue.',
+      },
       service: serviceKeys,
       checkout: checkoutKeys,
       success: successKeys,
@@ -519,6 +537,10 @@ const resources = {
       footer: { privacy: 'Gizlilik', terms: 'Şartlar', refund: 'İade Politikası', contact: 'İletişim' },
       concierge: { label: 'Concierge ile Konuşun' },
       notFound: { message: 'Aradığınız sayfa mevcut değil.', cta: 'Stratejik Genel Bakışa Dön' },
+      softPower: {
+        bundleIntro: "İstediğiniz lokasyonda anlaşmalı olduğumuz dil okullarıyla Tayland'da hem yasal kalış hakkınızı güvence altına alıyor hem de yeni bir dil ve kültür deneyimi yaşamanızı sağlıyoruz.",
+        bundleRequired: 'Devam etmek için bir paket seçmelisiniz.',
+      },
       service: serviceKeysTr,
       checkout: checkoutKeysTr,
       success: successKeysTr,

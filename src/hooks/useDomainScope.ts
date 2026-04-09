@@ -1,7 +1,7 @@
-export type DomainScope = 'tr' | 'global';
+export type DomainScope = 'tr' | 'en';
 
 export function getDomainScope(): DomainScope {
-  if (typeof window === 'undefined') return 'global';
+  if (typeof window === 'undefined') return 'en';
   const host = window.location.hostname.toLowerCase();
   const path = window.location.pathname;
 
@@ -10,7 +10,7 @@ export function getDomainScope(): DomainScope {
   // Preview/localhost: treat /tr paths as TR scope
   const isPreviewTR = (host.includes('lovable') || host === 'localhost') && path.startsWith('/tr');
 
-  return (isTRDomain || isPreviewTR) ? 'tr' : 'global';
+  return (isTRDomain || isPreviewTR) ? 'tr' : 'en';
 }
 
 export function useDomainScope(): DomainScope {
