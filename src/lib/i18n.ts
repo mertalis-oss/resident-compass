@@ -58,7 +58,7 @@ const checkoutKeys = {
   ctaLabel: 'Continue Consultation',
   redirecting: 'Redirecting...',
   advisorySubtitle: 'Private advisory — no automated processing',
-  initializeLabel: 'Initialize Protocol',
+  initializeLabel: 'Begin Advisory',
 };
 
 const successKeys = {
@@ -136,7 +136,7 @@ const checkoutKeysTr: Record<string, string> = {
   ctaLabel: 'Danışmanlığa Devam Et',
   redirecting: 'Yönlendiriliyorsunuz...',
   advisorySubtitle: 'Kişiye özel danışmanlık — otomatik işlem yok',
-  initializeLabel: 'Süreci Başlat',
+  initializeLabel: 'Danışmanlığı Başlat',
 };
 
 const successKeysTr: Record<string, string> = {
@@ -211,7 +211,7 @@ const checkoutKeysHi: Record<string, string> = {
   ctaLabel: 'परामर्श जारी रखें',
   redirecting: 'रीडायरेक्ट हो रहा है...',
   advisorySubtitle: 'निजी सलाह — कोई स्वचालित प्रसंस्करण नहीं',
-  initializeLabel: 'प्रोटोकॉल प्रारंभ करें',
+  initializeLabel: 'सलाह शुरू करें',
 };
 
 const successKeysHi: Record<string, string> = {
