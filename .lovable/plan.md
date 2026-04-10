@@ -1,122 +1,189 @@
 
 
-# Batch 2.5 Final — formatPrice Utility + i18n Keys + Global Pricing Audit
+# Batch 3: Sovereign Hybrid Model — 12-File Implementation
 
-## 8 Files Changed
+## Overview
+Transition 4 EN advisory pages from Stripe checkout to a lead-capture AdvisoryForm, create 2 new destination pages, soften checkout tone, and add a MICE-specific form variant. TR pages remain completely untouched.
 
-### 1. `src/hooks/useDomainScope.ts` — Type fix
-- Change `'tr' | 'global'` → `'tr' | 'en'`
-- Change fallback `return 'global'` → `return 'en'` (line 4)
-- Change final return `'tr' : 'global'` → `'tr' : 'en'` (line 13)
+---
 
-### 2. `src/lib/formatPrice.ts` — NEW single source of truth
+## File 1: `src/lib/i18n.ts`
 
-```ts
-import type { DomainScope } from '@/hooks/useDomainScope';
+**Tone shifts in existing keys:**
+- EN line 8: `ctaStart` → `'Begin Your Advisory'`
+- EN line 38: `microSecure` → `'Secure advisory process'`
+- EN line 58: `ctaLabel` → `'Continue Consultation'`
+- TR line 84: `ctaStart` → `'Danışmanlığı Başlat'`
+- TR line 114: `microSecure` → `'Güvenli danışmanlık süreci'`
+- TR line 134: `ctaLabel` → `'Danışmanlığa Devam Et'`
+- HI line 157: `ctaStart` → `'अपनी सलाह शुरू करें'`
+- HI line 187: `microSecure` → `'सुरक्षित सलाह प्रक्रिया'`
+- HI line 207: `ctaLabel` → `'परामर्श जारी रखें'`
 
-const VALID_CURRENCIES = ['USD', 'EUR'];
+**New keys in each checkout object:** `advisorySubtitle`, `initializeLabel`
 
-export function resolveCurrency(
-  currency: string | null | undefined,
-  scope: DomainScope
-): string {
-  const normalized = (currency || '').toUpperCase();
-  return VALID_CURRENCIES.includes(normalized) ? normalized : (scope === 'tr' ? 'USD' : 'EUR');
-}
+**New `advisory` namespace** added to EN (after line 323), TR (after ~line 460), HI (after ~line 590):
+- Form labels: `nameLabel`, `emailLabel`, `whatsappLabel`, `whatsappPlaceholder`, `destinationLabel`, `timelineLabel`, `notesLabel`, `notesPlaceholder`, `submitLabel`, `submitting`, `successMessage`
+- Destinations object: `{ thailand, vietnam, cambodia, global }`
+- Timelines object: `{ '1-3', '3-6', '6-12', flexible }`
+- MICE keys: `eventDestinationLabel`, `eventDatesLabel`, `eventDatesPlaceholder`, `companyLabel`, `groupSizeLabel`, `eventTypeLabel`
+- `groupSizes` object: `{ '10-20', '20-50', '50-100', '100-300', '300+' }`
+- `eventTypes` object: `{ retreat, summit, incentive, offsite, conference, other }`
+- EN success: `"We'll personally review your situation within 24 hours."`
+- TR success: `"Durumunuzu 24 saat içinde şahsen inceleyip dönüş yapacağız."`
 
-export function formatPrice(price: number, currency: string, scope: DomainScope): string {
-  const safeCurrency = resolveCurrency(currency, scope);
-  return new Intl.NumberFormat(scope === 'tr' ? 'tr-TR' : 'en-US', {
-    style: 'currency',
-    currency: safeCurrency,
-    currencyDisplay: 'narrowSymbol',
-    useGrouping: true,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(price);
-}
+---
 
-export function renderPrice(
-  price: number | null | undefined,
-  currency: string,
-  scope: DomainScope
-): { display: string; isPrivate: boolean; resolvedCurrency: string } {
-  const resolvedCurrency = resolveCurrency(currency, scope);
-  if (price == null || price === 0) {
-    return {
-      display: scope === 'tr' ? 'Özel Danışmanlık' : 'Private Engagement',
-      isPrivate: true,
-      resolvedCurrency,
-    };
+## File 2: `src/components/service/ServiceCheckout.tsx`
+
+- Line 256-258: Add `variant="outline"` to the Layer 1 trigger Button
+- Line 260: Replace `scope === 'tr' ? 'Süreci Başlat' : 'Initialize Protocol'` → `t('checkout.initializeLabel')`
+- After line 254 (price): Add `<p className="text-xs text-muted-foreground mt-1">{t('checkout.advisorySubtitle')}</p>`
+- Lines 262-266: Replace hardcoded advisory text → `t('checkout.advisorySubtitle')`
+- Move Stripe trust badge (lines 286-289) from modal header to after line 394 (below sticky CTA footer), preserving `{{currencyLabel}}`
+
+---
+
+## File 3: `src/components/advisory/AdvisoryForm.tsx` (NEW)
+
+**Props:** `variant?: 'individual' | 'mice'` (default `'individual'`), `defaultDestination?: string`, `source_page: string`
+
+**Individual fields:** Name (req), Email (req), WhatsApp (opt), Destination (select, req), Timeline (select, req), Notes (textarea)
+
+**MICE fields:** Name (req), Email (req), WhatsApp (opt), Company (req), Event Type (select, req), Group Size (select, req), Event Destination (select, opt), Event Dates (text, req, placeholder from i18n), Notes (textarea)
+
+**Guards implemented:**
+- Anti-bot honeypot: hidden `company_website` input, if filled → silently skip DB insert but still show success
+- Input normalization: `email.trim().toLowerCase()`, WhatsApp cleaned to digits + leading `+`
+- `safeVariant = variant || 'individual'`
+- `defaultDestination` fallback: if not in i18n destinations list → `'global'`
+- Double-submit: `isSubmitting` state disables button + shows loading text
+- SSR safety: `typeof window !== 'undefined'`, `typeof document !== 'undefined'`
+
+**Data payload:**
+```
+{
+  name,
+  email: email.trim().toLowerCase(),
+  customer_whatsapp: cleanedWhatsapp,
+  source_domain: typeof window !== 'undefined' ? window.location.hostname || 'unknown' : 'unknown',
+  created_from: safeVariant === 'mice' ? 'mice_form' : 'advisory_form',
+  quiz_answers: {
+    ...all_fields,
+    source_page,
+    submitted_at: new Date().toISOString(),
+    fingerprint: `${email.trim().toLowerCase()}-${source_page}-${safeVariant}`,
+    referrer: typeof document !== 'undefined' ? document.referrer || 'direct' : 'direct'
   }
-  return {
-    display: formatPrice(price, currency, scope),
-    isPrivate: false,
-    resolvedCurrency,
-  };
 }
 ```
 
-Key design decisions:
-- **No hooks** — pure functions only, scope always passed as parameter (Guard 1)
-- **No `window` access** — components resolve scope via `useDomainScope()` hook and pass it in (Guard 2)
-- **NaN-safe** — uses `price == null || price === 0` instead of `!price` (Guard 3)
-- `resolveCurrency` exported separately for `stripeTrust` label sync (Currency Label Consistency)
+**Flow:** DB insert (try/catch, silent fail) → THEN fire PostHog (`mice_form_submitted` or `advisory_form_submitted` with `{ source_page, variant, destination: destination || 'unspecified', timeline: timeline || 'unspecified' }`) → show success state
 
-### 3. `src/lib/i18n.ts` — Add missing keys
+**UX:** Wrapper `min-h-[420px]`. Success state: `flex items-center justify-center animate-fade-in` + `scrollIntoView({ behavior: 'smooth' })` via `useRef`. No auto-reset.
 
-**EN `checkoutKeys`** (after line 55): add `stripeTrust`, `connectionSlow`, `ctaLabel`, `redirecting`
+---
 
-**TR `checkoutKeysTr`** (after line 126): add `mustAccept`, `stripeTrust`, `connectionSlow`, `ctaLabel`, `redirecting`
+## File 4: `src/pages/en/WellnessPageEN.tsx`
 
-**HI `checkoutKeysHi`** (after line 194): add `mustAccept`, `stripeTrust`, `connectionSlow`, `ctaLabel`, `redirecting`
+- Remove imports: `ServiceCheckout` (line 9), `FOMOBlock` (line 14), `useServicesList` (line 15)
+- Add import: `AdvisoryForm`
+- Remove lines 73-98 (FOMOBlock + ServiceCheckout grid + empty state)
+- Keep `SocialProofMini` (line 71) as template fatigue guard
+- Insert `<AdvisoryForm source_page="wellness" defaultDestination="thailand" />` after SocialProofMini, wrapped in `<div id="checkout">`
+- Remove `hasServices` const and `isLoading`/`services` destructuring (no longer needed)
 
-**EN translation** (~line 305, alongside `service`/`checkout`): add `softPower: { bundleIntro, bundleRequired }`
+---
 
-**TR translation** (~line 430, alongside existing keys): add `softPower: { bundleIntro, bundleRequired }`
+## File 5: `src/pages/en/MICEPageEN.tsx`
 
-### 4. `src/components/service/ServiceCheckout.tsx`
-- Import `renderPrice`, `resolveCurrency` from `@/lib/formatPrice`
-- Remove inline `formatPrice` (lines 232-233)
-- Replace `priceDisplay` with `renderPrice(service.price, service.currency || 'USD', scope)`
-- Derive `currencyLabel` from `resolveCurrency(service.currency, scope)` — same resolved value feeds both price and `stripeTrust` text
-- Wrap numeric price in `<span className="whitespace-nowrap">` — skip `whitespace-nowrap` when `isPrivate` (Guard 4)
-- Remove all `defaultValue` fallbacks from `t()` calls that now have keys in i18n.ts
-- Replace CTA labels: `t('checkout.redirecting')` / `t('checkout.ctaLabel')` — remove scope branching since i18n resolves by language
+- Remove imports: `ServiceCheckout` (line 10), `FOMOBlock` (line 15), `useServicesList` (line 16)
+- Add import: `AdvisoryForm`
+- Remove lines 75-100 (FOMOBlock + ServiceCheckout grid + empty state)
+- Line 62: Update headline → `"From Leadership Retreats to Global Events."` accent `"Southeast Asia."`
+- Features grid (lines 105-120) stays as template fatigue guard before form
+- Insert `<AdvisoryForm variant="mice" source_page="mice" />` after Features grid (NO defaultDestination)
 
-### 5. `src/components/service/BundleSelector.tsx`
-- Import `formatPrice` from `@/lib/formatPrice`, `useDomainScope` from hook
-- Remove inline `formatPrice` (lines 10-11)
-- Add `const scope = useDomainScope()` inside component
-- Call `formatPrice(bundle.price, bundle.currency || 'USD', scope)`
-- Wrap price in `<span className="whitespace-nowrap">`
-- Remove `defaultValue` from `t('softPower.bundleIntro')` and `t('softPower.bundleRequired')`
+---
 
-### 6. `src/components/service/ServiceHero.tsx`
-- Import `renderPrice` from `@/lib/formatPrice`, `useDomainScope` from hook
-- Remove inline `formatPrice` (lines 6-13)
-- Add `const scope = useDomainScope()` inside component
-- Use `renderPrice(service.price, service.currency || 'USD', scope)`
-- If `isPrivate`: show label with `font-heading text-lg` (no `whitespace-nowrap`), hide price anchor lines
-- If not `isPrivate`: show price with `whitespace-nowrap`, keep anchor lines
+## File 6: `src/pages/en/ExpeditionsPageEN.tsx`
 
-### 7. `src/components/service/FOMOBlock.tsx`
-- Import `renderPrice` from `@/lib/formatPrice`, `useDomainScope` from hook
-- Remove inline `formatPrice` (lines 6-7)
-- Replace `isTR` (from `i18n.language`) with `const scope = useDomainScope()` and `scope === 'tr'`
-- Use `renderPrice(service.price, service.currency || 'USD', scope)`
-- If `isPrivate`: show label text, maintain container structure
-- If not `isPrivate`: show price with `whitespace-nowrap`
+- Remove imports: `ServiceCheckout` (line 10), `FOMOBlock` (line 15), `useServicesList` (line 16)
+- Add import: `AdvisoryForm`
+- Remove lines 65-69 ("View Packages" button)
+- Remove lines 80-105 (FOMOBlock + ServiceCheckout grid + empty state)
+- Routes grid (lines 118-135) stays as template fatigue guard
+- Insert `<AdvisoryForm source_page="expeditions" defaultDestination="thailand" />` after Routes grid
 
-### 8. `src/pages/tr/DTVVizePage.tsx`
-- Import `formatPrice` from `@/lib/formatPrice`
-- Remove inline `formatPrice` (lines 36-37)
-- Pass `'tr'` as scope explicitly in all calls
+---
 
-## NOT Modified
-- Admin files (internal tools — not customer-facing)
-- All TR page components except DTVVizePage formatPrice swap
-- Routing, Stripe edge functions, webhooks, RLS
-- Dialog/Radix A11y behavior
-- No new dependencies
+## File 7: `src/pages/en/NomadIncubatorPageEN.tsx`
+
+- Remove imports: `ServiceCheckout` (line 11), `FOMOBlock` (line 16), `useServicesList` (line 18)
+- Add import: `AdvisoryForm`
+- Lines 64-66: Update headline → `"Arrive Ready."` accent `"Build Immediately."`
+- Remove lines 84-109 (FOMOBlock + ServiceCheckout + empty state)
+- Line 163-164: `"Purchase Consulting Package ↑"` → `"View Advisory Packages ↑"`
+- `ExpectationOutcome` (line 80) stays as template fatigue guard
+- Insert `<AdvisoryForm source_page="nomad_incubator" defaultDestination="thailand" />` after 360° Life Setup section (after line 131)
+
+---
+
+## File 8: `src/pages/en/SoftPowerPageEN.tsx`
+
+- **KEEP** BundleSelector + ServiceCheckout (Stripe valid — paid service)
+- Line 57: Update headline → `"Stay Longer. Learn Deeper."` accent `"Move Naturally."`
+- Line 140-141: `"Purchase Consulting Package ↑"` → `"View Advisory Packages ↑"`
+- No structural changes
+
+---
+
+## File 9: `src/pages/en/VietnamPageEN.tsx` (NEW)
+
+- Route: `/destinations/vietnam`
+- Hero: Unsplash Ha Giang mountains image
+- Headline: `"The Quiet Route North."` accent `"Vietnam."` (5 words)
+- Subtext: `"Cultural study and soft landing in Asia's emerging frontier."` (10 words)
+- Structure: FocusedNavbar + TrustBar → Hero → Context (3 cards: Cultural Immersion, Soft Landing, Emerging Market) → Pathways (3 route cards) → `<AdvisoryForm source_page="vietnam" defaultDestination="vietnam" />` → Footer
+- Uses SEOHead, StickyMobileCTA, WhatsApp CTA. No Stripe.
+
+---
+
+## File 10: `src/pages/en/CambodiaPageEN.tsx` (NEW)
+
+- Route: `/destinations/cambodia`
+- Hero: Unsplash Angkor/Phnom Penh golden hour image
+- Headline: `"Fast. Calm. Flexible."` accent `"Cambodia."` (4 words)
+- Subtext: `"Concierge arrival and strategic positioning."` (6 words)
+- Same hierarchy as Vietnam. `<AdvisoryForm source_page="cambodia" defaultDestination="cambodia" />`
+- No Stripe.
+
+---
+
+## File 11: `src/App.tsx`
+
+- Add imports: `VietnamPageEN`, `CambodiaPageEN`
+- Add 2 routes after line 73 (above catch-alls):
+  - `/destinations/vietnam` → `VietnamPageEN`
+  - `/destinations/cambodia` → `CambodiaPageEN`
+
+---
+
+## File 12: `src/components/FocusedNavbar.tsx`
+
+- Add to EN_NAV_GROUPS "Experiences" items (lines 48-51):
+  - `{ to: '/destinations/vietnam', label: 'Vietnam' }`
+  - `{ to: '/destinations/cambodia', label: 'Cambodia' }`
+- No top-level nav additions. Experiences goes from 2 to 4 items.
+
+---
+
+## Technical Notes
+
+- **Database:** `leads` table has anon INSERT with `WITH CHECK (true)` — no RLS blockage
+- **No migrations needed** — all fields map to existing `leads` columns
+- **`animate-fade-in`** is already available as a Tailwind utility in the project
+- **No new dependencies** required
+- **TR pages, admin pages, Stripe functions, DTVPageEN** — all remain completely untouched
+- **SoftPowerPageEN** keeps Stripe (BundleSelector + ServiceCheckout) — only copy changes
 
