@@ -24,7 +24,7 @@ import StickyMobileCTA from '@/components/StickyMobileCTA';
 import ExpectationOutcome from '@/components/service/ExpectationOutcome';
 import TrustBlock from '@/components/service/TrustBlock';
 import SocialProofMini from '@/components/service/SocialProofMini';
-import FOMOBlock from '@/components/service/FOMOBlock';
+
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { AlertTriangle } from 'lucide-react';
@@ -268,9 +268,7 @@ export default function ServicePage() {
 
       <SocialProofMini />
 
-      <FOMOBlock service={service} />
-
-      <div id="checkout">
+      <div id="checkout" className="scroll-mt-24 md:scroll-mt-32">
         <ServiceCheckout service={service} />
       </div>
 

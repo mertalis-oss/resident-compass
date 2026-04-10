@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Home -->
+  <url><loc>https://planbasia.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+
+  <!-- Core Services (EN) -->
+  <url><loc>https://planbasia.com/visas/thailand-dtv</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://planbasia.com/visas/soft-power</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://planbasia.com/relocation/nomad-incubator</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+
+  <!-- Destinations & Experiences (EN) -->
+  <url><loc>https://planbasia.com/experiences/expeditions</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://planbasia.com/experiences/mice</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://planbasia.com/wellness</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://planbasia.com/destinations/vietnam</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://planbasia.com/destinations/cambodia</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Core Services (TR) -->
+  <url><loc>https://planbasya.com/vizeler/dtv-vize</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://planbasya.com/vizeler/soft-power</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://planbasya.com/yerlesim/nomad-incubator</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://planbasya.com/deneyimler/expeditions</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://planbasya.com/deneyimler/mice</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Legal -->
+  <url><loc>https://planbasia.com/privacy</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://planbasia.com/terms</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://planbasia.com/refund-policy</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+</urlset>

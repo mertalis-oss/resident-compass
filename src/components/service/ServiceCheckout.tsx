@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { getStoredUtms } from '@/lib/utmStorage';
@@ -48,7 +48,14 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
       setShowRescue(false);
     }
     setModalOpen(open);
+    document.body.style.overflow = open ? 'hidden' : '';
   };
+
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   const showLeadRescue = () => {
     setShowRescue(true);
@@ -240,27 +247,33 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
       {/* LAYER 1 — Advisory Card */}
       <section id="checkout-section" className="section-editorial border-t border-border">
         <div className="container max-w-2xl px-6">
-          <div className="bg-card/80 backdrop-blur-sm border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 ease-out p-6 md:p-8">
-            <h2 className="font-heading text-xl md:text-2xl mb-3">{service.title}</h2>
-            {service.short_description && (
-              <p className="text-muted-foreground text-sm mb-4">{service.short_description}</p>
-            )}
-            <div className="border-t border-accent/20 my-4" />
-            {isPrivate ? (
-              <p className="font-heading text-lg text-accent mb-4">{priceDisplay}</p>
-            ) : (
-              <p className="font-heading text-3xl md:text-4xl text-accent mb-1">
-                <span className="whitespace-nowrap">{priceDisplay}</span>
-              </p>
-            )}
-            <p className="text-xs text-muted-foreground mb-4">{t('checkout.advisorySubtitle')}</p>
-            <Button
-              variant="outline"
-              className="w-full h-12"
-              onClick={() => setModalOpen(true)}
-            >
-              {t('checkout.initializeLabel')}
-            </Button>
+          <div className={`relative flex flex-col justify-between rounded-2xl border border-muted/40 bg-card/80 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/5 min-h-[420px] p-6 md:p-7${service.is_featured ? ' ring-1 ring-foreground/10 md:scale-[1.02]' : ''}`}>
+            <div>
+              <h2 className="font-heading text-lg font-semibold tracking-tight text-foreground mb-3">{service.title}</h2>
+              {service.short_description && (
+                <p className="text-muted-foreground text-sm mt-1 mb-4">{service.short_description}</p>
+              )}
+              <div className="border-t border-border my-4 opacity-50" />
+              {isPrivate ? (
+                <p className="font-heading text-lg text-accent mt-4 mb-5">{priceDisplay}</p>
+              ) : (
+                <p className="font-heading text-3xl md:text-4xl font-medium tracking-tight text-foreground md:text-accent mt-4 mb-5">
+                  <span className="whitespace-nowrap">{priceDisplay}</span>
+                </p>
+              )}
+              <p className="text-xs text-muted-foreground mb-4">{t('checkout.advisorySubtitle')}</p>
+            </div>
+            <div className="mt-auto">
+              <Button
+                variant={service.is_featured ? "default" : "outline"}
+                className="w-full rounded-xl font-medium h-12"
+                onClick={() => setModalOpen(true)}
+                disabled={modalOpen}
+                aria-label={`Begin advisory for ${service.title}`}
+              >
+                {t('checkout.initializeLabel')}
+              </Button>
+            </div>
           </div>
         </div>
       </section>

@@ -13,7 +13,7 @@ import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
 import ExpectationOutcome from '@/components/service/ExpectationOutcome';
 import TrustBlock from '@/components/service/TrustBlock';
 import SocialProofMini from '@/components/service/SocialProofMini';
-import FOMOBlock from '@/components/service/FOMOBlock';
+
 import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
 import { useServicesList } from '@/hooks/useServicesList';
 import { Button } from '@/components/ui/button';
@@ -63,26 +63,21 @@ export default function ExpeditionsPage() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5-6 FOMO + CHECKOUT — only if services exist */}
-      {hasServices && (
-        <>
-          <FOMOBlock service={services[0]} />
-          <div id="checkout">
-            <section className="section-editorial border-t border-border py-16">
-              <div className="container mx-auto px-6 lg:px-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                  {services.map((s) => (
-                    <ServiceCheckout key={s.id} service={s} />
-                  ))}
-                </div>
+      {/* 5. CHECKOUT */}
+      {hasServices ? (
+        <div id="checkout" className="scroll-mt-24 md:scroll-mt-32">
+          <section className="section-editorial border-t border-border py-16">
+            <div className="container mx-auto px-6 lg:px-12">
+              <div className="min-h-[480px] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {services.map((s) => (
+                  <ServiceCheckout key={s.id} service={s} />
+                ))}
               </div>
-            </section>
-          </div>
-        </>
-      )}
-
-      {!hasServices && (
-        <div id="checkout">
+            </div>
+          </section>
+        </div>
+      ) : (
+        <div id="checkout" className="scroll-mt-24 md:scroll-mt-32">
           <ServiceUpdateFallback context="Expeditions" />
         </div>
       )}
