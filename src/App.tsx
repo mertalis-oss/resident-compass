@@ -35,6 +35,8 @@ import DTVPageEN from "./pages/en/DTVPageEN";
 import ExpeditionsPageEN from "./pages/en/ExpeditionsPageEN";
 import WellnessPageEN from "./pages/en/WellnessPageEN";
 import MICEPageEN from "./pages/en/MICEPageEN";
+import VietnamPageEN from "./pages/en/VietnamPageEN";
+import CambodiaPageEN from "./pages/en/CambodiaPageEN";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +73,8 @@ const App = () => (
               <Route path="/experiences/expeditions" element={<ExpeditionsPageEN />} />
               <Route path="/experiences/wellness" element={<WellnessPageEN />} />
               <Route path="/corporate/mice" element={<MICEPageEN />} />
+              <Route path="/destinations/vietnam" element={<VietnamPageEN />} />
+              <Route path="/destinations/cambodia" element={<CambodiaPageEN />} />
               {/* 301-equivalent redirects from old paths */}
               <Route path="/residency/soft-power" element={<RedirectWithQuery to="/visas/soft-power" />} />
               <Route path="/residency/nomad-incubator" element={<RedirectWithQuery to="/relocation/nomad-incubator" />} />

@@ -54,7 +54,7 @@ export default function SoftPowerPageEN() {
               <BookOpen className="w-4 h-4 text-accent" />
               <span className="text-sm text-background/90 tracking-wide">Education & Living Packages</span>
             </div>
-            <h1 className="heading-display text-background mb-6">Live Your Passion in Asia:<span className="block text-accent">Exclusive Education & Legal Stay Packages.</span></h1>
+            <h1 className="heading-display text-background mb-6">Stay Longer. Learn Deeper.<span className="block text-accent">Move Naturally.</span></h1>
             <p className="text-lg text-background/80 max-w-xl mb-10">Each program is an independent service with its own pricing and application process.</p>
             <button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold inline-flex items-center gap-2">Get Started <ArrowRight className="w-4 h-4" /></button>
           </motion.div>
@@ -137,8 +137,8 @@ export default function SoftPowerPageEN() {
           <p className="text-muted-foreground text-center mb-10 body-editorial">Quick preliminary assessment.</p>
           {formSubmitted ? (
             <div className="text-center py-10 space-y-6">
-              <p className="text-lg font-heading text-foreground">Your eligibility looks strong. Purchase a consulting package above to get started.</p>
-              <Button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Purchase Consulting Package ↑</Button>
+              <p className="text-lg font-heading text-foreground">Your eligibility looks strong. View advisory packages above to get started.</p>
+              <Button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">View Advisory Packages ↑</Button>
             </div>
           ) : (
             <PlanBForm serviceId={bundles[0]?.id} onSubmitSuccess={() => setFormSubmitted(true)} />

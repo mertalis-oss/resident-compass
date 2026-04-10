@@ -249,20 +249,17 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
             {isPrivate ? (
               <p className="font-heading text-lg text-accent mb-4">{priceDisplay}</p>
             ) : (
-              <p className="font-heading text-3xl md:text-4xl text-accent mb-4">
+              <p className="font-heading text-3xl md:text-4xl text-accent mb-1">
                 <span className="whitespace-nowrap">{priceDisplay}</span>
               </p>
             )}
+            <p className="text-xs text-muted-foreground mb-4">{t('checkout.advisorySubtitle')}</p>
             <Button
+              variant="outline"
               className="w-full h-12"
               onClick={() => setModalOpen(true)}
             >
-              {scope === 'tr' ? 'Süreci Başlat' : 'Initialize Protocol'}
-            </Button>
-            <p className="text-xs text-muted-foreground text-center mt-2">
-              {scope === 'tr'
-                ? 'Kişiye özel danışmanlık — otomatik işlem yok'
-                : 'Private advisory — no automated processing'}
+              {t('checkout.initializeLabel')}
             </p>
           </div>
         </div>
@@ -282,11 +279,7 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
               </DialogTitle>
             </DialogHeader>
 
-            {/* Stripe trust badge */}
-            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mt-6 mb-4">
-              <CreditCard className="h-3.5 w-3.5" />
-              <span>{t('checkout.stripeTrust', { currencyLabel })}</span>
-            </div>
+
 
             {/* Micro-trust signals */}
             <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground mb-6">
@@ -392,6 +385,10 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
             <p className="text-xs text-muted-foreground text-center mt-2">
               {scope === 'tr' ? '3 dakika içinde planın hazır' : 'Your plan ready in 3 minutes'}
             </p>
+            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mt-2">
+              <CreditCard className="h-3.5 w-3.5" />
+              <span>{t('checkout.stripeTrust', { currencyLabel })}</span>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
