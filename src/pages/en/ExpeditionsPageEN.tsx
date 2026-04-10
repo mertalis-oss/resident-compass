@@ -1,22 +1,19 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mountain, Shield, MapPin, ArrowRight, AlertTriangle, Loader, MessageCircle } from 'lucide-react';
+import { Mountain, Shield, MapPin, AlertTriangle, MessageCircle } from 'lucide-react';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
 import SEOHead from '@/components/SEOHead';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import PlanBForm from '@/components/PlanBForm';
 import ComparisonCrossSell from '@/components/service/ComparisonCrossSell';
-import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
 import ExpectationOutcome from '@/components/service/ExpectationOutcome';
 import TrustBlock from '@/components/service/TrustBlock';
 import SocialProofMini from '@/components/service/SocialProofMini';
-import FOMOBlock from '@/components/service/FOMOBlock';
-import { useServicesList } from '@/hooks/useServicesList';
+import AdvisoryForm from '@/components/advisory/AdvisoryForm';
 import { buildWhatsAppUrl } from '@/lib/constants';
 import { trackPostHogEvent } from '@/lib/posthog';
-import { Button } from '@/components/ui/button';
 
 const expeditions = [
   { title: 'Ha Giang Motor Expedition', location: 'Vietnam — Ha Giang', duration: '4-7 Days', desc: 'Guided motorcycle expedition through Vietnam\'s most dramatic mountain passes.', highlight: 'Most Popular' },
@@ -25,7 +22,6 @@ const expeditions = [
 ];
 
 export default function ExpeditionsPageEN() {
-  const { services, isLoading, hasError } = useServicesList('expeditions', 'global');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
@@ -35,10 +31,6 @@ export default function ExpeditionsPageEN() {
     trackPostHogEvent('whatsapp_click', { source: 'expeditions_en', intent: 'expedition-inquiry' }, true);
     try { window.open(whatsappUrl, '_blank'); } catch { window.location.href = whatsappUrl; }
   };
-
-  if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
-
-  const hasServices = services.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -60,14 +52,7 @@ export default function ExpeditionsPageEN() {
             </div>
             <h1 className="heading-display text-background mb-6">The Art of Strategic Movement.<span className="block text-accent">Southeast Asia's Hidden Routes.</span></h1>
             <p className="text-lg text-background/80 max-w-xl mb-10">Licensed and guided expeditions through the most breathtaking landscapes in the region.</p>
-            <div className="flex flex-wrap items-center gap-4">
-              <button onClick={handleWhatsAppClick} className="btn-luxury-gold inline-flex items-center gap-2"><MessageCircle className="w-4 h-4" /> Speak with Strategic Advisor</button>
-              {hasServices && (
-                <button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="border border-white/30 bg-white/10 hover:bg-white/20 text-white backdrop-blur-md text-xs tracking-[0.15em] uppercase px-8 py-4 h-auto rounded-md transition-all duration-300">
-                  View Packages
-                </button>
-              )}
-            </div>
+            <button onClick={handleWhatsAppClick} className="btn-luxury-gold inline-flex items-center gap-2"><MessageCircle className="w-4 h-4" /> Speak with Strategic Advisor</button>
           </motion.div>
         </div>
       </section>
@@ -77,37 +62,10 @@ export default function ExpeditionsPageEN() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5-6 FOMO + CHECKOUT */}
-      {hasServices ? (
-        <>
-          <FOMOBlock service={services[0]} />
-          <div id="checkout">
-            <section className="section-editorial border-t border-border py-16">
-              <div className="container mx-auto px-6 lg:px-12">
-                <div className="min-h-[400px] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                  {services.map((s) => (
-                    <ServiceCheckout key={s.id} service={s} />
-                  ))}
-                </div>
-              </div>
-            </section>
-          </div>
-        </>
-      ) : (
-        <div id="checkout">
-          <section className="py-24 text-center">
-            <p className="text-muted-foreground mb-6">Elite protocols are currently being updated by our strategic advisors.</p>
-            <Button onClick={handleWhatsAppClick} variant="outline" className="inline-flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" /> Speak with Strategic Advisor
-            </Button>
-          </section>
-        </div>
-      )}
-
-      {/* 7. WHO IS FOR */}
+      {/* 5. WHO IS FOR */}
       <ServiceWhoIsFor />
 
-      {/* 8. Safety */}
+      {/* 6. Safety */}
       <section className="py-6 bg-accent/5 border-y border-accent/20">
         <div className="container mx-auto px-6 lg:px-12 flex items-center justify-center gap-3">
           <Shield className="w-5 h-5 text-accent flex-shrink-0" />
@@ -115,7 +73,7 @@ export default function ExpeditionsPageEN() {
         </div>
       </section>
 
-      {/* Routes Grid */}
+      {/* 7. Routes Grid */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="text-center mb-16"><p className="caption-editorial text-accent mb-4">Routes</p><h2 className="heading-section mb-4">Active Expeditions</h2></div>
@@ -134,6 +92,19 @@ export default function ExpeditionsPageEN() {
         </div>
       </section>
 
+      {/* 8. Advisory Form */}
+      <div id="checkout">
+        <section className="section-editorial border-t border-border py-16">
+          <div className="container max-w-2xl px-6">
+            <div className="text-center mb-8">
+              <p className="caption-editorial text-accent mb-4">Begin Your Advisory</p>
+              <h2 className="heading-section mb-4">Plan Your Expedition</h2>
+            </div>
+            <AdvisoryForm source_page="expeditions" defaultDestination="thailand" />
+          </div>
+        </section>
+      </div>
+
       {/* PlanBForm */}
       <section className="py-20 bg-card border-t border-border">
         <div className="container max-w-2xl px-6">
@@ -143,7 +114,7 @@ export default function ExpeditionsPageEN() {
               <p className="text-lg font-heading text-foreground">Your request has been received. We will contact you shortly.</p>
             </div>
           ) : (
-            <PlanBForm serviceId={services[0]?.id} onSubmitSuccess={() => setFormSubmitted(true)} />
+            <PlanBForm onSubmitSuccess={() => setFormSubmitted(true)} />
           )}
         </div>
       </section>

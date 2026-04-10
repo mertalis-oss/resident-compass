@@ -48,6 +48,8 @@ const EN_NAV_GROUPS: NavGroup[] = [
     items: [
       { to: '/experiences/expeditions', label: 'Expeditions' },
       { to: '/experiences/wellness', label: 'Wellness' },
+      { to: '/destinations/vietnam', label: 'Vietnam' },
+      { to: '/destinations/cambodia', label: 'Cambodia' },
     ],
   },
   {

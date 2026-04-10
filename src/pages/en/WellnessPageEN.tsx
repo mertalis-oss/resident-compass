@@ -1,18 +1,16 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Wind, Dumbbell, Brain, Eye, Loader, MessageCircle } from 'lucide-react';
+import { Heart, Wind, Dumbbell, Brain, Eye, MessageCircle } from 'lucide-react';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
 import SEOHead from '@/components/SEOHead';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import PlanBForm from '@/components/PlanBForm';
-import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
 import ExpectationOutcome from '@/components/service/ExpectationOutcome';
 import TrustBlock from '@/components/service/TrustBlock';
 import SocialProofMini from '@/components/service/SocialProofMini';
-import FOMOBlock from '@/components/service/FOMOBlock';
-import { useServicesList } from '@/hooks/useServicesList';
+import AdvisoryForm from '@/components/advisory/AdvisoryForm';
 import { buildWhatsAppUrl } from '@/lib/constants';
 import { trackPostHogEvent } from '@/lib/posthog';
 import { Button } from '@/components/ui/button';
@@ -25,7 +23,6 @@ const modalities = [
 ];
 
 export default function WellnessPageEN() {
-  const { services, isLoading } = useServicesList('wellness', 'global');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
@@ -35,10 +32,6 @@ export default function WellnessPageEN() {
     trackPostHogEvent('whatsapp_click', { source: 'wellness_en', intent: 'wellness-inquiry' }, true);
     try { window.open(whatsappUrl, '_blank'); } catch { window.location.href = whatsappUrl; }
   };
-
-  if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
-
-  const hasServices = services.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -70,37 +63,23 @@ export default function WellnessPageEN() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5-6 CHECKOUT */}
-      {hasServices ? (
-        <>
-          <FOMOBlock service={services[0]} />
-          <div id="checkout">
-            <section className="section-editorial border-t border-border py-16">
-              <div className="container mx-auto px-6 lg:px-12">
-                <div className="min-h-[400px] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                  {services.map((s) => (
-                    <ServiceCheckout key={s.id} service={s} />
-                  ))}
-                </div>
-              </div>
-            </section>
+      {/* 5. Advisory Form */}
+      <div id="checkout">
+        <section className="section-editorial border-t border-border py-16">
+          <div className="container max-w-2xl px-6">
+            <div className="text-center mb-8">
+              <p className="caption-editorial text-accent mb-4">Begin Your Advisory</p>
+              <h2 className="heading-section mb-4">Start Your Wellness Process</h2>
+            </div>
+            <AdvisoryForm source_page="wellness" defaultDestination="thailand" />
           </div>
-        </>
-      ) : (
-        <div id="checkout">
-          <section className="py-24 text-center">
-            <p className="text-muted-foreground mb-6">Elite protocols are currently being updated by our strategic advisors.</p>
-            <Button onClick={handleWhatsAppClick} variant="outline" className="inline-flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" /> Speak with Strategic Advisor
-            </Button>
-          </section>
-        </div>
-      )}
+        </section>
+      </div>
 
-      {/* 7. WHO IS FOR */}
+      {/* 6. WHO IS FOR */}
       <ServiceWhoIsFor />
 
-      {/* 8. Modalities */}
+      {/* 7. Modalities */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
@@ -132,7 +111,7 @@ export default function WellnessPageEN() {
               <Button onClick={handleWhatsAppClick} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto inline-flex items-center gap-2"><MessageCircle className="w-4 h-4" /> Speak with Strategic Advisor</Button>
             </div>
           ) : (
-            <PlanBForm serviceId={services[0]?.id} onSubmitSuccess={() => setFormSubmitted(true)} />
+            <PlanBForm onSubmitSuccess={() => setFormSubmitted(true)} />
           )}
         </div>
       </section>

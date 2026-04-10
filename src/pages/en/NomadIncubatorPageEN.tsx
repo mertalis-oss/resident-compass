@@ -1,21 +1,18 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Building2, Globe, Calculator, Users, Zap, ArrowRight, CheckCircle, Home, Briefcase, Heart, MapPin, Loader } from 'lucide-react';
+import { Building2, Globe, Calculator, Users, Zap, ArrowRight, CheckCircle, Home, Briefcase, Heart, MapPin } from 'lucide-react';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
 import SEOHead from '@/components/SEOHead';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import PlanBForm from '@/components/PlanBForm';
 import ComparisonCrossSell from '@/components/service/ComparisonCrossSell';
-import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
 import ExpectationOutcome from '@/components/service/ExpectationOutcome';
 import TrustBlock from '@/components/service/TrustBlock';
 import SocialProofMini from '@/components/service/SocialProofMini';
-import FOMOBlock from '@/components/service/FOMOBlock';
-import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
-import { useServicesList } from '@/hooks/useServicesList';
+import AdvisoryForm from '@/components/advisory/AdvisoryForm';
 import { Button } from '@/components/ui/button';
 
 const serviceItems = [
@@ -35,14 +32,9 @@ const fullLifeItems = [
 ];
 
 export default function NomadIncubatorPageEN() {
-  const { services, isLoading, hasError } = useServicesList('residency', 'global');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
-
-  if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
-
-  const hasServices = services.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -62,8 +54,8 @@ export default function NomadIncubatorPageEN() {
               <span className="text-sm text-background/80 tracking-wide">Business Infrastructure for Digital Nomads</span>
             </div>
             <h1 className="heading-display text-background mb-6">
-              Live Anywhere,
-              <span className="block text-accent">Build Globally.</span>
+              Arrive Ready.
+              <span className="block text-accent">Build Immediately.</span>
             </h1>
             <p className="text-lg text-background/70 max-w-xl mb-4">Company formation, tax optimization, second passport, and a powerful community.</p>
             <div className="bg-accent/10 border border-accent/20 px-6 py-4 mb-10 max-w-xl">
@@ -81,37 +73,10 @@ export default function NomadIncubatorPageEN() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5-6. FOMO + CHECKOUT */}
-      {hasServices && (
-        <>
-          <FOMOBlock service={services[0]} />
-          <div id="checkout">
-            <section className="section-editorial border-t border-border py-16">
-              <div className="container mx-auto px-6 lg:px-12">
-                <div className="text-center mb-10">
-                  <p className="caption-editorial text-accent mb-2">Related Consulting Packages</p>
-                </div>
-                <div className="min-h-[400px] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                  {services.map((s) => (
-                    <ServiceCheckout key={s.id} service={s} />
-                  ))}
-                </div>
-              </div>
-            </section>
-          </div>
-        </>
-      )}
-
-      {!hasServices && (
-        <div id="checkout">
-          <div className="py-24 text-center text-muted-foreground">Packages currently being updated. Please check back soon.</div>
-        </div>
-      )}
-
-      {/* 7. WHO IS FOR */}
+      {/* 5. WHO IS FOR */}
       <ServiceWhoIsFor />
 
-      {/* 8. Content — 360° Life Setup */}
+      {/* 6. Content — 360° Life Setup */}
       <section className="py-20 lg:py-28 bg-card border-b border-border">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
@@ -129,6 +94,19 @@ export default function NomadIncubatorPageEN() {
           </div>
         </div>
       </section>
+
+      {/* 7. Advisory Form */}
+      <div id="checkout">
+        <section className="section-editorial border-t border-border py-16">
+          <div className="container max-w-2xl px-6">
+            <div className="text-center mb-8">
+              <p className="caption-editorial text-accent mb-4">Begin Your Advisory</p>
+              <h2 className="heading-section mb-4">Start Your Incubator Process</h2>
+            </div>
+            <AdvisoryForm source_page="nomad_incubator" defaultDestination="thailand" />
+          </div>
+        </section>
+      </div>
 
       {/* Services Grid */}
       <section className="py-20 lg:py-32 bg-background">
@@ -160,11 +138,11 @@ export default function NomadIncubatorPageEN() {
           <h2 className="heading-section text-center mb-4">Free Eligibility Check</h2>
           {formSubmitted ? (
             <div className="text-center py-10 space-y-6">
-              <p className="text-lg font-heading text-foreground">Your eligibility looks strong. Purchase a consulting package above to get started.</p>
-              <Button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">Purchase Consulting Package ↑</Button>
+              <p className="text-lg font-heading text-foreground">Your eligibility looks strong. View advisory packages above to get started.</p>
+              <Button onClick={() => document.getElementById('checkout')?.scrollIntoView({ behavior: 'smooth' })} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto">View Advisory Packages ↑</Button>
             </div>
           ) : (
-            <PlanBForm serviceId={services[0]?.id} onSubmitSuccess={() => setFormSubmitted(true)} />
+            <PlanBForm onSubmitSuccess={() => setFormSubmitted(true)} />
           )}
         </div>
       </section>

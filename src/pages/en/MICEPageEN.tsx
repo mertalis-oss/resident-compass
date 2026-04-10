@@ -1,19 +1,17 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Building2, Users, Calendar, Globe, MessageCircle, Loader } from 'lucide-react';
+import { Building2, Users, Calendar, Globe, MessageCircle } from 'lucide-react';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
 import SEOHead from '@/components/SEOHead';
 import PlanBForm from '@/components/PlanBForm';
 import ComparisonCrossSell from '@/components/service/ComparisonCrossSell';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
-import ServiceCheckout from '@/components/service/ServiceCheckout';
 import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
 import ExpectationOutcome from '@/components/service/ExpectationOutcome';
 import TrustBlock from '@/components/service/TrustBlock';
 import SocialProofMini from '@/components/service/SocialProofMini';
-import FOMOBlock from '@/components/service/FOMOBlock';
-import { useServicesList } from '@/hooks/useServicesList';
+import AdvisoryForm from '@/components/advisory/AdvisoryForm';
 import { buildWhatsAppUrl } from '@/lib/constants';
 import { trackPostHogEvent } from '@/lib/posthog';
 import { Button } from '@/components/ui/button';
@@ -26,7 +24,6 @@ const features = [
 ];
 
 export default function MICEPageEN() {
-  const { services, isLoading } = useServicesList('corporate-retreats', 'global');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
@@ -36,10 +33,6 @@ export default function MICEPageEN() {
     trackPostHogEvent('whatsapp_click', { source: 'mice_en', intent: 'event-planning' }, true);
     try { window.open(whatsappUrl, '_blank'); } catch { window.location.href = whatsappUrl; }
   };
-
-  if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader className="mx-auto mt-10 h-8 w-8 animate-spin text-accent" /></div>;
-
-  const hasServices = services.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -59,7 +52,7 @@ export default function MICEPageEN() {
               <Building2 className="w-4 h-4 text-accent" />
               <span className="text-sm text-background/90 tracking-wide">Corporate Solutions</span>
             </div>
-            <h1 className="heading-display text-background mb-6">The Architecture of Influence.<span className="block text-accent">Events That Move Markets.</span></h1>
+            <h1 className="heading-display text-background mb-6">From Leadership Retreats to Global Events.<span className="block text-accent">Southeast Asia.</span></h1>
             <p className="text-lg text-background/80 max-w-xl mb-4">10+ years delivering flawless press launches, autoshows, and dealer conventions across Southeast Asia.</p>
             <p className="text-background/60 text-sm mb-10">Confidential inquiry. Direct strategist review within 24 hours.</p>
             <button onClick={handleWhatsAppClick} className="btn-luxury-gold inline-flex items-center gap-2"><MessageCircle className="w-4 h-4" /> Speak with Strategic Advisor</button>
@@ -72,37 +65,10 @@ export default function MICEPageEN() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5-6. CHECKOUT */}
-      {hasServices ? (
-        <>
-          <FOMOBlock service={services[0]} />
-          <div id="checkout">
-            <section className="section-editorial border-t border-border py-16">
-              <div className="container mx-auto px-6 lg:px-12">
-                <div className="min-h-[400px] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                  {services.map((s) => (
-                    <ServiceCheckout key={s.id} service={s} />
-                  ))}
-                </div>
-              </div>
-            </section>
-          </div>
-        </>
-      ) : (
-        <div id="checkout">
-          <section className="py-24 text-center">
-            <p className="text-muted-foreground mb-6">Elite protocols are currently being updated by our strategic advisors.</p>
-            <Button onClick={handleWhatsAppClick} variant="outline" className="inline-flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" /> Speak with Strategic Advisor
-            </Button>
-          </section>
-        </div>
-      )}
-
-      {/* 7. WHO IS FOR */}
+      {/* 5. WHO IS FOR */}
       <ServiceWhoIsFor />
 
-      {/* 8. Features */}
+      {/* 6. Features */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="text-center mb-16"><p className="caption-editorial text-accent mb-4">Services</p><h2 className="heading-section mb-4">End-to-End Corporate Solutions</h2></div>
@@ -119,10 +85,23 @@ export default function MICEPageEN() {
         </div>
       </section>
 
+      {/* 7. Advisory Form */}
+      <div id="checkout">
+        <section className="section-editorial border-t border-border py-16">
+          <div className="container max-w-2xl px-6">
+            <div className="text-center mb-8">
+              <p className="caption-editorial text-accent mb-4">Begin Your Advisory</p>
+              <h2 className="heading-section mb-4">Initialize Your Event Blueprint</h2>
+            </div>
+            <AdvisoryForm variant="mice" source_page="mice" />
+          </div>
+        </section>
+      </div>
+
       {/* PlanBForm */}
       <section className="py-20 bg-card border-t border-border">
         <div className="container max-w-2xl px-6">
-          <h2 className="heading-section text-center mb-4">Initialize Your Event Blueprint</h2>
+          <h2 className="heading-section text-center mb-4">Confidential Inquiry</h2>
           <p className="text-muted-foreground text-center mb-10 body-editorial">Confidential inquiry. Direct strategist review within 24 hours.</p>
           {formSubmitted ? (
             <div className="text-center py-10 space-y-6">
@@ -130,7 +109,7 @@ export default function MICEPageEN() {
               <Button onClick={handleWhatsAppClick} className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto inline-flex items-center gap-2"><MessageCircle className="w-4 h-4" /> Speak with Strategic Advisor</Button>
             </div>
           ) : (
-            <PlanBForm serviceId={services[0]?.id} onSubmitSuccess={() => setFormSubmitted(true)} />
+            <PlanBForm onSubmitSuccess={() => setFormSubmitted(true)} />
           )}
         </div>
       </section>
