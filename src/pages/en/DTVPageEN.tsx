@@ -104,11 +104,8 @@ export default function DTVPageEN() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5. FOMO */}
-      {hasServices && <FOMOBlock service={anchorService} />}
-
-      {/* 6. CHECKOUT GRID */}
-      <div id="checkout">
+      {/* 5. CHECKOUT GRID */}
+      <div id="checkout" className="scroll-mt-24 md:scroll-mt-32">
         {hasServices ? (
           <section className="section-editorial border-t border-border py-16">
             <div className="container mx-auto px-6 lg:px-12">
@@ -116,7 +113,7 @@ export default function DTVPageEN() {
                 <p className="caption-editorial text-accent mb-2">Advisory Packages</p>
                 <h2 className="heading-section">Select Your Strategic Pathway</h2>
               </div>
-              <div className="min-h-[400px] grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="min-h-[480px] grid grid-cols-1 md:grid-cols-2 gap-8">
                 {services.map((s) => (
                   <ServiceCheckout key={s.id} service={s} />
                 ))}

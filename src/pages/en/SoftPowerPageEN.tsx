@@ -66,22 +66,18 @@ export default function SoftPowerPageEN() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5. FOMO */}
-      <FOMOBlock service={selectedBundle || bundles[0]} />
+      {/* 5. BUNDLE SELECTOR + CHECKOUT */}
+      <section id="checkout" className="scroll-mt-24 md:scroll-mt-32">
+        <BundleSelector bundles={bundles} selected={selectedBundle} onSelect={setSelectedBundle} />
 
-      {/* 6. BUNDLE SELECTOR */}
-      <BundleSelector bundles={bundles} selected={selectedBundle} onSelect={setSelectedBundle} />
+        {selectedBundle && (
+          <div className="flex justify-center mb-2">
+            <span className="inline-flex items-center gap-1.5 bg-accent/10 border border-accent/30 text-accent text-[10px] tracking-[0.2em] uppercase font-medium px-3 py-1 rounded-full">
+              Boosts Your Visa Eligibility
+            </span>
+          </div>
+        )}
 
-      {selectedBundle && (
-        <div className="flex justify-center mb-2">
-          <span className="inline-flex items-center gap-1.5 bg-accent/10 border border-accent/30 text-accent text-[10px] tracking-[0.2em] uppercase font-medium px-3 py-1 rounded-full">
-            Boosts Your Visa Eligibility
-          </span>
-        </div>
-      )}
-
-      {/* 7. CHECKOUT (id="checkout") */}
-      <div id="checkout">
         {selectedBundle ? (
           <ServiceCheckout service={selectedBundle} />
         ) : (
@@ -91,7 +87,7 @@ export default function SoftPowerPageEN() {
             </div>
           </section>
         )}
-      </div>
+      </section>
 
       {/* 8. WHO IS FOR */}
       <ServiceWhoIsFor />

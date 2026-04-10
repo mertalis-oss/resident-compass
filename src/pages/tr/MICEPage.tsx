@@ -73,22 +73,19 @@ export default function MICEPage() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5-6. FOMO + CHECKOUT — only if services exist */}
+      {/* 5. CHECKOUT */}
       {hasServices && (
-        <>
-          <FOMOBlock service={services[0]} />
-          <div id="checkout">
-            <section className="section-editorial border-t border-border py-16">
-              <div className="container mx-auto px-6 lg:px-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                  {services.map((s) => (
-                    <ServiceCheckout key={s.id} service={s} />
-                  ))}
-                </div>
+        <div id="checkout" className="scroll-mt-24 md:scroll-mt-32">
+          <section className="section-editorial border-t border-border py-16">
+            <div className="container mx-auto px-6 lg:px-12">
+              <div className="min-h-[480px] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {services.map((s) => (
+                  <ServiceCheckout key={s.id} service={s} />
+                ))}
               </div>
-            </section>
-          </div>
-        </>
+            </div>
+          </section>
+        </div>
       )}
 
       {/* 7. WHO IS FOR */}

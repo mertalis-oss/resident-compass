@@ -268,9 +268,7 @@ export default function ServicePage() {
 
       <SocialProofMini />
 
-      <FOMOBlock service={service} />
-
-      <div id="checkout">
+      <div id="checkout" className="scroll-mt-24 md:scroll-mt-32">
         <ServiceCheckout service={service} />
       </div>
 
