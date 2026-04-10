@@ -5,7 +5,7 @@ const serviceKeys = {
   programme: 'Sovereign Programme',
   priceOneTime: 'One-time payment. No recurring fees. No hidden costs later. No wasted time.',
   priceAnchor: 'Typical cost of mistakes in this process: $500–$5,000+',
-  ctaStart: 'Start Your Process',
+  ctaStart: 'Begin Your Advisory',
   whatYouGet: "What you'll get:",
   featuresContext: 'Designed to give you clarity, speed, and a clear path forward. Based on real cases and proven processes.',
   whoForLabel: 'Who this is for',
@@ -35,7 +35,7 @@ const serviceKeys = {
 
 const checkoutKeys = {
   microTime: 'Takes less than 2 minutes',
-  microSecure: 'Secure Stripe checkout',
+  microSecure: 'Secure advisory process',
   microCountries: '12+ countries served',
   hesitationKiller: "You don't need to have everything figured out. That's exactly why this exists.",
   agreementLabel: 'I agree to the Terms of Service, Privacy Policy, and Refund Policy. I understand this is an advisory service and government decisions are independent.',
@@ -55,8 +55,10 @@ const checkoutKeys = {
   mustAccept: 'You must accept the terms before proceeding.',
   stripeTrust: 'Processed securely in {{currencyLabel}} by Stripe',
   connectionSlow: 'Connection is slow. Please wait...',
-  ctaLabel: 'Continue to Secure Payment',
+  ctaLabel: 'Continue Consultation',
   redirecting: 'Redirecting...',
+  advisorySubtitle: 'Private advisory — no automated processing',
+  initializeLabel: 'Initialize Protocol',
 };
 
 const successKeys = {
@@ -81,7 +83,7 @@ const serviceKeysTr: Record<string, string> = {
   programme: 'Egemen Program',
   priceOneTime: 'Tek seferlik ödeme. Tekrarlayan ücret yok. Gizli maliyet yok. Kayıp zaman yok.',
   priceAnchor: 'Bu süreçte yapılan hataların tipik maliyeti: $500–$5,000+',
-  ctaStart: 'Sürecinizi Başlatın',
+  ctaStart: 'Danışmanlığı Başlat',
   whatYouGet: 'Neler alacaksınız:',
   featuresContext: 'Size netlik, hız ve ileriye dönük net bir yol sunmak için tasarlandı. Gerçek vakalara ve kanıtlanmış süreçlere dayanır.',
   whoForLabel: 'Kimler için',
@@ -111,7 +113,7 @@ const serviceKeysTr: Record<string, string> = {
 
 const checkoutKeysTr: Record<string, string> = {
   microTime: '2 dakikadan kısa sürer',
-  microSecure: 'Güvenli Stripe ödeme',
+  microSecure: 'Güvenli danışmanlık süreci',
   microCountries: '12+ ülkede hizmet',
   hesitationKiller: 'Her şeyi çözmüş olmanıza gerek yok. Tam da bu yüzden bu hizmet var.',
   agreementLabel: 'Hizmet Şartlarını, Gizlilik Politikasını ve İade Politikasını kabul ediyorum. Bunun bir danışmanlık hizmeti olduğunu ve devlet kararlarının bağımsız olduğunu anlıyorum.',
@@ -131,8 +133,10 @@ const checkoutKeysTr: Record<string, string> = {
   mustAccept: 'Devam etmek için şartları kabul etmelisiniz.',
   stripeTrust: '{{currencyLabel}} üzerinden Stripe ile güvenli ödeme',
   connectionSlow: 'Bağlantı yavaş. Lütfen bekleyin...',
-  ctaLabel: 'Güvenli Ödemeye Geç',
+  ctaLabel: 'Danışmanlığa Devam Et',
   redirecting: 'Yönlendiriliyorsunuz...',
+  advisorySubtitle: 'Kişiye özel danışmanlık — otomatik işlem yok',
+  initializeLabel: 'Süreci Başlat',
 };
 
 const successKeysTr: Record<string, string> = {
@@ -154,7 +158,7 @@ const serviceKeysHi: Record<string, string> = {
   programme: 'संप्रभु कार्यक्रम',
   priceOneTime: 'एकमुश्त भुगतान। कोई आवर्ती शुल्क नहीं। कोई छिपी लागत नहीं।',
   priceAnchor: 'इस प्रक्रिया में गलतियों की विशिष्ट लागत: $500–$5,000+',
-  ctaStart: 'अपनी प्रक्रिया शुरू करें',
+  ctaStart: 'अपनी सलाह शुरू करें',
   whatYouGet: 'आपको क्या मिलेगा:',
   featuresContext: 'आपको स्पष्टता, गति और एक स्पष्ट मार्ग देने के लिए डिज़ाइन किया गया।',
   whoForLabel: 'यह किसके लिए है',
@@ -184,7 +188,7 @@ const serviceKeysHi: Record<string, string> = {
 
 const checkoutKeysHi: Record<string, string> = {
   microTime: '2 मिनट से कम समय लगता है',
-  microSecure: 'सुरक्षित Stripe चेकआउट',
+  microSecure: 'सुरक्षित सलाह प्रक्रिया',
   microCountries: '12+ देशों में सेवा',
   hesitationKiller: 'आपको सब कुछ समझने की ज़रूरत नहीं। इसी लिए यह सेवा मौजूद है।',
   agreementLabel: 'मैं सेवा की शर्तें, गोपनीयता नीति और रिफंड नीति से सहमत हूं।',
@@ -204,8 +208,10 @@ const checkoutKeysHi: Record<string, string> = {
   mustAccept: 'आगे बढ़ने से पहले शर्तें स्वीकार करें।',
   stripeTrust: '{{currencyLabel}} में Stripe द्वारा सुरक्षित भुगतान',
   connectionSlow: 'कनेक्शन धीमा है। कृपया प्रतीक्षा करें...',
-  ctaLabel: 'सुरक्षित भुगतान पर जाएं',
+  ctaLabel: 'परामर्श जारी रखें',
   redirecting: 'रीडायरेक्ट हो रहा है...',
+  advisorySubtitle: 'निजी सलाह — कोई स्वचालित प्रसंस्करण नहीं',
+  initializeLabel: 'प्रोटोकॉल प्रारंभ करें',
 };
 
 const successKeysHi: Record<string, string> = {
