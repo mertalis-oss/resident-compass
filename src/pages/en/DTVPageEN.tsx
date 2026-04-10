@@ -10,7 +10,7 @@ import ServiceWhoIsFor from '@/components/service/ServiceWhoIsFor';
 import ExpectationOutcome from '@/components/service/ExpectationOutcome';
 import TrustBlock from '@/components/service/TrustBlock';
 import SocialProofMini from '@/components/service/SocialProofMini';
-import FOMOBlock from '@/components/service/FOMOBlock';
+
 import PlanBForm from '@/components/PlanBForm';
 import ComparisonCrossSell from '@/components/service/ComparisonCrossSell';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
