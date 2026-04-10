@@ -260,7 +260,7 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
               onClick={() => setModalOpen(true)}
             >
               {t('checkout.initializeLabel')}
-            </p>
+            </Button>
           </div>
         </div>
       </section>
