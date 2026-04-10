@@ -1,189 +1,73 @@
 
 
-# Batch 3: Sovereign Hybrid Model — 12-File Implementation
+# 9-Phase Sovereign Architecture — Execution Plan
 
-## Overview
-Transition 4 EN advisory pages from Stripe checkout to a lead-capture AdvisoryForm, create 2 new destination pages, soften checkout tone, and add a MICE-specific form variant. TR pages remain completely untouched.
+## Phase 1: FOMO Purge & Anchor Rescue
 
----
+Remove `FOMOBlock` import + usage from 8 files. Add scroll offset + CLS guard. Delete component file.
 
-## File 1: `src/lib/i18n.ts`
+| File | Changes |
+|------|---------|
+| `src/pages/tr/DTVVizePage.tsx` | Remove L14 import, remove L103-104. L107 `<div id="checkout">` → `<div id="checkout" className="scroll-mt-24 md:scroll-mt-32">`. L114 grid → add `min-h-[480px]`. |
+| `src/pages/en/DTVPageEN.tsx` | Remove L13 import, remove L107-108. L111 `<div id="checkout">` → add `className="scroll-mt-24 md:scroll-mt-32"`. L119 grid `min-h-[400px]` → `min-h-[480px]`. |
+| `src/pages/tr/SoftPowerPage.tsx` | Remove L16 import, remove L68-69. Restructure L72-93: wrap BundleSelector + badge + checkout in `<section id="checkout" className="scroll-mt-24 md:scroll-mt-32">` replacing the `<div id="checkout">`. |
+| `src/pages/en/SoftPowerPageEN.tsx` | Remove L16 import, remove L69-70. Same restructure as TR SoftPower (L72-94). |
+| `src/pages/tr/ExpeditionsPage.tsx` | Remove L16 import, remove L69 from fragment. L70 `<div id="checkout">` → add `className="scroll-mt-24 md:scroll-mt-32"`. L73 grid → add `min-h-[480px]`. |
+| `src/pages/tr/MICEPage.tsx` | Remove L16 import, remove L79 `<FOMOBlock>`. L80 `<div id="checkout">` → add scroll offset. L83 grid → add `min-h-[480px]`. |
+| `src/pages/tr/NomadIncubatorPage.tsx` | Remove L16 import, remove L87 `<FOMOBlock>`. L88 `<div id="checkout">` → add scroll offset. L94 grid → add `min-h-[480px]`. |
+| `src/pages/ServicePage.tsx` | Remove L27 import, remove L271. L273 `<div id="checkout">` → add `className="scroll-mt-24 md:scroll-mt-32"`. |
+| **DELETE** `src/components/service/FOMOBlock.tsx` | After all refs removed. |
 
-**Tone shifts in existing keys:**
-- EN line 8: `ctaStart` → `'Begin Your Advisory'`
-- EN line 38: `microSecure` → `'Secure advisory process'`
-- EN line 58: `ctaLabel` → `'Continue Consultation'`
-- TR line 84: `ctaStart` → `'Danışmanlığı Başlat'`
-- TR line 114: `microSecure` → `'Güvenli danışmanlık süreci'`
-- TR line 134: `ctaLabel` → `'Danışmanlığa Devam Et'`
-- HI line 157: `ctaStart` → `'अपनी सलाह शुरू करें'`
-- HI line 187: `microSecure` → `'सुरक्षित सलाह प्रक्रिया'`
-- HI line 207: `ctaLabel` → `'परामर्श जारी रखें'`
+## Phase 2: Sovereign Checkout V2 (ServiceCheckout.tsx)
 
-**New keys in each checkout object:** `advisorySubtitle`, `initializeLabel`
+Layer 1 card only (L238-266). Zero Stripe logic changes.
 
-**New `advisory` namespace** added to EN (after line 323), TR (after ~line 460), HI (after ~line 590):
-- Form labels: `nameLabel`, `emailLabel`, `whatsappLabel`, `whatsappPlaceholder`, `destinationLabel`, `timelineLabel`, `notesLabel`, `notesPlaceholder`, `submitLabel`, `submitting`, `successMessage`
-- Destinations object: `{ thailand, vietnam, cambodia, global }`
-- Timelines object: `{ '1-3', '3-6', '6-12', flexible }`
-- MICE keys: `eventDestinationLabel`, `eventDatesLabel`, `eventDatesPlaceholder`, `companyLabel`, `groupSizeLabel`, `eventTypeLabel`
-- `groupSizes` object: `{ '10-20', '20-50', '50-100', '100-300', '300+' }`
-- `eventTypes` object: `{ retreat, summit, incentive, offsite, conference, other }`
-- EN success: `"We'll personally review your situation within 24 hours."`
-- TR success: `"Durumunuzu 24 saat içinde şahsen inceleyip dönüş yapacağız."`
+- L243 card div: → `relative flex flex-col justify-between rounded-2xl border border-muted/40 bg-card/80 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/5 min-h-[420px] p-6 md:p-7`
+- L244 title: → `text-lg font-semibold tracking-tight text-foreground`
+- L246 subtitle: add `mt-1`
+- L248 divider: → `border-t border-border my-4 opacity-50`
+- L252 price: add `font-medium tracking-tight`
+- L257-263 button: wrap in `<div className="mt-auto">`, add `w-full rounded-xl font-medium h-12`, add `aria-label={`Begin advisory for ${service.title}`}`, add `disabled={modalOpen}`
 
----
+## Phase 3: I18N Tone Polish (i18n.ts)
 
-## File 2: `src/components/service/ServiceCheckout.tsx`
+- L61: `'Initialize Protocol'` → `'Begin Advisory'`
+- L139: `'Süreci Başlat'` → `'Danışmanlığı Başlat'`
+- L214: `'प्रोटोकॉल प्रारंभ करें'` → `'सलाह शुरू करें'`
 
-- Line 256-258: Add `variant="outline"` to the Layer 1 trigger Button
-- Line 260: Replace `scope === 'tr' ? 'Süreci Başlat' : 'Initialize Protocol'` → `t('checkout.initializeLabel')`
-- After line 254 (price): Add `<p className="text-xs text-muted-foreground mt-1">{t('checkout.advisorySubtitle')}</p>`
-- Lines 262-266: Replace hardcoded advisory text → `t('checkout.advisorySubtitle')`
-- Move Stripe trust badge (lines 286-289) from modal header to after line 394 (below sticky CTA footer), preserving `{{currencyLabel}}`
+## Phase 4: HTML SEO (index.html)
 
----
+Add to `<head>` before closing:
+- Google verification meta (placeholder)
+- Hreflang: en → planbasia.com, tr → planbasya.com, x-default → planbasia.com
+- Stripe preconnect + dns-prefetch
+- Canonical: add trailing slash
 
-## File 3: `src/components/advisory/AdvisoryForm.tsx` (NEW)
+## Phase 5: Robots.txt & Sitemap.xml
 
-**Props:** `variant?: 'individual' | 'mice'` (default `'individual'`), `defaultDestination?: string`, `source_page: string`
+**robots.txt**: Replace with `Crawl-delay: 5` + sitemap link.
 
-**Individual fields:** Name (req), Email (req), WhatsApp (opt), Destination (select, req), Timeline (select, req), Notes (textarea)
+**sitemap.xml** (NEW): Static sitemap — 1.0 home, 0.9 services (dtv, soft-power, nomad-incubator + TR equivalents), 0.8 destinations/experiences, 0.5 legal.
 
-**MICE fields:** Name (req), Email (req), WhatsApp (opt), Company (req), Event Type (select, req), Group Size (select, req), Event Destination (select, opt), Event Dates (text, req, placeholder from i18n), Notes (textarea)
+## Phase 6: Security
 
-**Guards implemented:**
-- Anti-bot honeypot: hidden `company_website` input, if filled → silently skip DB insert but still show success
-- Input normalization: `email.trim().toLowerCase()`, WhatsApp cleaned to digits + leading `+`
-- `safeVariant = variant || 'individual'`
-- `defaultDestination` fallback: if not in i18n destinations list → `'global'`
-- Double-submit: `isSubmitting` state disables button + shows loading text
-- SSR safety: `typeof window !== 'undefined'`, `typeof document !== 'undefined'`
+Verify `rel="noopener noreferrer"` on external `target="_blank"` links in modified files. WhatsApp uses `window.open` — no HTML attrs needed.
 
-**Data payload:**
-```
-{
-  name,
-  email: email.trim().toLowerCase(),
-  customer_whatsapp: cleanedWhatsapp,
-  source_domain: typeof window !== 'undefined' ? window.location.hostname || 'unknown' : 'unknown',
-  created_from: safeVariant === 'mice' ? 'mice_form' : 'advisory_form',
-  quiz_answers: {
-    ...all_fields,
-    source_page,
-    submitted_at: new Date().toISOString(),
-    fingerprint: `${email.trim().toLowerCase()}-${source_page}-${safeVariant}`,
-    referrer: typeof document !== 'undefined' ? document.referrer || 'direct' : 'direct'
-  }
-}
-```
+## Phase 7: Smooth Scroll
 
-**Flow:** DB insert (try/catch, silent fail) → THEN fire PostHog (`mice_form_submitted` or `advisory_form_submitted` with `{ source_page, variant, destination: destination || 'unspecified', timeline: timeline || 'unspecified' }`) → show success state
+Already at `src/index.css` L113-115. No changes needed.
 
-**UX:** Wrapper `min-h-[420px]`. Success state: `flex items-center justify-center animate-fade-in` + `scrollIntoView({ behavior: 'smooth' })` via `useRef`. No auto-reset.
+## Phase 8: Scroll Lock & Cleanup (ServiceCheckout.tsx)
+
+- Add `useEffect` import (already has `useRef` → add `useEffect` to imports at L1)
+- `handleModalChange` (L44): add `document.body.style.overflow = open ? 'hidden' : ''`
+- Add cleanup effect: `useEffect(() => { return () => { document.body.style.overflow = ''; }; }, []);`
+
+## Phase 9: Double-Click Guard
+
+Layer 1 button: `disabled={modalOpen}` — uses existing `modalOpen` state (L41). No new state created.
 
 ---
 
-## File 4: `src/pages/en/WellnessPageEN.tsx`
-
-- Remove imports: `ServiceCheckout` (line 9), `FOMOBlock` (line 14), `useServicesList` (line 15)
-- Add import: `AdvisoryForm`
-- Remove lines 73-98 (FOMOBlock + ServiceCheckout grid + empty state)
-- Keep `SocialProofMini` (line 71) as template fatigue guard
-- Insert `<AdvisoryForm source_page="wellness" defaultDestination="thailand" />` after SocialProofMini, wrapped in `<div id="checkout">`
-- Remove `hasServices` const and `isLoading`/`services` destructuring (no longer needed)
-
----
-
-## File 5: `src/pages/en/MICEPageEN.tsx`
-
-- Remove imports: `ServiceCheckout` (line 10), `FOMOBlock` (line 15), `useServicesList` (line 16)
-- Add import: `AdvisoryForm`
-- Remove lines 75-100 (FOMOBlock + ServiceCheckout grid + empty state)
-- Line 62: Update headline → `"From Leadership Retreats to Global Events."` accent `"Southeast Asia."`
-- Features grid (lines 105-120) stays as template fatigue guard before form
-- Insert `<AdvisoryForm variant="mice" source_page="mice" />` after Features grid (NO defaultDestination)
-
----
-
-## File 6: `src/pages/en/ExpeditionsPageEN.tsx`
-
-- Remove imports: `ServiceCheckout` (line 10), `FOMOBlock` (line 15), `useServicesList` (line 16)
-- Add import: `AdvisoryForm`
-- Remove lines 65-69 ("View Packages" button)
-- Remove lines 80-105 (FOMOBlock + ServiceCheckout grid + empty state)
-- Routes grid (lines 118-135) stays as template fatigue guard
-- Insert `<AdvisoryForm source_page="expeditions" defaultDestination="thailand" />` after Routes grid
-
----
-
-## File 7: `src/pages/en/NomadIncubatorPageEN.tsx`
-
-- Remove imports: `ServiceCheckout` (line 11), `FOMOBlock` (line 16), `useServicesList` (line 18)
-- Add import: `AdvisoryForm`
-- Lines 64-66: Update headline → `"Arrive Ready."` accent `"Build Immediately."`
-- Remove lines 84-109 (FOMOBlock + ServiceCheckout + empty state)
-- Line 163-164: `"Purchase Consulting Package ↑"` → `"View Advisory Packages ↑"`
-- `ExpectationOutcome` (line 80) stays as template fatigue guard
-- Insert `<AdvisoryForm source_page="nomad_incubator" defaultDestination="thailand" />` after 360° Life Setup section (after line 131)
-
----
-
-## File 8: `src/pages/en/SoftPowerPageEN.tsx`
-
-- **KEEP** BundleSelector + ServiceCheckout (Stripe valid — paid service)
-- Line 57: Update headline → `"Stay Longer. Learn Deeper."` accent `"Move Naturally."`
-- Line 140-141: `"Purchase Consulting Package ↑"` → `"View Advisory Packages ↑"`
-- No structural changes
-
----
-
-## File 9: `src/pages/en/VietnamPageEN.tsx` (NEW)
-
-- Route: `/destinations/vietnam`
-- Hero: Unsplash Ha Giang mountains image
-- Headline: `"The Quiet Route North."` accent `"Vietnam."` (5 words)
-- Subtext: `"Cultural study and soft landing in Asia's emerging frontier."` (10 words)
-- Structure: FocusedNavbar + TrustBar → Hero → Context (3 cards: Cultural Immersion, Soft Landing, Emerging Market) → Pathways (3 route cards) → `<AdvisoryForm source_page="vietnam" defaultDestination="vietnam" />` → Footer
-- Uses SEOHead, StickyMobileCTA, WhatsApp CTA. No Stripe.
-
----
-
-## File 10: `src/pages/en/CambodiaPageEN.tsx` (NEW)
-
-- Route: `/destinations/cambodia`
-- Hero: Unsplash Angkor/Phnom Penh golden hour image
-- Headline: `"Fast. Calm. Flexible."` accent `"Cambodia."` (4 words)
-- Subtext: `"Concierge arrival and strategic positioning."` (6 words)
-- Same hierarchy as Vietnam. `<AdvisoryForm source_page="cambodia" defaultDestination="cambodia" />`
-- No Stripe.
-
----
-
-## File 11: `src/App.tsx`
-
-- Add imports: `VietnamPageEN`, `CambodiaPageEN`
-- Add 2 routes after line 73 (above catch-alls):
-  - `/destinations/vietnam` → `VietnamPageEN`
-  - `/destinations/cambodia` → `CambodiaPageEN`
-
----
-
-## File 12: `src/components/FocusedNavbar.tsx`
-
-- Add to EN_NAV_GROUPS "Experiences" items (lines 48-51):
-  - `{ to: '/destinations/vietnam', label: 'Vietnam' }`
-  - `{ to: '/destinations/cambodia', label: 'Cambodia' }`
-- No top-level nav additions. Experiences goes from 2 to 4 items.
-
----
-
-## Technical Notes
-
-- **Database:** `leads` table has anon INSERT with `WITH CHECK (true)` — no RLS blockage
-- **No migrations needed** — all fields map to existing `leads` columns
-- **`animate-fade-in`** is already available as a Tailwind utility in the project
-- **No new dependencies** required
-- **TR pages, admin pages, Stripe functions, DTVPageEN** — all remain completely untouched
-- **SoftPowerPageEN** keeps Stripe (BundleSelector + ServiceCheckout) — only copy changes
+**Summary**: 10 files modified, 1 deleted, 1 new static file, 2 static files updated. Build verification via `grep -r "FOMOBlock" src/` + build.
 
