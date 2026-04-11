@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { trackPostHogEvent } from '@/lib/posthog';
+import { trackEvent } from '@/lib/analytics';
 import SEOHead from '@/components/SEOHead';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
@@ -53,6 +54,7 @@ export default function Success() {
               session_id: sessionId,
               service_title: data.service_title || '',
             }, true);
+            trackEvent('purchase_success', { session_id: sessionId || 'unknown' });
           }
           return;
         }

@@ -36,7 +36,8 @@ export default function SEOHead({
 
   const baseUrl = DOMAIN_MAP[scope];
   const currentPath = location.pathname;
-  const absoluteUrl = `${baseUrl}${currentPath}`;
+  const cleanPath = currentPath.split(/[?#]/)[0];
+  const absoluteUrl = `${baseUrl}${cleanPath}`.toLowerCase().replace(/\/$/, '') || baseUrl;
 
   const metaDescription = description || t('hero.subtitle');
   const defaultOgImage = ogImage || `${baseUrl}/images/hero-home.webp`;

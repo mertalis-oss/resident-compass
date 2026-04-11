@@ -1,19 +1,20 @@
-/**
- * Lightweight GA4 event helper.
- * Fires only if gtag is present on window (i.e. GA script loaded).
- */
-
 declare global {
   interface Window {
-    gtag?: (...args: unknown[]) => void;
+    dataLayer: Record<string, unknown>[];
   }
 }
 
 export function trackEvent(
   eventName: string,
-  params?: Record<string, string | number | boolean>,
+  params?: Record<string, string | number | boolean | null | undefined>,
 ) {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', eventName, params);
+  if (typeof window !== 'undefined') {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: eventName,
+      ...params,
+      timestamp: new Date().toISOString(),
+      domain_scope: window.location.hostname.includes('planbasya') ? 'tr' : 'en',
+    });
   }
 }
