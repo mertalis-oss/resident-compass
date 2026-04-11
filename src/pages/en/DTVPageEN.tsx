@@ -105,7 +105,7 @@ export default function DTVPageEN() {
       <SocialProofMini />
 
       {/* 5. CHECKOUT GRID */}
-      <div id="checkout" className="scroll-mt-24 md:scroll-mt-32">
+      <div id="checkout" className="scroll-mt-28 md:scroll-mt-36">
         {hasServices ? (
           <section className="section-editorial border-t border-border py-16">
             <div className="container mx-auto px-6 lg:px-12">
@@ -113,9 +113,9 @@ export default function DTVPageEN() {
                 <p className="caption-editorial text-accent mb-2">Advisory Packages</p>
                 <h2 className="heading-section">Select Your Strategic Pathway</h2>
               </div>
-              <div className="min-h-[480px] grid grid-cols-1 md:grid-cols-2 gap-8">
-                {services.map((s) => (
-                  <ServiceCheckout key={s.id} service={s} />
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 min-h-[420px] md:min-h-[480px] items-stretch auto-rows-fr">
+                {services.map((s, index) => (
+                  <ServiceCheckout key={s.id ?? s.slug ?? index} service={s} layout="grid" />
                 ))}
               </div>
             </div>

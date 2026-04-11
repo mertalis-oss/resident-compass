@@ -14,8 +14,6 @@ import ExpectationOutcome from '@/components/service/ExpectationOutcome';
 import TrustBlock from '@/components/service/TrustBlock';
 import SocialProofMini from '@/components/service/SocialProofMini';
 
-import BundleSelector from '@/components/service/BundleSelector';
-import ServiceUpdateFallback from '@/components/tr/ServiceUpdateFallback';
 import { useServicesList } from '@/hooks/useServicesList';
 import { Button } from '@/components/ui/button';
 
@@ -28,7 +26,6 @@ const courses = [
 
 export default function SoftPowerPageEN() {
   const { services: bundles, isLoading, hasError } = useServicesList('soft-power', 'global');
-  const [selectedBundle, setSelectedBundle] = useState<any>(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
@@ -66,28 +63,26 @@ export default function SoftPowerPageEN() {
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5. BUNDLE SELECTOR + CHECKOUT */}
-      <section id="checkout" className="scroll-mt-24 md:scroll-mt-32">
-        <BundleSelector bundles={bundles} selected={selectedBundle} onSelect={setSelectedBundle} />
-
-        {selectedBundle && (
-          <div className="flex justify-center mb-2">
-            <span className="inline-flex items-center gap-1.5 bg-accent/10 border border-accent/30 text-accent text-[10px] tracking-[0.2em] uppercase font-medium px-3 py-1 rounded-full">
-              Boosts Your Visa Eligibility
-            </span>
-          </div>
-        )}
-
-        {selectedBundle ? (
-          <ServiceCheckout service={selectedBundle} />
-        ) : (
-          <section className="section-editorial border-t border-border">
-            <div className="container max-w-2xl px-6 text-center py-12">
-              <p className="text-sm text-muted-foreground">Select a package above to proceed to checkout.</p>
+      {/* 5. CHECKOUT GRID — All bundles */}
+      <div id="checkout" className="scroll-mt-28 md:scroll-mt-36">
+        <section className="section-editorial border-t border-border py-16">
+          <div className="container mx-auto px-6 lg:px-12">
+            <div className="text-center mb-10">
+              <p className="caption-editorial text-accent mb-2">Education Packages</p>
+              <h2 className="heading-section">Select Your Training Path</h2>
             </div>
-          </section>
-        )}
-      </section>
+            {!bundles?.length ? (
+              <div className="min-h-[420px]" />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 min-h-[420px] md:min-h-[480px] items-stretch auto-rows-fr">
+                {bundles.map((bundle, index) => (
+                  <ServiceCheckout key={bundle.id ?? bundle.slug ?? index} service={bundle} layout="grid" />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
 
       {/* 8. WHO IS FOR */}
       <ServiceWhoIsFor />
