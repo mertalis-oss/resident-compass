@@ -1,73 +1,75 @@
 
 
-# 9-Phase Sovereign Architecture — Execution Plan
+# Growth Infrastructure & Enterprise Grid — Execution Plan
 
-## Phase 1: FOMO Purge & Anchor Rescue
+## 16 Files Modified
 
-Remove `FOMOBlock` import + usage from 8 files. Add scroll offset + CLS guard. Delete component file.
+### Phase 1: ServiceCheckout.tsx — Layout Prop, Z-999, Conversion Tracking
 
-| File | Changes |
-|------|---------|
-| `src/pages/tr/DTVVizePage.tsx` | Remove L14 import, remove L103-104. L107 `<div id="checkout">` → `<div id="checkout" className="scroll-mt-24 md:scroll-mt-32">`. L114 grid → add `min-h-[480px]`. |
-| `src/pages/en/DTVPageEN.tsx` | Remove L13 import, remove L107-108. L111 `<div id="checkout">` → add `className="scroll-mt-24 md:scroll-mt-32"`. L119 grid `min-h-[400px]` → `min-h-[480px]`. |
-| `src/pages/tr/SoftPowerPage.tsx` | Remove L16 import, remove L68-69. Restructure L72-93: wrap BundleSelector + badge + checkout in `<section id="checkout" className="scroll-mt-24 md:scroll-mt-32">` replacing the `<div id="checkout">`. |
-| `src/pages/en/SoftPowerPageEN.tsx` | Remove L16 import, remove L69-70. Same restructure as TR SoftPower (L72-94). |
-| `src/pages/tr/ExpeditionsPage.tsx` | Remove L16 import, remove L69 from fragment. L70 `<div id="checkout">` → add `className="scroll-mt-24 md:scroll-mt-32"`. L73 grid → add `min-h-[480px]`. |
-| `src/pages/tr/MICEPage.tsx` | Remove L16 import, remove L79 `<FOMOBlock>`. L80 `<div id="checkout">` → add scroll offset. L83 grid → add `min-h-[480px]`. |
-| `src/pages/tr/NomadIncubatorPage.tsx` | Remove L16 import, remove L87 `<FOMOBlock>`. L88 `<div id="checkout">` → add scroll offset. L94 grid → add `min-h-[480px]`. |
-| `src/pages/ServicePage.tsx` | Remove L27 import, remove L271. L273 `<div id="checkout">` → add `className="scroll-mt-24 md:scroll-mt-32"`. |
-| **DELETE** `src/components/service/FOMOBlock.tsx` | After all refs removed. |
+**File**: `src/components/service/ServiceCheckout.tsx`
 
-## Phase 2: Sovereign Checkout V2 (ServiceCheckout.tsx)
+- Add `import { cn } from '@/lib/utils'` and `import { trackEvent } from '@/lib/analytics'` at top
+- Add `layout?: 'standalone' | 'grid'` to Props interface (default `'standalone'`)
+- Extract L250-277 card div into a `card` const variable
+- Conditional render: `layout === 'grid'` renders `card` directly; `'standalone'` wraps in `<section id="checkout-section">` + `container`
+- Dialog (L282-407): rendered OUTSIDE conditional, add `className="relative z-[999]"` to DialogContent, add `id={`checkout-dialog-${service.id ?? service.slug ?? 'default'}`}`
+- Update `handleModalChange` (L44): add overflow check: `if (!open && document.body.style.overflow === 'hidden') document.body.style.overflow = '';`
+- Card classes: use `cn()` with `Boolean(service.is_featured)` for ring/scale
+- CTA onClick (L270): fire `trackEvent('checkout_click', { service: service.slug || service.id || 'unknown_service', price: service.price, currency: service.currency || 'USD' })` before `setModalOpen(true)`
+- Add secondary useEffect: `useEffect(() => { if (!modalOpen && document.body.style.overflow === 'hidden') document.body.style.overflow = ''; }, [modalOpen]);`
+- Existing unmount cleanup (L54-58) stays
 
-Layer 1 card only (L238-266). Zero Stripe logic changes.
+### Phase 2: Grid Pages — Offset + Grid + layout="grid" (7 files)
 
-- L243 card div: → `relative flex flex-col justify-between rounded-2xl border border-muted/40 bg-card/80 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/5 min-h-[420px] p-6 md:p-7`
-- L244 title: → `text-lg font-semibold tracking-tight text-foreground`
-- L246 subtitle: add `mt-1`
-- L248 divider: → `border-t border-border my-4 opacity-50`
-- L252 price: add `font-medium tracking-tight`
-- L257-263 button: wrap in `<div className="mt-auto">`, add `w-full rounded-xl font-medium h-12`, add `aria-label={`Begin advisory for ${service.title}`}`, add `disabled={modalOpen}`
+All get `scroll-mt-28 md:scroll-mt-36` and `layout="grid"` on ServiceCheckout.
 
-## Phase 3: I18N Tone Polish (i18n.ts)
+| File | Grid classes update |
+|------|-------------------|
+| DTVVizePage.tsx L104,L111 | Add `xl:grid-cols-3 gap-6 md:gap-8 min-h-[420px] md:min-h-[480px] items-stretch auto-rows-fr` |
+| DTVPageEN.tsx L108,L116 | Same + add `xl:grid-cols-3` |
+| ExpeditionsPage.tsx L68,L71 | Update offset + grid classes + `gap-6 md:gap-8 items-stretch auto-rows-fr` |
+| MICEPage.tsx L78,L81 | Same |
+| NomadIncubatorPage.tsx L86,L92 | Same |
 
-- L61: `'Initialize Protocol'` → `'Begin Advisory'`
-- L139: `'Süreci Başlat'` → `'Danışmanlığı Başlat'`
-- L214: `'प्रोटोकॉल प्रारंभ करें'` → `'सलाह शुरू करें'`
+**SoftPower Architecture Change (TR L69-89, EN L70-90)**:
+- Remove `BundleSelector` import, `selectedBundle` state, conditional render
+- Map ALL `bundles` into grid with `<ServiceCheckout layout="grid" />`
+- Add empty-state CLS guard: `if (!bundles?.length) return <div className="min-h-[420px]" />`
+- Grid classes: `grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 min-h-[420px] md:min-h-[480px] items-stretch auto-rows-fr`
 
-## Phase 4: HTML SEO (index.html)
+### Phase 3: ServicePage.tsx — Offset Only
 
-Add to `<head>` before closing:
-- Google verification meta (placeholder)
-- Hreflang: en → planbasia.com, tr → planbasya.com, x-default → planbasia.com
-- Stripe preconnect + dns-prefetch
-- Canonical: add trailing slash
+L271: `scroll-mt-24 md:scroll-mt-32` → `scroll-mt-28 md:scroll-mt-36`
 
-## Phase 5: Robots.txt & Sitemap.xml
+### Phase 4: SEOHead.tsx — Canonical Normalization
 
-**robots.txt**: Replace with `Crawl-delay: 5` + sitemap link.
+L38-39 → `const cleanPath = currentPath.split(/[?#]/)[0];` + `const absoluteUrl = \`${baseUrl}${cleanPath}\`.toLowerCase().replace(/\/$/, '') || baseUrl;`
 
-**sitemap.xml** (NEW): Static sitemap — 1.0 home, 0.9 services (dtv, soft-power, nomad-incubator + TR equivalents), 0.8 destinations/experiences, 0.5 legal.
+### Phase 5: index.html — GTM (GTM-MTGTMBGR) + OG Image Fix
 
-## Phase 6: Security
+Replace with exact GTM snippet using ID `GTM-MTGTMBGR`. Replace lovable.dev OG image with `https://planbasia.com/images/hero-home.webp`. Add `<noscript>` GTM iframe in `<body>`. Keep existing hreflang + Stripe preconnect.
 
-Verify `rel="noopener noreferrer"` on external `target="_blank"` links in modified files. WhatsApp uses `window.open` — no HTML attrs needed.
+### Phase 6: analytics.ts — DataLayer Rewrite
 
-## Phase 7: Smooth Scroll
+Replace gtag-based implementation with `window.dataLayer.push()` pattern including `timestamp` and `domain_scope`.
 
-Already at `src/index.css` L113-115. No changes needed.
+### Phase 7: Conversion Event Chain
 
-## Phase 8: Scroll Lock & Cleanup (ServiceCheckout.tsx)
+**PlanBForm.tsx**: Import `trackEvent`. After L56 (`setSubmitted(true)`), add `trackEvent('form_submit', { service: serviceId || 'general' })`.
 
-- Add `useEffect` import (already has `useRef` → add `useEffect` to imports at L1)
-- `handleModalChange` (L44): add `document.body.style.overflow = open ? 'hidden' : ''`
-- Add cleanup effect: `useEffect(() => { return () => { document.body.style.overflow = ''; }; }, []);`
+**Success.tsx**: Import `trackEvent`. Add deduplicated `useEffect` with `firedRef` pattern firing `trackEvent('purchase_success', { session_id: sessionId })` when `status === 'paid'`, alongside existing PostHog event at L50-56.
 
-## Phase 9: Double-Click Guard
+### Phase 8: robots.txt
 
-Layer 1 button: `disabled={modalOpen}` — uses existing `modalOpen` state (L41). No new state created.
+```
+User-agent: *
+Allow: /
+Sitemap: https://planbasia.com/sitemap.xml
+Sitemap: https://planbasya.com/sitemap.xml
+Host: https://planbasia.com
+```
 
----
+### Phase 9: sitemap.xml — xhtml Hreflang Parity
 
-**Summary**: 10 files modified, 1 deleted, 1 new static file, 2 static files updated. Build verification via `grep -r "FOMOBlock" src/` + build.
+Full rewrite with `xmlns:xhtml` namespace. Dual pages (Home, DTV, Soft Power, Nomad, Expeditions, MICE) get TWO `<url>` blocks each with 3 `<xhtml:link>` alternates (en, tr, x-default→EN). EN-only pages (Wellness, Vietnam, Cambodia, Privacy, Terms, Refund) get ONE block with 2 alternates (en, x-default only).
 
