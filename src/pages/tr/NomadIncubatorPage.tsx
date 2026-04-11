@@ -83,22 +83,22 @@ export default function NomadIncubatorPage() {
 
       {/* 5. CHECKOUT */}
       {hasServices ? (
-        <div id="checkout" className="scroll-mt-24 md:scroll-mt-32">
+        <div id="checkout" className="scroll-mt-28 md:scroll-mt-36">
           <section className="section-editorial border-t border-border py-16">
             <div className="container mx-auto px-6 lg:px-12">
               <div className="text-center mb-10">
                 <p className="caption-editorial text-accent mb-2">{t('nomad.relatedPackages', { defaultValue: 'İlgili Danışmanlık Paketleri' })}</p>
               </div>
-              <div className="min-h-[480px] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                {services.map((s) => (
-                  <ServiceCheckout key={s.id} service={s} />
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 min-h-[420px] md:min-h-[480px] items-stretch auto-rows-fr">
+                {services.map((s, index) => (
+                  <ServiceCheckout key={s.id ?? s.slug ?? index} service={s} layout="grid" />
                 ))}
               </div>
             </div>
           </section>
         </div>
       ) : (
-        <div id="checkout" className="scroll-mt-24 md:scroll-mt-32"><ServiceUpdateFallback context="Nomad Incubator" /></div>
+        <div id="checkout" className="scroll-mt-28 md:scroll-mt-36"><ServiceUpdateFallback context="Nomad Incubator" /></div>
       )}
 
       {/* 7. WHO IS FOR */}

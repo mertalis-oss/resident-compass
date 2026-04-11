@@ -53,6 +53,7 @@ export default function PlanBForm({ serviceId, onSubmitSuccess }: PlanBFormProps
       return;
     }
     trackEvent('lead_form_submit', { source: 'plan_b_form' });
+    trackEvent('form_submit', { service: serviceId || 'general' });
     trackPostHogEvent('lead_form_submit', { source: 'plan_b_form' });
     setSubmitted(true);
     onSubmitSuccess?.();

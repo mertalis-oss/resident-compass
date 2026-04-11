@@ -268,7 +268,7 @@ export default function ServicePage() {
 
       <SocialProofMini />
 
-      <div id="checkout" className="scroll-mt-24 md:scroll-mt-32">
+      <div id="checkout" className="scroll-mt-28 md:scroll-mt-36">
         <ServiceCheckout service={service} />
       </div>
 

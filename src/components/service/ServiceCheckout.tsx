@@ -3,11 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { getStoredUtms } from '@/lib/utmStorage';
 import { trackPostHogEvent } from '@/lib/posthog';
+import { trackEvent } from '@/lib/analytics';
 import { normalizeEmail } from '@/lib/emailNormalize';
 import { safeGet, cleanupFallback } from '@/lib/safeStorage';
 import { getDomainScope } from '@/hooks/useDomainScope';
 import { renderPrice, resolveCurrency } from '@/lib/formatPrice';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -28,11 +30,12 @@ declare global {
 interface Props {
   service: Service;
   variant?: 'full' | 'mirror';
+  layout?: 'standalone' | 'grid';
 }
 
 const scope = getDomainScope();
 
-export default function ServiceCheckout({ service, variant = 'full' }: Props) {
+export default function ServiceCheckout({ service, variant = 'full', layout = 'standalone' }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [isAgreed, setIsAgreed] = useState(false);
@@ -48,7 +51,11 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
       setShowRescue(false);
     }
     setModalOpen(open);
-    document.body.style.overflow = open ? 'hidden' : '';
+    if (!open && document.body.style.overflow === 'hidden') {
+      document.body.style.overflow = '';
+    } else if (open) {
+      document.body.style.overflow = 'hidden';
+    }
   };
 
   useEffect(() => {
@@ -56,6 +63,12 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
       document.body.style.overflow = '';
     };
   }, []);
+
+  useEffect(() => {
+    if (!modalOpen && document.body.style.overflow === 'hidden') {
+      document.body.style.overflow = '';
+    }
+  }, [modalOpen]);
 
   const showLeadRescue = () => {
     setShowRescue(true);
@@ -242,45 +255,64 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
   );
   const currencyLabel = resolvedCurrency;
 
+  const isFeatured = Boolean(service.is_featured);
+
+  const card = (
+    <div className={cn(
+      'relative flex flex-col justify-between rounded-2xl border border-muted/40 bg-card/80 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/5 min-h-[420px] p-6 md:p-7',
+      isFeatured && 'ring-1 ring-foreground/10 md:scale-[1.02]'
+    )}>
+      <div>
+        <h2 className="font-heading text-lg font-semibold tracking-tight text-foreground mb-3">{service.title}</h2>
+        {service.short_description && (
+          <p className="text-muted-foreground text-sm mt-1 mb-4">{service.short_description}</p>
+        )}
+        <div className="border-t border-border my-4 opacity-50" />
+        {isPrivate ? (
+          <p className="font-heading text-lg text-accent mt-4 mb-5">{priceDisplay}</p>
+        ) : (
+          <p className="font-heading text-3xl md:text-4xl font-medium tracking-tight text-foreground md:text-accent mt-4 mb-5">
+            <span className="whitespace-nowrap">{priceDisplay}</span>
+          </p>
+        )}
+        <p className="text-xs text-muted-foreground mb-4">{t('checkout.advisorySubtitle')}</p>
+      </div>
+      <div className="mt-auto">
+        <Button
+          variant={isFeatured ? "default" : "outline"}
+          className="w-full rounded-xl font-medium h-12"
+          onClick={() => {
+            trackEvent('checkout_click', {
+              service: service.slug || service.id || 'unknown_service',
+              price: service.price,
+              currency: service.currency || 'USD',
+            });
+            setModalOpen(true);
+          }}
+          disabled={modalOpen}
+          aria-label={`Begin advisory for ${service.title}`}
+        >
+          {t('checkout.initializeLabel')}
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <>
-      {/* LAYER 1 — Advisory Card */}
-      <section id="checkout-section" className="section-editorial border-t border-border">
-        <div className="container max-w-2xl px-6">
-          <div className={`relative flex flex-col justify-between rounded-2xl border border-muted/40 bg-card/80 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/5 min-h-[420px] p-6 md:p-7${service.is_featured ? ' ring-1 ring-foreground/10 md:scale-[1.02]' : ''}`}>
-            <div>
-              <h2 className="font-heading text-lg font-semibold tracking-tight text-foreground mb-3">{service.title}</h2>
-              {service.short_description && (
-                <p className="text-muted-foreground text-sm mt-1 mb-4">{service.short_description}</p>
-              )}
-              <div className="border-t border-border my-4 opacity-50" />
-              {isPrivate ? (
-                <p className="font-heading text-lg text-accent mt-4 mb-5">{priceDisplay}</p>
-              ) : (
-                <p className="font-heading text-3xl md:text-4xl font-medium tracking-tight text-foreground md:text-accent mt-4 mb-5">
-                  <span className="whitespace-nowrap">{priceDisplay}</span>
-                </p>
-              )}
-              <p className="text-xs text-muted-foreground mb-4">{t('checkout.advisorySubtitle')}</p>
-            </div>
-            <div className="mt-auto">
-              <Button
-                variant={service.is_featured ? "default" : "outline"}
-                className="w-full rounded-xl font-medium h-12"
-                onClick={() => setModalOpen(true)}
-                disabled={modalOpen}
-                aria-label={`Begin advisory for ${service.title}`}
-              >
-                {t('checkout.initializeLabel')}
-              </Button>
-            </div>
+      {layout === 'grid' ? (
+        card
+      ) : (
+        <section id="checkout-section" className="section-editorial border-t border-border">
+          <div className="container max-w-2xl px-6">
+            {card}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* LAYER 2 — Interstitial Modal */}
       <Dialog open={modalOpen} onOpenChange={handleModalChange}>
-        <DialogContent className="p-0 overflow-hidden max-w-[560px]">
+        <DialogContent className="relative z-[999] p-0 overflow-hidden max-w-[560px]" id={`checkout-dialog-${service.id ?? service.slug ?? 'default'}`}>
           {/* Scrollable inner wrapper */}
           <div className="max-h-[80vh] overflow-y-auto p-6 md:p-8 pb-32">
             <DialogHeader>
@@ -291,8 +323,6 @@ export default function ServiceCheckout({ service, variant = 'full' }: Props) {
                 )}
               </DialogTitle>
             </DialogHeader>
-
-
 
             {/* Micro-trust signals */}
             <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground mb-6">
