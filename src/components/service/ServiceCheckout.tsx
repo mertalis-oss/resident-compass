@@ -258,32 +258,51 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
             aria-label={`Begin advisory for ${service.title}`}
           >
             {t("checkout.initializeLabel")}
-          </Button>
           <Button
-            size="lg"
+            variant={isFeatured ? "default" : "outline"}
+            className="w-full rounded-xl font-medium h-12"
             onClick={() => {
-              trackPostHogEvent("whatsapp_click", { source: "lead_rescue", service: service.slug }, true);
-              setTimeout(() => window.open(rescueWhatsapp, "_blank"), 150);
+              if (clickLock.current || modalOpen) return;
+              clickLock.current = true;
+
+              try {
+                trackEvent("checkout_click", {
+                  service: service.slug || service.id || "unknown_service",
+                  price: service.price,
+                  currency: service.currency || "USD",
+                });
+                setModalOpen(true);
+              } catch (err) {
+                console.error("Modal activation failed:", err);
+                clickLock.current = false;
+              }
             }}
-            className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
+            disabled={modalOpen}
+            aria-label={`Begin advisory for ${service.title}`}
           >
-            <MessageCircle className="mr-2 h-4 w-4" />
-            {scope === "tr" ? "WhatsApp ile İletişime Geçin" : "Contact Us on WhatsApp"}
+            {t("checkout.initializeLabel")}
           </Button>
         </div>
-      </section>
-    );
-  }
+      </div>
+    </div>
+  );
 
-  if (variant === "mirror") {
-    return (
-      <Button
-        size="lg"
-        onClick={() => document.getElementById("checkout-section")?.scrollIntoView({ behavior: "smooth" })}
-        className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
-      >
-        {t("service.ctaStart")}
-      </Button>
+  return (
+    <>
+      {layout === "grid" ? (
+        card
+      ) : (
+        <section id="checkout-section" className="section-editorial border-t border-border">
+          <div className="container max-w-2xl px-6">{card}</div>
+        </section>
+      )}
+
+      {/* LAYER 2 — Interstitial Modal */}
+      <Dialog open={modalOpen} onOpenChange={handleModalChange}>
+        <DialogContent
+          className="z-[999] p-0 overflow-hidden max-w-[560px]"
+          id={`checkout-dialog-${service.id ?? service.slug ?? "default"}`}
+        >
     );
   }
 
@@ -322,14 +341,28 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
         <Button
           variant={isFeatured ? "default" : "outline"}
           className="w-full rounded-xl font-medium h-12"
-          onClick={() => {
-            trackEvent("checkout_click", {
-              service: service.slug || service.id || "unknown_service",
-              price: service.price,
-              currency: service.currency || "USD",
-            });
-            setModalOpen(true);
-          }}
+        onClick={() => {
+  if (clickLock.current || modalOpen) return;
+
+  console.log("CTA CLICK FIRED", {
+    service: service.slug ?? service.id,
+    price: service.price,
+  });
+
+  clickLock.current = true;
+
+  try {
+    trackEvent("checkout_click", {
+      service: service.slug ?? service.id ?? "unknown_service",
+      price: service.price,
+      currency: service.currency ?? "USD",
+    });
+    setModalOpen(true);
+  } catch (err) {
+    console.error("Checkout click failed:", err);
+    clickLock.current = false;
+  }
+}}
           disabled={modalOpen}
           aria-label={`Begin advisory for ${service.title}`}
         >
