@@ -235,6 +235,31 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
               : "Reach out to us on WhatsApp and we'll get back to you shortly."}
           </p>
           <Button
+            variant={isFeatured ? "default" : "outline"}
+            className="w-full rounded-xl font-medium h-12"
+            onClick={() => {
+              // Kilit ve Modal Kontrolü
+              if (clickLock.current || modalOpen) return;
+              clickLock.current = true;
+
+              try {
+                trackEvent("checkout_click", {
+                  service: service.slug || service.id || "unknown_service",
+                  price: service.price,
+                  currency: service.currency || "USD",
+                });
+                setModalOpen(true);
+              } catch (err) {
+                console.error("Modal activation failed:", err);
+                clickLock.current = false;
+              }
+            }}
+            disabled={modalOpen}
+            aria-label={`Begin advisory for ${service.title}`}
+          >
+            {t("checkout.initializeLabel")}
+          </Button>
+          <Button
             size="lg"
             onClick={() => {
               trackPostHogEvent("whatsapp_click", { source: "lead_rescue", service: service.slug }, true);
@@ -327,7 +352,7 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
       {/* LAYER 2 — Interstitial Modal */}
       <Dialog open={modalOpen} onOpenChange={handleModalChange}>
         <DialogContent
-          className="relative z-[999] p-0 overflow-hidden max-w-[560px]"
+          className="z-[999] p-0 overflow-hidden max-w-[560px]"
           id={`checkout-dialog-${service.id ?? service.slug ?? "default"}`}
         >
           {/* Scrollable inner wrapper */}
