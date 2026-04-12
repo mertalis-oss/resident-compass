@@ -1,13 +1,13 @@
-import { Helmet } from 'react-helmet-async';
-import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
-import { getDomainScope } from '@/hooks/useDomainScope';
+import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
+import { getDomainScope } from "@/hooks/useDomainScope";
 
 interface SEOHeadProps {
   title: string;
   description?: string;
   canonical?: string;
-  schemaType?: 'Organization' | 'Service' | 'Product';
+  schemaType?: "Organization" | "Service" | "Product";
   serviceName?: string;
   serviceDescription?: string;
   ogImage?: string;
@@ -15,15 +15,15 @@ interface SEOHeadProps {
 }
 
 const DOMAIN_MAP = {
-  tr: 'https://planbasya.com',
-  global: 'https://planbasia.com',
+  tr: "https://planbasya.com",
+  global: "https://planbasia.com",
 } as const;
 
 export default function SEOHead({
   title,
   description,
   canonical,
-  schemaType = 'Organization',
+  schemaType = "Organization",
   serviceName,
   serviceDescription,
   ogImage,
@@ -32,38 +32,38 @@ export default function SEOHead({
   const { t } = useTranslation();
   const location = useLocation();
   const scope = getDomainScope();
-  const lang = scope === 'tr' ? 'tr' : 'en';
+  const lang = scope === "tr" ? "tr" : "en";
 
   const baseUrl = DOMAIN_MAP[scope];
   const currentPath = location.pathname;
   const cleanPath = currentPath.split(/[?#]/)[0];
-  const absoluteUrl = `${baseUrl}${cleanPath}`.toLowerCase().replace(/\/$/, '') || baseUrl;
+  const absoluteUrl = `${baseUrl}${cleanPath}`.toLowerCase().replace(/\/$/, "") || baseUrl;
 
-  const metaDescription = description || t('hero.subtitle');
+  const metaDescription = description || t("hero.subtitle");
   const defaultOgImage = ogImage || `${baseUrl}/images/hero-home.webp`;
 
   const orgSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'Plan B Asia',
-    alternateName: 'Atropox OÜ',
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Plan B Asia",
+    alternateName: "Atropox OÜ",
     url: baseUrl,
     logo: `${baseUrl}/images/hero-home.webp`,
-    description: 'Sovereign Mobility Architecture for Founders and Global Citizens.',
+    description: "Sovereign Mobility Architecture for Founders and Global Citizens.",
     contactPoint: {
-      '@type': 'ContactPoint',
-      contactType: 'customer service',
-      availableLanguage: ['English', 'Turkish', 'Hindi'],
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      availableLanguage: ["English", "Turkish", "Hindi"],
     },
   };
 
   const serviceSchema = {
-    '@context': 'https://schema.org',
-    '@type': schemaType,
+    "@context": "https://schema.org",
+    "@type": schemaType,
     name: serviceName || title,
     description: serviceDescription || metaDescription,
-    provider: { '@type': 'Organization', name: 'Plan B Asia', url: baseUrl },
-    areaServed: { '@type': 'Place', name: 'Southeast Asia' },
+    provider: { "@type": "Organization", name: "Plan B Asia", url: baseUrl },
+    areaServed: { "@type": "Place", name: "Southeast Asia" },
     url: absoluteUrl,
   };
 
@@ -72,6 +72,9 @@ export default function SEOHead({
       <html lang={lang} />
       <title>{title}</title>
       <meta name="description" content={metaDescription} />
+
+      {/* Meta Domain Verification — Phase 3 */}
+      <meta name="facebook-domain-verification" content="czst3u3pxeva2if5eefjzhvq0q825n" />
 
       {/* Canonical — always absolute */}
       <link rel="canonical" href={canonical || absoluteUrl} />
@@ -91,7 +94,7 @@ export default function SEOHead({
       <meta property="og:type" content="website" />
       <meta property="og:url" content={canonical || absoluteUrl} />
       <meta property="og:image" content={defaultOgImage} />
-      <meta property="og:locale" content={lang === 'tr' ? 'tr_TR' : 'en_US'} />
+      <meta property="og:locale" content={lang === "tr" ? "tr_TR" : "en_US"} />
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -103,7 +106,7 @@ export default function SEOHead({
 
       {/* JSON-LD */}
       <script type="application/ld+json">
-        {JSON.stringify(schemaType === 'Organization' ? orgSchema : serviceSchema)}
+        {JSON.stringify(schemaType === "Organization" ? orgSchema : serviceSchema)}
       </script>
     </Helmet>
   );
