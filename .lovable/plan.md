@@ -1,46 +1,69 @@
 
 
-# Absolute Execute — Final Wiring
+# V32.3 — Final Hardening Layer (Paranoid Mode)
 
-## Pre-flight audit (must verify before coding)
-- `src/lib/vipWhatsApp.ts` — likely missing → CREATE per spec
-- `src/lib/tracking.ts` — unknown state → READ first; EXTEND with `captureCTAClick` only if missing
-- `src/lib/utmStorage.ts` — has `captureUtms` + `getStoredUtms`; missing `sid`/`getSessionId` → EXTEND
-- `src/components/home/SimplifiedAssessmentModal.tsx` — likely missing → flag before creating; if missing, ask whether to scaffold full modal (intent/timeline/budget → score) or skip wiring this pass
-- `src/lib/constants.ts` — `WHATSAPP_NUMBER='66647036510'` ✅
-- `src/components/service/ServiceFooter.tsx` — exists, no WA link → EXTEND
+Five tactical micro-fixes layered on V32.2. All optional-but-elite. No architectural changes.
 
-## Files (extend, don't overwrite)
+## 1. `SimplifiedAssessmentModal.tsx`
 
-### 1. `src/lib/vipWhatsApp.ts` — CREATE
-Verbatim per spec. Pure TS. Imports `captureCTAClick` + `WHATSAPP_NUMBER` only.
+**a. Strict submit ref check (StrictMode-safe):**
+```ts
+if (submittingRef.current === true) return;
+submittingRef.current = true;
+```
 
-### 2. `src/lib/tracking.ts` — READ then EXTEND
-- If `captureCTAClick` exists: leave as-is.
-- Else: append the spec'd wrapper using existing `trackEvent` + `getSessionId`.
-- Do not touch existing `captureLeadSubmitted` / `capturePurchase` / etc.
+**b. 2s submit cooldown ref (network-retry/double-click double-insert guard):**
+```ts
+const lastSubmitRef = useRef<number>(0);
+// inside handleSubmit, after the strict ref + honeypot + timing + email guards:
+if (Date.now() - lastSubmitRef.current < 2000) return;
+lastSubmitRef.current = Date.now();
+```
 
-### 3. `src/lib/utmStorage.ts` — EXTEND
-- Inside existing `captureUtms()` boot path, append `sid` generation (`crypto.randomUUID()` with `Math.random().toString(36).substring(2,15)` fallback) gated on `!sessionStorage.getItem('sid')`.
-- Export new `getSessionId()` helper. Existing `captureUtms` / `getStoredUtms` untouched.
+**c. Tightened email regex (TLD ≥ 2 chars):**
+```ts
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+```
 
-### 4. `src/components/home/SimplifiedAssessmentModal.tsx`
-- If exists: confirm single `const isHighIntent = score >= 5`; wire VIP CTA `onClick={(e) => handleVipWhatsAppClick(e, 'VIP_MODAL', clickLock, score, sourceSite)}`. Add `clickLock = useRef(false)` if absent.
-- If missing: SKIP and surface in delivery message — will not scaffold full scoring modal in same pass without explicit go-ahead (too large + risks duplicating future direction).
+**d. VIP timer null-after-clear (steril cleanup):**
+```ts
+useEffect(() => {
+  if (isHighIntent && submitted) {
+    setShowVipEscape(false);
+    if (vipTimer.current) { clearTimeout(vipTimer.current); vipTimer.current = null; }
+    vipTimer.current = setTimeout(() => setShowVipEscape(true), 2000);
+  }
+  return () => {
+    if (vipTimer.current) { clearTimeout(vipTimer.current); vipTimer.current = null; }
+  };
+}, [isHighIntent, submitted]);
+```
+Same `vipTimer.current = null` discipline applied in the auto-reset-on-close effect.
 
-### 5. `src/components/service/ServiceFooter.tsx` — EXTEND
-- Add `clickLock = useRef(false)` + `sourceSite = useDomainScope()`.
-- Add link: copy `Direct line (existing clients & qualified cases)`, classes `opacity-60 text-xs hover:opacity-100 transition-opacity`, `href={buildWaUrl('VIP_FOOTER', undefined, sourceSite) ?? '#'}`, `target="_blank" rel="noopener noreferrer"`, `onClick={(e) => handleVipWhatsAppClick(e, 'VIP_FOOTER', clickLock, undefined, sourceSite)}`.
-- Existing footer markup untouched.
+**e. Warm copy refinement (brand-aligned filter signal):**
+```
+"We'll reach out if there's a strong fit."
+```
+(replaces "Thank you. You're on the list — we'll be in touch with relevant updates.")
 
-## Frozen / out of scope
-UTM dual-touch payload, scroll lock, z-index armor, banned semantics, V1–V24 contracts. No new hooks/states beyond `clickLock`.
+## 2. Pre-execute verification gates
 
-## Verification
-1. `grep "from 'react'" src/lib/vipWhatsApp.ts` → empty.
-2. New tab → `sessionStorage.sid` populated; reload → unchanged.
-3. Footer click → `about:blank` opens, redirects to `wa.me/66647036510?text=Plan%20B%20Asia%20%E2%80%94%20Qualified%20case%20inquiry%20(VIP_FOOTER%20%7C%20Site%3A%20tr)`; PostHog `cta_click {type:'vip_whatsapp_footer', session_id, ...utms}`.
-4. Popup blocked → current tab navigates (no dead click).
-5. Double-click within 1s → ignored; visibility-return releases lock early.
-6. If modal missing → delivery message lists it as deferred with explicit ask.
+Before code edits run, two grep-style checks during execute:
+- `grep "checkout/advisory" src/App.tsx` → if empty, surface a single delivery-message warning (route missing). `safeNavigate` hard-fallback already prevents crash; user will need to add the route after deploy.
+- `grep -ri "whatsapp\|wa.me\|buildWhatsAppUrl" src/components/home/Hero.tsx` → must be empty after rewire. Mission-accomplished gate.
+
+## 3. Frozen / Deferred (explicit)
+- `safeNavigate` duplication (Hero + Modal) — deferred to post-launch refactor into `src/lib/navigation.ts`. Acknowledged drift risk, accepted as non-blocker.
+- DB-level `UNIQUE(email, created_from, submit_timestamp)` constraint — skipped in favor of frontend 2s cooldown ref. No migration this pass.
+- All V32 + V32.1 + V32.2 logic intact (stateless string-enum scoring, body scroll lock, auto-reset on close, anti-bot 1.5s timing + honeypot, hot/warm success states, VIP 2s reveal, dual-touch UTM payload, try/catch/finally submit, i18n null guard, Safari-safe non-smooth modal scroll, RAF+200ms safeNavigate w/ same-route short-circuit, simplified ghost-click filter).
+- TR Hero, Footer "Direct line" (V25), `vipWhatsApp.ts`, `tracking.ts`, `getSessionId` — untouched.
+
+## Verification (deltas only)
+1. React StrictMode double-invoke → second invocation hits `submittingRef.current === true` and returns; no duplicate insert.
+2. User clicks submit twice within 2s after a slow-network resolve → second click hits `lastSubmitRef` cooldown, silent skip.
+3. Email `a@b.c` → rejected (TLD too short); `a@b.co` → accepted.
+4. Modal close mid-2s VIP timer → cleared and nulled; reopen starts fresh.
+5. Warm submit → renders "We'll reach out if there's a strong fit." Zero CTAs, zero WhatsApp DOM nodes.
+6. `grep "wa.me\|whatsapp" src/components/home/Hero.tsx` → empty.
+7. If `/checkout/advisory` route absent → delivery message flags it; anchor click degrades to hard nav (no crash, but 404 surface until route added).
 
