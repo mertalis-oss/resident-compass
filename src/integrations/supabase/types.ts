@@ -272,46 +272,106 @@ export type Database = {
       }
       leads: {
         Row: {
+          budget: string | null
           created_at: string | null
           created_from: string | null
           customer_whatsapp: string | null
           email: string
+          entry_point: string | null
+          funnel_stage: string | null
           id: string
+          intent: string | null
+          language: string | null
+          lead_score: number | null
           name: string | null
+          page_path: string | null
+          page_query: string | null
           quiz_answers: Json | null
           recommended_service_id: string | null
+          referrer: string | null
           score: number | null
           service_id: string | null
+          session_id: string | null
           source_domain: string | null
+          source_site: string | null
           status: Database["public"]["Enums"]["lead_status"] | null
+          submit_iso: string | null
+          submit_timestamp: number | null
+          timeline: string | null
+          utm_campaign_first: string | null
+          utm_campaign_last: string | null
+          utm_medium_first: string | null
+          utm_medium_last: string | null
+          utm_source_first: string | null
+          utm_source_last: string | null
         }
         Insert: {
+          budget?: string | null
           created_at?: string | null
           created_from?: string | null
           customer_whatsapp?: string | null
           email: string
+          entry_point?: string | null
+          funnel_stage?: string | null
           id?: string
+          intent?: string | null
+          language?: string | null
+          lead_score?: number | null
           name?: string | null
+          page_path?: string | null
+          page_query?: string | null
           quiz_answers?: Json | null
           recommended_service_id?: string | null
+          referrer?: string | null
           score?: number | null
           service_id?: string | null
+          session_id?: string | null
           source_domain?: string | null
+          source_site?: string | null
           status?: Database["public"]["Enums"]["lead_status"] | null
+          submit_iso?: string | null
+          submit_timestamp?: number | null
+          timeline?: string | null
+          utm_campaign_first?: string | null
+          utm_campaign_last?: string | null
+          utm_medium_first?: string | null
+          utm_medium_last?: string | null
+          utm_source_first?: string | null
+          utm_source_last?: string | null
         }
         Update: {
+          budget?: string | null
           created_at?: string | null
           created_from?: string | null
           customer_whatsapp?: string | null
           email?: string
+          entry_point?: string | null
+          funnel_stage?: string | null
           id?: string
+          intent?: string | null
+          language?: string | null
+          lead_score?: number | null
           name?: string | null
+          page_path?: string | null
+          page_query?: string | null
           quiz_answers?: Json | null
           recommended_service_id?: string | null
+          referrer?: string | null
           score?: number | null
           service_id?: string | null
+          session_id?: string | null
           source_domain?: string | null
+          source_site?: string | null
           status?: Database["public"]["Enums"]["lead_status"] | null
+          submit_iso?: string | null
+          submit_timestamp?: number | null
+          timeline?: string | null
+          utm_campaign_first?: string | null
+          utm_campaign_last?: string | null
+          utm_medium_first?: string | null
+          utm_medium_last?: string | null
+          utm_source_first?: string | null
+          utm_source_last?: string | null
         }
         Relationships: [
           {
