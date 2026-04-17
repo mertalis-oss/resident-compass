@@ -1,35 +1,61 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { buildWhatsAppUrl } from '@/lib/constants';
+import { captureCTAClick } from '@/lib/tracking';
+import SimplifiedAssessmentModal from '@/components/home/SimplifiedAssessmentModal';
 import heroImage from '@/assets/hero-beach.jpg';
 
 export default function Hero() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const isTR = i18n.language === 'tr';
+  const [assessmentOpen, setAssessmentOpen] = useState(false);
 
   const scrollToContent = () => {
     window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
   };
 
+  const trackIfVisible = (type: string) => {
+    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+      try { captureCTAClick({ type, site: isTR ? 'tr' : 'global' }); } catch { /* noop */ }
+    }
+  };
+
+  const safeNavigate = (path: string) => {
+    if (typeof window !== 'undefined' && window.location.pathname === path) return;
+    navigate(path);
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        if (typeof window !== 'undefined' && window.location.pathname !== path) {
+          window.location.href = path;
+        }
+      }, 200);
+    });
+  };
+
   const handlePrimaryCTA = () => {
+    trackIfVisible('hero_primary_cta');
     if (isTR) {
-      navigate('/tr/mobility-assessment');
+      safeNavigate('/tr/mobility-assessment');
     } else {
-      const url = buildWhatsAppUrl('Page: Homepage Hero | Intent: strategic-review | Domain: planbasia.com');
-      try { window.open(url, '_blank'); } catch { window.location.href = url; }
+      setAssessmentOpen(true);
     }
   };
 
   const handleSecondaryCTA = () => {
-    const portalsEl = document.getElementById('portals-section');
-    if (portalsEl) {
-      portalsEl.scrollIntoView({ behavior: 'smooth' });
+    trackIfVisible('hero_secondary_cta');
+    if (isTR) {
+      const portalsEl = document.getElementById('portals-section');
+      if (portalsEl) {
+        portalsEl.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        safeNavigate('/tr');
+      }
     } else {
-      navigate(isTR ? '/tr' : '/');
+      safeNavigate('/checkout/advisory');
     }
   };
 
@@ -177,6 +203,14 @@ export default function Hero() {
           <ChevronDown className="w-5 h-5 text-white/60 group-hover:text-white/80 transition-colors" />
         </motion.div>
       </motion.button>
+
+      {!isTR && (
+        <SimplifiedAssessmentModal
+          open={assessmentOpen}
+          onClose={() => setAssessmentOpen(false)}
+          sourceSite="global"
+        />
+      )}
     </section>
   );
 }

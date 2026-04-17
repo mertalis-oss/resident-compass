@@ -84,6 +84,7 @@ const App = () => (
               <Route path="/corporate-retreats/:slug" element={<ServicePage />} />
               <Route path="/expeditions/:slug" element={<ServicePage />} />
               <Route path="/success" element={<Success />} />
+              <Route path="/checkout/advisory" element={<MobilityAssessment />} />
               <Route path="/tools/dtv-visa-calculator" element={<MobilityAssessment />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
