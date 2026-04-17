@@ -1,25 +1,46 @@
 
 
-# Surgical Fix: ServiceCheckout.tsx — 3 Changes
+# Absolute Execute — Final Wiring
 
-## Change 1: Add Atomic Lock Ref (Line 43)
-After `const sessionKey = useRef(...)`, add:
-```typescript
-const clickLock = useRef(false);
-```
+## Pre-flight audit (must verify before coding)
+- `src/lib/vipWhatsApp.ts` — likely missing → CREATE per spec
+- `src/lib/tracking.ts` — unknown state → READ first; EXTEND with `captureCTAClick` only if missing
+- `src/lib/utmStorage.ts` — has `captureUtms` + `getStoredUtms`; missing `sid`/`getSessionId` → EXTEND
+- `src/components/home/SimplifiedAssessmentModal.tsx` — likely missing → flag before creating; if missing, ask whether to scaffold full modal (intent/timeline/budget → score) or skip wiring this pass
+- `src/lib/constants.ts` — `WHATSAPP_NUMBER='66647036510'` ✅
+- `src/components/service/ServiceFooter.tsx` — exists, no WA link → EXTEND
 
-## Change 2: Replace CTA onClick Handler (~Line 269)
-Replace the current `onClick` on the card's CTA Button with the exact guarded handler including `console.log` debug, `clickLock` atomic guard, `try/catch` fail-safe, and `??` nullish coalescing.
+## Files (extend, don't overwrite)
 
-## Change 3: Dialog Visibility Fix (Line 315)
-Remove `relative` from `DialogContent` className:
-- Before: `className="relative z-[999] p-0 overflow-hidden max-w-[560px]"`
-- After: `className="z-[999] p-0 overflow-hidden max-w-[560px]"`
+### 1. `src/lib/vipWhatsApp.ts` — CREATE
+Verbatim per spec. Pure TS. Imports `captureCTAClick` + `WHATSAPP_NUMBER` only.
 
-## Post-Deploy Verification
-After applying, navigate to a service page, click the CTA, confirm the modal appears, agree to terms, and click checkout to verify Stripe redirect works end-to-end.
+### 2. `src/lib/tracking.ts` — READ then EXTEND
+- If `captureCTAClick` exists: leave as-is.
+- Else: append the spec'd wrapper using existing `trackEvent` + `getSessionId`.
+- Do not touch existing `captureLeadSubmitted` / `capturePurchase` / etc.
 
-## Scope
-- ONE file only: `src/components/service/ServiceCheckout.tsx`
-- No quiz, no new files, no other changes
+### 3. `src/lib/utmStorage.ts` — EXTEND
+- Inside existing `captureUtms()` boot path, append `sid` generation (`crypto.randomUUID()` with `Math.random().toString(36).substring(2,15)` fallback) gated on `!sessionStorage.getItem('sid')`.
+- Export new `getSessionId()` helper. Existing `captureUtms` / `getStoredUtms` untouched.
+
+### 4. `src/components/home/SimplifiedAssessmentModal.tsx`
+- If exists: confirm single `const isHighIntent = score >= 5`; wire VIP CTA `onClick={(e) => handleVipWhatsAppClick(e, 'VIP_MODAL', clickLock, score, sourceSite)}`. Add `clickLock = useRef(false)` if absent.
+- If missing: SKIP and surface in delivery message — will not scaffold full scoring modal in same pass without explicit go-ahead (too large + risks duplicating future direction).
+
+### 5. `src/components/service/ServiceFooter.tsx` — EXTEND
+- Add `clickLock = useRef(false)` + `sourceSite = useDomainScope()`.
+- Add link: copy `Direct line (existing clients & qualified cases)`, classes `opacity-60 text-xs hover:opacity-100 transition-opacity`, `href={buildWaUrl('VIP_FOOTER', undefined, sourceSite) ?? '#'}`, `target="_blank" rel="noopener noreferrer"`, `onClick={(e) => handleVipWhatsAppClick(e, 'VIP_FOOTER', clickLock, undefined, sourceSite)}`.
+- Existing footer markup untouched.
+
+## Frozen / out of scope
+UTM dual-touch payload, scroll lock, z-index armor, banned semantics, V1–V24 contracts. No new hooks/states beyond `clickLock`.
+
+## Verification
+1. `grep "from 'react'" src/lib/vipWhatsApp.ts` → empty.
+2. New tab → `sessionStorage.sid` populated; reload → unchanged.
+3. Footer click → `about:blank` opens, redirects to `wa.me/66647036510?text=Plan%20B%20Asia%20%E2%80%94%20Qualified%20case%20inquiry%20(VIP_FOOTER%20%7C%20Site%3A%20tr)`; PostHog `cta_click {type:'vip_whatsapp_footer', session_id, ...utms}`.
+4. Popup blocked → current tab navigates (no dead click).
+5. Double-click within 1s → ignored; visibility-return releases lock early.
+6. If modal missing → delivery message lists it as deferred with explicit ask.
 
