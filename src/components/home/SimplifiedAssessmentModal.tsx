@@ -9,9 +9,9 @@ import { getSessionId, getStoredUtms } from '@/lib/utmStorage';
 import { captureCTAClick } from '@/lib/tracking';
 import { handleVipWhatsAppClick, buildWaUrl } from '@/lib/vipWhatsApp';
 
-type Intent = 'visa' | 'relocation' | 'business' | 'explore';
-type Timeline = 'now' | '3m' | '6m' | 'later';
-type Budget = 'high' | 'mid' | 'low' | 'unsure';
+type Intent = 'exploring' | 'planning_6_12' | 'relocating_now';
+type Timeline = 'later' | '3m' | 'now';
+type Budget = 'under_3k' | '3_to_10k' | 'over_10k';
 
 interface Props {
   open: boolean;
@@ -21,9 +21,9 @@ interface Props {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-const intentScore: Record<Intent, number> = { visa: 2, relocation: 3, business: 3, explore: 0 };
-const timelineScore: Record<Timeline, number> = { now: 3, '3m': 2, '6m': 1, later: 0 };
-const budgetScore: Record<Budget, number> = { high: 3, mid: 2, low: 1, unsure: 0 };
+const intentMap = { exploring: 0, planning_6_12: 1, relocating_now: 2 } as const;
+const timelineMap = { later: 0, '3m': 1, 'now': 2 } as const;
+const budgetMap = { under_3k: 0, '3_to_10k': 1, over_10k: 2 } as const;
 
 export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }: Props) {
   const { i18n } = useTranslation();
@@ -45,14 +45,15 @@ export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }:
   const [submitted, setSubmitted] = useState(false);
   const [showVipEscape, setShowVipEscape] = useState(false);
 
-  const score = useMemo(() => {
-    const i = intent ? intentScore[intent] : 0;
-    const t = timeline ? timelineScore[timeline] : 0;
-    const b = budget ? budgetScore[budget] : 0;
-    return i + t + b;
+  const { finalScore, isHighIntent } = useMemo(() => {
+    const intentScore = intent ? intentMap[intent] : 0;
+    const timelineScore = timeline ? timelineMap[timeline] : 0;
+    const budgetScore = budget ? budgetMap[budget] : 0;
+    const baseScore = intentScore + timelineScore + budgetScore;
+    const bonus = (intentScore >= 1 && timelineScore >= 1 && baseScore < 5) ? 1 : 0;
+    const final = baseScore + bonus;
+    return { finalScore: final, isHighIntent: final >= 5 };
   }, [intent, timeline, budget]);
-
-  const isHighIntent = score >= 5;
 
   // Body scroll lock
   useEffect(() => {
@@ -116,7 +117,7 @@ export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }:
     // Guards top-to-bottom, network last
     if (submittingRef.current === true) return;
     if (honeypot && honeypot.trim().length > 0) return;
-    if (Date.now() - formStartTime.current < 1500) return;
+    if (Date.now() - formStartTime.current < 1200) return;
 
     const normalizedEmail = email
       .trim()
@@ -128,6 +129,10 @@ export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }:
     if (!consent) return;
     if (!intent || !timeline || !budget) return;
     if (Date.now() - lastSubmitRef.current < 2000) return;
+
+    if (import.meta.env.DEV) {
+      console.info('[SCORE SYNC]', { intent, timeline, budget, finalScore });
+    }
 
     submittingRef.current = true;
     lastSubmitRef.current = Date.now();
@@ -147,7 +152,7 @@ export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }:
       intent,
       timeline,
       budget,
-      score,
+      score: finalScore,
       funnel_stage: isHighIntent ? 'hot' : 'warm',
       utm_source_first: utms.utm_source || null,
       utm_medium_first: utms.utm_medium || null,
@@ -156,7 +161,7 @@ export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }:
       utm_medium_last: params.get('utm_medium') || utms.utm_medium || null,
       utm_campaign_last: params.get('utm_campaign') || utms.utm_campaign || null,
       quiz_answers: {
-        intent, timeline, budget, score,
+        intent, timeline, budget, score: finalScore,
         submitted_at: now.toISOString(),
         source: 'hero_modal',
       },
@@ -231,10 +236,9 @@ export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }:
                   <h2 className="font-heading text-2xl text-foreground">What brings you here?</h2>
                   <div className="space-y-3 pt-2">
                     {([
-                      ['visa', 'I need a visa or residency'],
-                      ['relocation', 'I want to relocate fully'],
-                      ['business', 'Business / corporate setup'],
-                      ['explore', 'Just exploring'],
+                      ['relocating_now', 'I want to relocate fully'],
+                      ['planning_6_12', 'Planning within 6–12 months'],
+                      ['exploring', 'Exploring options'],
                     ] as [Intent, string][]).map(([k, label]) => (
                       <button
                         key={k}
@@ -256,7 +260,6 @@ export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }:
                     {([
                       ['now', 'Within 1 month'],
                       ['3m', 'Within 3 months'],
-                      ['6m', 'Within 6 months'],
                       ['later', 'No fixed timeline'],
                     ] as [Timeline, string][]).map(([k, label]) => (
                       <button
@@ -277,10 +280,9 @@ export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }:
                   <h2 className="font-heading text-2xl text-foreground">Investment range?</h2>
                   <div className="space-y-3 pt-2">
                     {([
-                      ['high', '$10,000+'],
-                      ['mid', '$3,000 – $10,000'],
-                      ['low', 'Under $3,000'],
-                      ['unsure', 'Not sure yet'],
+                      ['over_10k', '$10,000+'],
+                      ['3_to_10k', '$3,000 – $10,000'],
+                      ['under_3k', 'Under $3,000'],
                     ] as [Budget, string][]).map(([k, label]) => (
                       <button
                         key={k}
@@ -351,10 +353,10 @@ export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }:
                 </Button>
                 {showVipEscape && (
                   <a
-                    href={buildWaUrl('VIP_MODAL', score, sourceSite) ?? '#'}
+                    href={buildWaUrl('VIP_MODAL', finalScore, sourceSite) ?? '#'}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => handleVipWhatsAppClick(e, 'VIP_MODAL', clickLock, score, sourceSite)}
+                    onClick={(e) => handleVipWhatsAppClick(e, 'VIP_MODAL', clickLock, finalScore, sourceSite)}
                     className="block opacity-40 hover:opacity-80 transition-opacity duration-[120ms] text-[11px] text-muted-foreground tracking-wide pt-2 animate-fade-in"
                   >
                     Direct line (existing clients & qualified cases)
