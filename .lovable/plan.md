@@ -1,116 +1,56 @@
 
 
-# V43 — Atomic Security Seal
+# V44 — Financial-Grade Exploit-Proofing
 
-Single migration. Surgical hardening of payment RPC + ledger + profile role lock. Adapts spec to the actual schema (ledger table is `ledger_transactions`; existing RPC uses `RETURNS boolean`).
+Single migration. Four micro-patches. Adapts §1 to actual schema.
 
-## 1. Reality check (from current schema)
+## Reality check
 
-- Payment RPC is `process_stripe_payment(...) RETURNS boolean` — keep that signature; do NOT change to `void` (would break `stripe-webhook` edge function callsite).
-- Ledger table is `public.ledger_transactions` (no `payment_intent_id` column; uses `stripe_event_id text NOT NULL`). Atomic idempotency is already enforced upstream by `stripe_webhook_events.id` PK + `ON CONFLICT DO NOTHING`. We will additionally enforce `UNIQUE(stripe_event_id)` on `ledger_transactions` as a defense-in-depth atomic seal.
-- `prevent_ledger_modification()` exists but no triggers are attached (per `<db-triggers>` "no triggers"). We must wire it up + revoke writes.
-- `lock_profile_role()` trigger does not yet exist (V41 plan referenced it but findings still show escalation path). We will create it now.
-- Findings to mark fixed after apply: `profiles_role_escalation_via_has_role`, `orders_no_user_read_policy`, `email_unsubscribe_tokens_no_anon_block` (from prior turn — still pending).
+- `ledger_transactions` has **no `payment_intent_id` column** — it has `stripe_event_id` and `enrollment_id`. The spec's `WHERE tx_type='payment'` partial unique index on `payment_intent_id` cannot be created as written.
+- `enrollments.payment_intent_id` IS the canonical payment intent. Each successful payment writes one ledger row keyed by `enrollment_id` + `tx_type='payment'`. The correct dedupe surface is therefore `(enrollment_id) WHERE tx_type='payment'` — guarantees one payment row per enrollment regardless of how many Stripe event IDs Stripe replays for the same intent.
+- §2, §3, §4 map cleanly to existing schema.
 
-## 2. Migration contents (single file)
+## Migration contents
 
-**A. Payment RPC hardening** — `CREATE OR REPLACE FUNCTION public.process_stripe_payment(...)` keeping existing signature + body, adding at top:
+**1. Ledger payment-level idempotency (adapted)**
 ```sql
-SET search_path = public  -- already set
--- new first statement inside body:
-IF COALESCE(current_setting('request.jwt.claim.role', true), '') <> 'service_role' THEN
-  RAISE EXCEPTION 'unauthorized';
+CREATE UNIQUE INDEX IF NOT EXISTS uniq_enrollment_payment
+  ON public.ledger_transactions (enrollment_id)
+  WHERE tx_type = 'payment';
+```
+Effect: a second `payment_intent.succeeded` / `charge.succeeded` for the same enrollment cannot double-insert, even if Stripe rotates event IDs.
+
+**2. Strict state validation in `process_stripe_payment`**
+`CREATE OR REPLACE FUNCTION` keeping signature + body, inserting right after the `FOR UPDATE` lock + spoof check:
+```sql
+IF NOT p_is_refund AND v_enrollment.status <> 'pending_deposit' THEN
+  RAISE EXCEPTION 'Invalid state transition: Enrollment is not pending a deposit.';
 END IF;
 ```
-Then:
+Removes reliance on the silent `WHERE status='pending_deposit'` row-count fallback for double-payment detection.
+
+**3. Orders RLS NULL guard**
 ```sql
-REVOKE EXECUTE ON FUNCTION public.process_stripe_payment(text,text,uuid,uuid,text,integer,integer,boolean) FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.process_stripe_payment(text,text,uuid,uuid,text,integer,integer,boolean) TO service_role;
+DROP POLICY IF EXISTS "Users read own orders" ON public.orders;
+CREATE POLICY "Users read own orders" ON public.orders FOR SELECT TO authenticated
+USING (
+  auth.jwt() ->> 'email' IS NOT NULL
+  AND lower(customer_email) = lower(auth.jwt() ->> 'email')
+);
 ```
 
-**B. Ledger atomic seal + immutability**
-```sql
-ALTER TABLE public.ledger_transactions
-  ADD CONSTRAINT ledger_transactions_stripe_event_id_key UNIQUE (stripe_event_id);
+**4. `search_path` confirmation**
+Already present (`SET search_path TO 'public'`). Re-asserted in the `CREATE OR REPLACE` from §2. No additional change.
 
-DROP TRIGGER IF EXISTS ledger_immutable_update ON public.ledger_transactions;
-DROP TRIGGER IF EXISTS ledger_immutable_delete ON public.ledger_transactions;
-CREATE TRIGGER ledger_immutable_update BEFORE UPDATE ON public.ledger_transactions
-  FOR EACH ROW EXECUTE FUNCTION public.prevent_ledger_modification();
-CREATE TRIGGER ledger_immutable_delete BEFORE DELETE ON public.ledger_transactions
-  FOR EACH ROW EXECUTE FUNCTION public.prevent_ledger_modification();
+## Frozen / untouched
 
-REVOKE INSERT, UPDATE, DELETE ON public.ledger_transactions FROM anon, authenticated;
-GRANT INSERT ON public.ledger_transactions TO service_role;
-```
+V43 ledger immutability triggers, profile role lock, service-role gate on RPC, EXECUTE revocations, V40 scoring, brand copy, edge functions.
 
-**C. Profiles practical role lock**
-```sql
-CREATE OR REPLACE FUNCTION public.lock_profile_role()
-RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
-BEGIN
-  IF OLD.role IS DISTINCT FROM NEW.role THEN
-    IF COALESCE(current_setting('request.jwt.claim.role', true), '') <> 'service_role'
-       AND NOT public.has_role(auth.uid(), 'admin'::user_role) THEN
-      RAISE EXCEPTION 'role change not allowed directly';
-    END IF;
-  END IF;
-  RETURN NEW;
-END;
-$$;
+## Verification (deltas only)
 
-DROP TRIGGER IF EXISTS lock_profile_role_trigger ON public.profiles;
-CREATE TRIGGER lock_profile_role_trigger BEFORE UPDATE ON public.profiles
-  FOR EACH ROW EXECUTE FUNCTION public.lock_profile_role();
-
-REVOKE UPDATE (role) ON public.profiles FROM authenticated;
-```
-
-**D. Harden `handle_new_user()`** — explicit `role = 'client'` to remove default-reliance:
-```sql
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
-BEGIN
-  INSERT INTO public.profiles (id, full_name, role)
-  VALUES (NEW.id, COALESCE(NEW.raw_user_meta_data->>'full_name',''), 'client'::user_role);
-  RETURN NEW;
-END;
-$$;
-```
-
-**E. Resolve carry-over findings from prior turn**
-- `orders` SELECT-own:
-  ```sql
-  CREATE POLICY "Users read own orders" ON public.orders FOR SELECT TO authenticated
-    USING (lower(customer_email) = lower(auth.jwt() ->> 'email'));
-  ```
-- `email_unsubscribe_tokens` + `suppressed_emails` — drop `public`-targeted runtime-check policies, recreate targeted at `service_role` directly. Admin SELECT on `suppressed_emails` already exists — keep.
-
-## 3. Code-side verification (no edits expected)
-
-- `supabase/functions/stripe-webhook/index.ts` already calls the RPC via service-role client → JWT claim role = `service_role` → passes new gate.
-- No client-side calls to `process_stripe_payment`.
-- No client writes to `ledger_transactions`.
-- Admin profile edits flow through admin UI as authenticated admin → `has_role(...,'admin')` branch passes.
-
-## 4. Mark findings fixed (after migration applies)
-
-`supabase_lov`:
-- `profiles_role_escalation_via_has_role`
-- `orders_no_user_read_policy`
-- `email_unsubscribe_tokens_no_anon_block`
-
-## 5. Frozen / untouched
-
-V40 scoring engine, V32.x guards, brand copy, navigation, i18n, edge function generic error responses, prior `webhook_logs` / `suppressed_emails` admin policies.
-
-## 6. Verification (deltas only)
-
-1. Anon/authenticated `SELECT process_stripe_payment(...)` → `permission denied` (EXECUTE revoked).
-2. Service-role webhook call → succeeds, ledger row inserted, second replay of same `stripe_event_id` → `ON CONFLICT` no-op + new UNIQUE constraint blocks any direct dup.
-3. Authenticated `UPDATE profiles SET role='admin' WHERE id=auth.uid()` → trigger raises `role change not allowed directly`.
-4. Admin updating another user's role via admin UI → succeeds.
-5. Authenticated `INSERT/UPDATE/DELETE ledger_transactions` → `permission denied`; service-role insert → ok; update/delete → trigger blocks.
-6. Authenticated `SELECT * FROM orders WHERE customer_email = <my jwt email>` → returns own rows only.
-7. Anon `SELECT * FROM email_unsubscribe_tokens` → 0 rows / denied (policies now scoped to `service_role`).
+1. Two distinct event IDs targeting same enrollment → first succeeds, second fails on `uniq_enrollment_payment` (or earlier on state check) — no duplicate ledger row.
+2. Enrollment already in `deposit_paid` + replay payment event → raises `Invalid state transition...`.
+3. Authenticated user with NULL JWT email → 0 rows from `orders`.
+4. Authenticated user with matching email → own rows only.
+5. `process_stripe_payment` header still shows `SECURITY DEFINER` + `SET search_path TO 'public'`.
 
