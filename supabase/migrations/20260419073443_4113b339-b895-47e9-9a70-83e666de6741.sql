@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Service role manages webhook logs" ON public.webhook_logs;
