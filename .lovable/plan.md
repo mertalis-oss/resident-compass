@@ -1,75 +1,116 @@
 
 
-# V40 — Canonical Rollback & Final Polish
+# V43 — Atomic Security Seal
 
-Strict revert to 0-2 scoring scale + historical DB keys. Preserves all V32.x guards.
+Single migration. Surgical hardening of payment RPC + ledger + profile role lock. Adapts spec to the actual schema (ledger table is `ledger_transactions`; existing RPC uses `RETURNS boolean`).
 
-## 1. `SimplifiedAssessmentModal.tsx`
+## 1. Reality check (from current schema)
 
-**Restore canonical maps (0-2 scale, historical keys):**
-```ts
-const intentMap = { exploring: 0, planning_6_12: 1, relocating_now: 2 } as const;
-const timelineMap = { later: 0, '3m': 1, 'now': 2 } as const;
-const budgetMap = { under_3k: 0, '3_to_10k': 1, over_10k: 2 } as const;
+- Payment RPC is `process_stripe_payment(...) RETURNS boolean` — keep that signature; do NOT change to `void` (would break `stripe-webhook` edge function callsite).
+- Ledger table is `public.ledger_transactions` (no `payment_intent_id` column; uses `stripe_event_id text NOT NULL`). Atomic idempotency is already enforced upstream by `stripe_webhook_events.id` PK + `ON CONFLICT DO NOTHING`. We will additionally enforce `UNIQUE(stripe_event_id)` on `ledger_transactions` as a defense-in-depth atomic seal.
+- `prevent_ledger_modification()` exists but no triggers are attached (per `<db-triggers>` "no triggers"). We must wire it up + revoke writes.
+- `lock_profile_role()` trigger does not yet exist (V41 plan referenced it but findings still show escalation path). We will create it now.
+- Findings to mark fixed after apply: `profiles_role_escalation_via_has_role`, `orders_no_user_read_policy`, `email_unsubscribe_tokens_no_anon_block` (from prior turn — still pending).
+
+## 2. Migration contents (single file)
+
+**A. Payment RPC hardening** — `CREATE OR REPLACE FUNCTION public.process_stripe_payment(...)` keeping existing signature + body, adding at top:
+```sql
+SET search_path = public  -- already set
+-- new first statement inside body:
+IF COALESCE(current_setting('request.jwt.claim.role', true), '') <> 'service_role' THEN
+  RAISE EXCEPTION 'unauthorized';
+END IF;
+```
+Then:
+```sql
+REVOKE EXECUTE ON FUNCTION public.process_stripe_payment(text,text,uuid,uuid,text,integer,integer,boolean) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.process_stripe_payment(text,text,uuid,uuid,text,integer,integer,boolean) TO service_role;
 ```
 
-**Update UI option `value`s to emit these exact keys:**
-- Intent step: `exploring`, `planning_6_12`, `relocating_now`
-- Timeline step: `later`, `3m`, `now`
-- Budget step: `under_3k`, `3_to_10k`, `over_10k`
+**B. Ledger atomic seal + immutability**
+```sql
+ALTER TABLE public.ledger_transactions
+  ADD CONSTRAINT ledger_transactions_stripe_event_id_key UNIQUE (stripe_event_id);
 
-**Scoring formula (replaces inline `useMemo`):**
-```ts
-const intentScore = intent ? intentMap[intent] : 0;
-const timelineScore = timeline ? timelineMap[timeline] : 0;
-const budgetScore = budget ? budgetMap[budget] : 0;
-const baseScore = intentScore + timelineScore + budgetScore;
-const bonus = (intentScore >= 1 && timelineScore >= 1 && baseScore < 5) ? 1 : 0;
-const finalScore = baseScore + bonus;
-const isHighIntent = finalScore >= 5;
-```
-Persist `finalScore` to Supabase `score` column + `quiz_answers.score`.
+DROP TRIGGER IF EXISTS ledger_immutable_update ON public.ledger_transactions;
+DROP TRIGGER IF EXISTS ledger_immutable_delete ON public.ledger_transactions;
+CREATE TRIGGER ledger_immutable_update BEFORE UPDATE ON public.ledger_transactions
+  FOR EACH ROW EXECUTE FUNCTION public.prevent_ledger_modification();
+CREATE TRIGGER ledger_immutable_delete BEFORE DELETE ON public.ledger_transactions
+  FOR EACH ROW EXECUTE FUNCTION public.prevent_ledger_modification();
 
-**Silent killer guard — right before Supabase insert:**
-```ts
-if (!intent || !timeline || !budget) return;
-if (import.meta.env.DEV) {
-  console.info('[SCORE SYNC]', { intent, timeline, budget, finalScore });
-}
+REVOKE INSERT, UPDATE, DELETE ON public.ledger_transactions FROM anon, authenticated;
+GRANT INSERT ON public.ledger_transactions TO service_role;
 ```
 
-**Timing armor — confirm intact:**
-- `useEffect(() => { if (open) formStartTime.current = Date.now(); }, [open])`
-- `if (honeypot && honeypot.trim().length > 0) return;`
-- `if (Date.now() - formStartTime.current < 1200) return;`
+**C. Profiles practical role lock**
+```sql
+CREATE OR REPLACE FUNCTION public.lock_profile_role()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  IF OLD.role IS DISTINCT FROM NEW.role THEN
+    IF COALESCE(current_setting('request.jwt.claim.role', true), '') <> 'service_role'
+       AND NOT public.has_role(auth.uid(), 'admin'::user_role) THEN
+      RAISE EXCEPTION 'role change not allowed directly';
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$;
 
-## 2. `safeNavigate` double-nav guard (Modal + Hero)
+DROP TRIGGER IF EXISTS lock_profile_role_trigger ON public.profiles;
+CREATE TRIGGER lock_profile_role_trigger BEFORE UPDATE ON public.profiles
+  FOR EACH ROW EXECUTE FUNCTION public.lock_profile_role();
 
-Both copies must lead with:
-```ts
-if (typeof window !== 'undefined' && window.location.pathname === path) return;
+REVOKE UPDATE (role) ON public.profiles FROM authenticated;
 ```
 
-## 3. Tracking-name purge
+**D. Harden `handle_new_user()`** — explicit `role = 'client'` to remove default-reliance:
+```sql
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  INSERT INTO public.profiles (id, full_name, role)
+  VALUES (NEW.id, COALESCE(NEW.raw_user_meta_data->>'full_name',''), 'client'::user_role);
+  RETURN NEW;
+END;
+$$;
+```
 
-Final grep across `src/` for `hero_primary_cta` and `hero_secondary_cta`. Replace any survivors with `hero_primary_assessment` / `hero_secondary_advisory`. Confirm `Hero.tsx` payloads send only those two strings.
+**E. Resolve carry-over findings from prior turn**
+- `orders` SELECT-own:
+  ```sql
+  CREATE POLICY "Users read own orders" ON public.orders FOR SELECT TO authenticated
+    USING (lower(customer_email) = lower(auth.jwt() ->> 'email'));
+  ```
+- `email_unsubscribe_tokens` + `suppressed_emails` — drop `public`-targeted runtime-check policies, recreate targeted at `service_role` directly. Admin SELECT on `suppressed_emails` already exists — keep.
 
-## 4. Frozen / Untouched
+## 3. Code-side verification (no edits expected)
 
-- V32.x submit guards: `submittingRef === true` strict check, 2s `lastSubmitRef` cooldown, tightened email regex (`[^\s@]{2,}` TLD), VIP timer null cleanup, warm copy "We'll reach out if there's a strong fit"
-- V34 brand line "15 Years of Strategic Operational Leadership"
-- TR navbar 4-pillar mirror + `(Yakında)` disabled items (`aria-disabled`, `tabIndex={-1}`, `opacity-50 pointer-events-none`)
-- RAF+50ms hot anchor tear-down, hot path → `/checkout/advisory`
-- `i18n.ts` guarantee/pressure sweep
-- TR Hero, Footer, `vipWhatsApp.ts`, `tracking.ts`, UTM persistence
+- `supabase/functions/stripe-webhook/index.ts` already calls the RPC via service-role client → JWT claim role = `service_role` → passes new gate.
+- No client-side calls to `process_stripe_payment`.
+- No client writes to `ledger_transactions`.
+- Admin profile edits flow through admin UI as authenticated admin → `has_role(...,'admin')` branch passes.
 
-## 5. Verification (deltas only)
+## 4. Mark findings fixed (after migration applies)
 
-1. `intent=relocating_now` (2) + `timeline=now` (2) + `budget=over_10k` (2) → base 6, bonus 0, finalScore 6 → hot.
-2. `intent=planning_6_12` (1) + `timeline=3m` (1) + `budget=under_3k` (0) → base 2, bonus 1, finalScore 3 → warm.
-3. `intent=exploring` (0) + anything → bonus 0 (gated by `intentScore >= 1`).
-4. DEV console prints `[SCORE SYNC] { intent, timeline, budget, finalScore }` exactly once per submit.
-5. Submit with any field undefined → silent abort before insert.
-6. On `/checkout/advisory`, click any CTA targeting same path → no nav fired.
-7. `grep -r "hero_primary_cta\|hero_secondary_cta" src/` → empty.
+`supabase_lov`:
+- `profiles_role_escalation_via_has_role`
+- `orders_no_user_read_policy`
+- `email_unsubscribe_tokens_no_anon_block`
+
+## 5. Frozen / untouched
+
+V40 scoring engine, V32.x guards, brand copy, navigation, i18n, edge function generic error responses, prior `webhook_logs` / `suppressed_emails` admin policies.
+
+## 6. Verification (deltas only)
+
+1. Anon/authenticated `SELECT process_stripe_payment(...)` → `permission denied` (EXECUTE revoked).
+2. Service-role webhook call → succeeds, ledger row inserted, second replay of same `stripe_event_id` → `ON CONFLICT` no-op + new UNIQUE constraint blocks any direct dup.
+3. Authenticated `UPDATE profiles SET role='admin' WHERE id=auth.uid()` → trigger raises `role change not allowed directly`.
+4. Admin updating another user's role via admin UI → succeeds.
+5. Authenticated `INSERT/UPDATE/DELETE ledger_transactions` → `permission denied`; service-role insert → ok; update/delete → trigger blocks.
+6. Authenticated `SELECT * FROM orders WHERE customer_email = <my jwt email>` → returns own rows only.
+7. Anon `SELECT * FROM email_unsubscribe_tokens` → 0 rows / denied (policies now scoped to `service_role`).
 
