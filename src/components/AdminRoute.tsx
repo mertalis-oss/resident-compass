@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
 
-const FOUNDER_EMAIL = 'mertalis@gmail.com';
-
 interface AdminRouteProps {
   children: React.ReactNode;
 }
@@ -27,13 +25,7 @@ export default function AdminRoute({ children }: AdminRouteProps) {
 
       const user = session.user;
 
-      // FOUNDER GOD-MODE: email-based instant grant
-      if (user.email?.toLowerCase() === FOUNDER_EMAIL) {
-        if (isMounted) { setAuthorized(true); setLoading(false); }
-        return;
-      }
-
-      // Standard role check via security definer function
+      // Role check via security definer function (DB trigger ensures founder has admin role)
       const { data: isAdmin } = await supabase.rpc('has_role', {
         _user_id: user.id,
         _role: 'admin',

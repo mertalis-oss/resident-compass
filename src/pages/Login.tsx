@@ -7,8 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { toast } from "sonner";
 import logoDark from "@/assets/Dark_Seffaf.png";
 
-const FOUNDER_EMAIL = 'mertalis@gmail.com';
-
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -42,16 +40,11 @@ export default function Login() {
       if (error) {
         toast.error(error.message);
       } else if (data.user) {
-        // FOUNDER GOD-MODE: instant admin redirect
-        if (data.user.email?.toLowerCase() === FOUNDER_EMAIL) {
-          navigate("/admin/leads", { replace: true });
-        } else {
-          const { data: isAdmin } = await supabase.rpc('has_role', {
-            _user_id: data.user.id,
-            _role: 'admin',
-          });
-          navigate(isAdmin ? "/admin/services" : "/dashboard", { replace: true });
-        }
+        const { data: isAdmin } = await supabase.rpc('has_role', {
+          _user_id: data.user.id,
+          _role: 'admin',
+        });
+        navigate(isAdmin ? "/admin/services" : "/dashboard", { replace: true });
       }
     }
 
