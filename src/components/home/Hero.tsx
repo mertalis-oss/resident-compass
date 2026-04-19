@@ -37,7 +37,7 @@ export default function Hero() {
   };
 
   const handlePrimaryCTA = () => {
-    trackIfVisible('hero_primary_cta');
+    trackIfVisible('hero_primary_assessment');
     if (isTR) {
       safeNavigate('/tr/mobility-assessment');
     } else {
@@ -46,7 +46,7 @@ export default function Hero() {
   };
 
   const handleSecondaryCTA = () => {
-    trackIfVisible('hero_secondary_cta');
+    trackIfVisible('hero_secondary_advisory');
     if (isTR) {
       const portalsEl = document.getElementById('portals-section');
       if (portalsEl) {
