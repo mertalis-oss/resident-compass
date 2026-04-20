@@ -75,9 +75,14 @@ const App = () => (
               <Route path="/corporate/mice" element={<MICEPageEN />} />
               <Route path="/destinations/vietnam" element={<VietnamPageEN />} />
               <Route path="/destinations/cambodia" element={<CambodiaPageEN />} />
+
               {/* 301-equivalent redirects from old paths */}
               <Route path="/residency/soft-power" element={<RedirectWithQuery to="/visas/soft-power" />} />
-              <Route path="/residency/nomad-incubator" element={<RedirectWithQuery to="/relocation/nomad-incubator" />} />
+              <Route
+                path="/residency/nomad-incubator"
+                element={<RedirectWithQuery to="/relocation/nomad-incubator" />}
+              />
+
               {/* Dynamic single-service catch-alls */}
               <Route path="/residency/:slug" element={<ServicePage />} />
               <Route path="/wellness/:slug" element={<ServicePage />} />
@@ -89,20 +94,67 @@ const App = () => (
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/refund-policy" element={<RefundPolicy />} />
+
               {/* TR-specific pages */}
               <Route path="/tr" element={<Index />} />
               <Route path="/tr/rabbit-hole" element={<RabbitHolePage />} />
-              <Route path="/tr/nomad-incubator" element={<NomadIncubatorPage />} />
-              <Route path="/tr/dtv-vize" element={<DTVVizePage />} />
-              <Route path="/tr/soft-power" element={<SoftPowerPage />} />
-              <Route path="/tr/expeditions" element={<ExpeditionsPage />} />
-              <Route path="/tr/mice" element={<MICEPage />} />
+
+              {/* TR canonical URLs per sitemap */}
+              <Route path="/vizeler/dtv-vize" element={<DTVVizePage />} />
+              <Route path="/vizeler/soft-power" element={<SoftPowerPage />} />
+              <Route path="/yerlesim/nomad-incubator" element={<NomadIncubatorPage />} />
+              <Route path="/deneyimler/expeditions" element={<ExpeditionsPage />} />
+              <Route path="/deneyimler/mice" element={<MICEPage />} />
+
+              {/* Old /tr/* URLs → 301 redirect to canonical TR URLs */}
+              <Route path="/tr/dtv-vize" element={<RedirectWithQuery to="/vizeler/dtv-vize" />} />
+              <Route path="/tr/soft-power" element={<RedirectWithQuery to="/vizeler/soft-power" />} />
+              <Route path="/tr/nomad-incubator" element={<RedirectWithQuery to="/yerlesim/nomad-incubator" />} />
+              <Route path="/tr/expeditions" element={<RedirectWithQuery to="/deneyimler/expeditions" />} />
+              <Route path="/tr/mice" element={<RedirectWithQuery to="/deneyimler/mice" />} />
+
               {/* Admin Routes */}
-              <Route path="/admin/services" element={<AdminRoute><AdminServices /></AdminRoute>} />
-              <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
-              <Route path="/admin/leads" element={<AdminRoute><AdminLeads /></AdminRoute>} />
-              <Route path="/admin/customers" element={<AdminRoute><AdminCustomers /></AdminRoute>} />
-              <Route path="/admin/system/webhooks" element={<AdminRoute><Webhooks /></AdminRoute>} />
+              <Route
+                path="/admin/services"
+                element={
+                  <AdminRoute>
+                    <AdminServices />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/orders"
+                element={
+                  <AdminRoute>
+                    <AdminOrders />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/leads"
+                element={
+                  <AdminRoute>
+                    <AdminLeads />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/customers"
+                element={
+                  <AdminRoute>
+                    <AdminCustomers />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/system/webhooks"
+                element={
+                  <AdminRoute>
+                    <Webhooks />
+                  </AdminRoute>
+                }
+              />
+
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
