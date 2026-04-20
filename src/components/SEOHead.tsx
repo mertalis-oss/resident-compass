@@ -14,10 +14,10 @@ interface SEOHeadProps {
   noIndex?: boolean;
 }
 
-const DOMAIN_MAP = {
+const DOMAIN_MAP: Record<"tr" | "en", string> = {
   tr: "https://planbasya.com",
-  global: "https://planbasia.com",
-} as const;
+  en: "https://planbasia.com",
+};
 
 export default function SEOHead({
   title,
