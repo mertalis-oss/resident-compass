@@ -1,38 +1,31 @@
 
 
-# V46 — Email Privacy Lockdown (Lean)
+## TikTok Verification File
 
-## Migration
+Create a static verification file so TikTok can confirm ownership of the `/visas/thailand-dtv/` path.
 
-```sql
--- Drop redundant service-role policies (RLS bypass makes them noise)
-DROP POLICY IF EXISTS "Service role can read send log" ON public.email_send_log;
-DROP POLICY IF EXISTS "Admins read email send log" ON public.email_send_log;
-DROP POLICY IF EXISTS "Admins read email send state" ON public.email_send_state;
+### File to create
 
--- Ensure RLS is ON (default Deny-All for anon/authenticated)
-ALTER TABLE public.email_send_log ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.email_send_state ENABLE ROW LEVEL SECURITY;
+**Path:** `public/visas/thailand-dtv/tiktok1WVnqnOBe9my8OoI9I9ac1MNMk39cwDI.txt`
 
--- Revoke all grants from external roles
-REVOKE ALL ON public.email_send_log FROM anon, authenticated;
-REVOKE ALL ON public.email_send_state FROM anon, authenticated;
+**Content (single line, no trailing newline issues):**
+```
+tiktok-developers-site-verification=1WVnqnOBe9my8OoI9I9ac1MNMk39cwDI
 ```
 
-## Findings management
+### How it works
 
-After migration applies:
-- **Mark fixed**: `email_send_log_public_exposure`, `email_send_state_no_policy` — resolved via RLS + REVOKE lockdown.
-- **Ignore** (architectural): the `RLS enabled no policy` finding on these tables (intentional Deny-All) and the `profiles_role_update_bypass` finding (already mitigated by `lock_profile_role` trigger + column REVOKE + has_role pattern; static linter can't read triggers).
+- Files in `public/` are served as-is at the matching URL by Vite.
+- After publish, TikTok will be able to fetch:
+  - `https://planbasia.com/visas/thailand-dtv/tiktok1WVnqnOBe9my8OoI9I9ac1MNMk39cwDI.txt`
+  - `https://planbasya.com/visas/thailand-dtv/tiktok1WVnqnOBe9my8OoI9I9ac1MNMk39cwDI.txt`
+- No routing, SPA fallback, or React code changes needed — static asset only.
 
-## Frozen / untouched
+### Post-implementation
 
-V44 ledger idempotency, V43 immutability triggers, profile role lock, payment RPC service-role gate, all app code.
+1. Hit **Publish/Update** so the file is served on the custom domains.
+2. Verify the URL returns the exact verification string (200, `text/plain`).
+3. Click "Verify" in TikTok's developer console.
 
-## Verification
-
-1. Anon/authenticated `SELECT * FROM email_send_log` → 0 rows / permission denied.
-2. Anon/authenticated `SELECT * FROM email_send_state` → 0 rows / permission denied.
-3. Service-role edge functions (`process-email-queue`) continue to read/write both tables (bypasses RLS).
-4. Linter: 2 PII findings cleared; 2 architectural findings marked ignored with rationale.
+No other files touched. No dependencies. No DB changes.
 
