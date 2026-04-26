@@ -7,15 +7,13 @@ export default function TrustSignals() {
   const { t } = useTranslation();
   const scope = getDomainScope();
 
-  // TR-specific authentic pillars
   const trPillars = [
     { value: "10+", label: "Yıllık Turizm & Operasyon Deneyimi" },
     { value: "360°", label: "Kişiye Özel Yaşam Kurulumu" },
-    { value: "100%", label: "Yasal Süreç Danışmanlığı" },
+    { value: "5+", label: "Aktif Destinasyon & Ülke" },
     { value: "24s", label: "Ortalama İlk Yanıt Süresi" },
   ];
 
-  // FIX: EN stats grid — design parity with TR, Line 49
   const enPillars = [
     { value: "15+", label: "Years International Operations" },
     { value: "360°", label: "Tailored Life & Business Setup" },
@@ -23,17 +21,12 @@ export default function TrustSignals() {
     { value: "24h", label: "Average First Response" },
   ];
 
-  const globalPillars = t("trustSignals.stats", { returnObjects: true }) as { value: string; label: string }[];
-  const trStats = trPillars;
-  const enStats = Array.isArray(globalPillars) ? globalPillars : enPillars;
-
   return (
     <section className="py-24 lg:py-32 bg-secondary">
       <div className="container mx-auto px-6 lg:px-12">
-        {/* Stats — TR */}
         {scope === "tr" && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-20 lg:mb-32">
-            {trStats.map((stat, index) => (
+            {trPillars.map((stat, index) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, y: 30 }}
@@ -51,10 +44,9 @@ export default function TrustSignals() {
           </div>
         )}
 
-        {/* Stats — EN: now uses grid layout matching TR, not just a text line */}
         {scope !== "tr" && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-20 lg:mb-32">
-            {enStats.map((stat, index) => (
+            {enPillars.map((stat, index) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, y: 30 }}
@@ -72,7 +64,6 @@ export default function TrustSignals() {
           </div>
         )}
 
-        {/* Trust Strip — text-only, no fake logos */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
