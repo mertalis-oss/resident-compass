@@ -13,7 +13,7 @@ import SocialProofMini from "@/components/service/SocialProofMini";
 import PlanBForm from "@/components/PlanBForm";
 import ComparisonCrossSell from "@/components/service/ComparisonCrossSell";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
-import SimplifiedAssessmentModal from "@/components/SimplifiedAssessmentModal";
+import SimplifiedAssessmentModal from "@/components/home/SimplifiedAssessmentModal";
 import { useServicesList } from "@/hooks/useServicesList";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
