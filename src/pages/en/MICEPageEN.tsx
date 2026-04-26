@@ -11,7 +11,7 @@ import ExpectationOutcome from "@/components/service/ExpectationOutcome";
 import TrustBlock from "@/components/service/TrustBlock";
 import SocialProofMini from "@/components/service/SocialProofMini";
 import AdvisoryForm from "@/components/advisory/AdvisoryForm";
-import SimplifiedAssessmentModal from "@/components/SimplifiedAssessmentModal";
+import SimplifiedAssessmentModal from "@/components/home/SimplifiedAssessmentModal";
 import { trackPostHogEvent } from "@/lib/posthog";
 
 // FIX: No direct WhatsApp anywhere. All CTAs → assessment modal.
