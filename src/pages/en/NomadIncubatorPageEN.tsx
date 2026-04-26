@@ -103,9 +103,10 @@ export default function NomadIncubatorPageEN() {
       <FocusedNavbar />
       <TrustBar />
 
-      {/* 1. Hero */}
+      {/* 1. Hero — FIX: replaced abstract grid with tropical villa hero image */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden grain-overlay">
         <div className="absolute inset-0">
+          {/* FIX: sunset infinity pool / tropical villa — supports the 360° life setup promise */}
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
@@ -152,16 +153,13 @@ export default function NomadIncubatorPageEN() {
         </div>
       </section>
 
-      {/* 2-4 */}
+      {/* 2-4 — nomad context on TrustBlock/SocialProofMini keeps generic EN (no special MICE copy needed) */}
       <ExpectationOutcome />
       <TrustBlock />
       <SocialProofMini />
 
-      {/* 5. WHO IS FOR */}
-      <ServiceWhoIsFor
-        customWhoForBody="For forward-thinkers seeking a frictionless, stress-free transition to their new life in Asia. We eliminate the friction, you build your empire."
-        customNotForBody="Those looking to navigate local bureaucracies manually or seeking basic, unmanaged travel advice."
-      />
+      {/* 5. WHO IS FOR — Nomad context: friction-free lifestyle transition copy */}
+      <ServiceWhoIsFor context="nomad" />
 
       {/* 6. Content — 360° Life Setup */}
       <section className="py-20 lg:py-28 bg-card border-b border-border">
