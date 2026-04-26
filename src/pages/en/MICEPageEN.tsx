@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Building2, Users, Calendar, Globe, MessageCircle } from "lucide-react";
+import { Building2, Users, Calendar, Globe } from "lucide-react";
 import FocusedNavbar from "@/components/FocusedNavbar";
 import TrustBar from "@/components/TrustBar";
 import SEOHead from "@/components/SEOHead";
@@ -11,11 +11,11 @@ import ExpectationOutcome from "@/components/service/ExpectationOutcome";
 import TrustBlock from "@/components/service/TrustBlock";
 import SocialProofMini from "@/components/service/SocialProofMini";
 import AdvisoryForm from "@/components/advisory/AdvisoryForm";
-import { buildWhatsAppUrl } from "@/lib/constants";
+import SimplifiedAssessmentModal from "@/components/SimplifiedAssessmentModal";
 import { trackPostHogEvent } from "@/lib/posthog";
-import { Button } from "@/components/ui/button";
 
-// FIX: PlanBForm import removed — duplicate form section eliminated (Line 72)
+// FIX: No direct WhatsApp anywhere. All CTAs → assessment modal.
+// WhatsApp only surfaces inside SimplifiedAssessmentModal for isHighIntent === true.
 
 const features = [
   { icon: Calendar, title: "Event Planning", desc: "End-to-end corporate event orchestration across Southeast Asia." },
@@ -33,22 +33,15 @@ const features = [
 ];
 
 export default function MICEPageEN() {
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [assessmentOpen, setAssessmentOpen] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const whatsappUrl = buildWhatsAppUrl(
-    "Page: MICE | Intent: event-planning | Domain: " + (typeof window !== "undefined" ? window.location.hostname : ""),
-  );
-
-  const handleWhatsAppClick = () => {
-    trackPostHogEvent("whatsapp_click", { source: "mice_en", intent: "event-planning" }, true);
-    try {
-      window.open(whatsappUrl, "_blank");
-    } catch {
-      window.location.href = whatsappUrl;
-    }
+  const openAssessment = () => {
+    trackPostHogEvent("assessment_open", { source: "mice_en" }, true);
+    setAssessmentOpen(true);
   };
 
   return (
@@ -92,7 +85,6 @@ export default function MICEPageEN() {
               <span className="block text-accent">Southeast Asia.</span>
             </h1>
 
-            {/* FIX: "10+ years" removed — replaced with delivery-focused copy */}
             <p className="text-lg text-background/80 max-w-xl mb-4">
               Precision-engineered corporate events — press launches, dealer conventions, executive summits, and
               incentive programs across Southeast Asia.
@@ -102,19 +94,20 @@ export default function MICEPageEN() {
               Confidential inquiry. Direct strategist review within 24 hours.
             </p>
 
-            <button onClick={handleWhatsAppClick} className="btn-luxury-gold inline-flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" /> Speak with Strategic Advisor
+            {/* FIX: was handleWhatsAppClick → now assessment modal */}
+            <button onClick={openAssessment} className="btn-luxury-gold inline-flex items-center gap-2">
+              Begin Your Inquiry
             </button>
           </motion.div>
         </div>
       </section>
 
-      {/* 2-4 — context props added */}
+      {/* 2-4 — MICE context */}
       <ExpectationOutcome />
       <TrustBlock context="mice" />
       <SocialProofMini context="mice" />
 
-      {/* 5. WHO IS FOR — MICE context */}
+      {/* 5. WHO IS FOR */}
       <ServiceWhoIsFor context="mice" />
 
       {/* 6. Features */}
@@ -145,7 +138,7 @@ export default function MICEPageEN() {
         </div>
       </section>
 
-      {/* 7. Advisory Form — single form, PlanBForm section removed below */}
+      {/* 7. Advisory Form — single form, no duplicate */}
       <div id="checkout">
         <section className="section-editorial border-t border-border py-16">
           <div className="container max-w-2xl px-6">
@@ -158,12 +151,10 @@ export default function MICEPageEN() {
         </section>
       </div>
 
-      {/* FIX Line 72: PlanBForm "Confidential Inquiry" section REMOVED — duplicate form eliminated */}
-
       {/* Comparison & Cross-Sell */}
       <ComparisonCrossSell currentSlug="mice-thailand" />
 
-      {/* WhatsApp CTA */}
+      {/* Final CTA — FIX line 174: was WhatsApp → now assessment modal */}
       <section className="py-20 lg:py-32 bg-foreground text-background grain-overlay">
         <div className="container mx-auto px-6 lg:px-12 text-center">
           <div className="max-w-2xl mx-auto">
@@ -171,8 +162,8 @@ export default function MICEPageEN() {
             <p className="body-editorial text-background/70 mb-8">
               Let us design the experience your organization deserves.
             </p>
-            <button onClick={handleWhatsAppClick} className="btn-luxury-gold inline-flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" /> Speak with Strategic Advisor
+            <button onClick={openAssessment} className="btn-luxury-gold inline-flex items-center gap-2">
+              Begin Your Inquiry
             </button>
           </div>
         </div>
@@ -186,7 +177,11 @@ export default function MICEPageEN() {
         </div>
       </footer>
 
-      <StickyMobileCTA onClick={handleWhatsAppClick} />
+      {/* FIX: StickyMobileCTA → assessment modal */}
+      <StickyMobileCTA onClick={openAssessment} />
+
+      {/* Modal — WhatsApp only for isHighIntent === true inside */}
+      <SimplifiedAssessmentModal open={assessmentOpen} onClose={() => setAssessmentOpen(false)} sourceSite="mice" />
     </div>
   );
 }
