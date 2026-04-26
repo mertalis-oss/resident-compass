@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Shield, Clock, ChevronDown, Loader, ArrowRight, MessageCircle } from "lucide-react";
+import { Shield, Clock, ChevronDown, Loader, ArrowRight } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import FocusedNavbar from "@/components/FocusedNavbar";
 import TrustBar from "@/components/TrustBar";
@@ -13,9 +13,8 @@ import SocialProofMini from "@/components/service/SocialProofMini";
 import PlanBForm from "@/components/PlanBForm";
 import ComparisonCrossSell from "@/components/service/ComparisonCrossSell";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
+import SimplifiedAssessmentModal from "@/components/SimplifiedAssessmentModal";
 import { useServicesList } from "@/hooks/useServicesList";
-import { buildWhatsAppUrl } from "@/lib/constants";
-import { trackPostHogEvent } from "@/lib/posthog";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -65,24 +64,13 @@ const faqs = [
 ];
 
 export default function DTVPageEN() {
-  const { services, isLoading, hasError } = useServicesList("residency", "global");
+  const { services, isLoading } = useServicesList("residency", "global");
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [assessmentOpen, setAssessmentOpen] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const whatsappUrl = buildWhatsAppUrl(
-    "Page: DTV | Intent: strategic-review | Domain: " + (typeof window !== "undefined" ? window.location.hostname : ""),
-  );
-
-  const handleWhatsAppClick = () => {
-    trackPostHogEvent("whatsapp_click", { source: "dtv_en", intent: "strategic-review" }, true);
-    try {
-      window.open(whatsappUrl, "_blank");
-    } catch {
-      window.location.href = whatsappUrl;
-    }
-  };
 
   if (isLoading)
     return (
@@ -140,7 +128,6 @@ export default function DTVPageEN() {
               in Southeast Asia.
             </p>
 
-            {/* FIX Line 79: replaced fear/risk framing with adventure + confidence positioning */}
             <div className="bg-accent/10 border border-accent/20 px-6 py-4 mb-8 max-w-xl">
               <p className="text-background font-heading text-lg">
                 While your application moves quietly in the background —
@@ -151,20 +138,19 @@ export default function DTVPageEN() {
               </p>
             </div>
 
-            {/* FIX Line 83: primary CTA is now View Packages (scroll to checkout), WhatsApp is secondary */}
+            {/* FIX line 163: primary CTA → assessment modal. No direct WhatsApp. */}
             <div className="flex flex-wrap items-center gap-4 mb-10">
               <button
-                onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}
+                onClick={() => setAssessmentOpen(true)}
                 className="btn-luxury-gold inline-flex items-center gap-2"
               >
-                View Packages <ArrowRight className="w-4 h-4" />
+                Check My Eligibility <ArrowRight className="w-4 h-4" />
               </button>
-
               <button
-                onClick={handleWhatsAppClick}
-                className="border border-white/30 bg-white/10 hover:bg-white/20 text-white backdrop-blur-md text-xs tracking-[0.15em] uppercase px-8 py-4 h-auto rounded-md transition-all duration-300 inline-flex items-center gap-2"
+                onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}
+                className="border border-white/30 bg-white/10 hover:bg-white/20 text-white backdrop-blur-md text-xs tracking-[0.15em] uppercase px-8 py-4 h-auto rounded-md transition-all duration-300"
               >
-                <MessageCircle className="w-4 h-4" /> Speak with Advisor
+                View Packages
               </button>
             </div>
 
@@ -214,8 +200,8 @@ export default function DTVPageEN() {
             <p className="text-muted-foreground mb-6">
               Elite protocols are currently being updated by our strategic advisors.
             </p>
-            <Button onClick={handleWhatsAppClick} variant="outline" className="inline-flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" /> Speak with Strategic Advisor
+            <Button onClick={() => setAssessmentOpen(true)} variant="outline">
+              Check My Eligibility
             </Button>
           </section>
         )}
@@ -229,7 +215,6 @@ export default function DTVPageEN() {
               { value: "5 Years", label: "Visa Validity" },
               { value: "180 Days", label: "Per Entry Stay" },
               { value: "Unlimited", label: "Re-Entries" },
-              // FIX Line 144: removed '100% Approval Target*' — replaced with honest advisory stat
               { value: "24h", label: "Advisory Response Time" },
             ].map((item, i) => (
               <motion.div
@@ -339,9 +324,7 @@ export default function DTVPageEN() {
         </div>
       </section>
 
-      {/* 12. COMPARISON & CROSS-SELL */}
-      {/* NOTE Line 86: ComparisonCrossSell rendering partially — likely a data/fetch issue in the component itself.
-          This is a backend/data concern, not a TSX revision. Investigate useServicesList or the comp's internal fetch. */}
+      {/* 12. COMPARISON */}
       <ComparisonCrossSell currentSlug="dtv-thailand" />
 
       {/* Cross-Bridge */}
@@ -369,7 +352,11 @@ export default function DTVPageEN() {
         </div>
       </footer>
 
-      <StickyMobileCTA onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })} />
+      {/* FIX line 234: StickyMobileCTA → assessment modal */}
+      <StickyMobileCTA onClick={() => setAssessmentOpen(true)} />
+
+      {/* Modal — WhatsApp only surfaces inside for isHighIntent === true */}
+      <SimplifiedAssessmentModal open={assessmentOpen} onClose={() => setAssessmentOpen(false)} sourceSite="dtv" />
     </div>
   );
 }
