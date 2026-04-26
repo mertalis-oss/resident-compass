@@ -1,25 +1,43 @@
-import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+
+// FIX: context prop added — default EN quotes updated to be universally applicable
+// context="mice" renders corporate event-specific social proof
 
 const quotes = {
-  tr: [
-    'Haftalarca sürecek karmaşadan kurtardılar.',
-    'Net ve dürüst danışmanlık.',
-    'Sonunda seçeneklerimi anladım.',
-  ],
+  tr: ["Haftalarca sürecek karmaşadan kurtardılar.", "Net ve dürüst danışmanlık.", "Sonunda seçeneklerimi anladım."],
   en: [
-    'Saved me weeks of confusion.',
-    'Clear and honest advice.',
-    'Finally understood my options.',
+    "Exactly the clarity we needed.",
+    "Professional from first contact to final delivery.",
+    "No surprises — everything as agreed.",
+  ],
+  en_mice: [
+    "Seamless from brief to execution.",
+    "Our team handled every detail without follow-up.",
+    "The most composed event partner we have worked with.",
   ],
 };
 
+interface SocialProofMiniProps {
+  context?: "mice" | "default";
+}
+
 /**
  * Mini Social Proof — italic quote-style testimonials.
+ * Pass context="mice" for MICE/corporate event quotes.
  */
-export default function SocialProofMini() {
+export default function SocialProofMini({ context = "default" }: SocialProofMiniProps) {
   const { i18n } = useTranslation();
-  const items = i18n.language === 'tr' ? quotes.tr : quotes.en;
+  const isTR = i18n.language === "tr";
+
+  let items: string[];
+  if (isTR) {
+    items = quotes.tr;
+  } else if (context === "mice") {
+    items = quotes.en_mice;
+  } else {
+    items = quotes.en;
+  }
 
   return (
     <section className="py-8 md:py-10 bg-background border-b border-border">
