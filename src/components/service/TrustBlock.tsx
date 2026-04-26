@@ -1,26 +1,48 @@
-import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { CheckCircle } from 'lucide-react';
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import { CheckCircle } from "lucide-react";
+
+// FIX: context prop added — all existing usages (DTV, Soft Power, Nomad) unaffected (no prop = default fallback)
+// MICE passes context="mice" to get corporate-specific trust signals
 
 const trustItems = {
   tr: [
     "Tayland'da yerleşik ekip",
     "Asya'ya taşınan dijital göçebelerin güvendiği danışmanlık",
-    'Durumunuza özel kişisel rehberlik',
+    "Durumunuza özel kişisel rehberlik",
   ],
   en: [
-    'Based in Thailand',
-    'Trusted by remote workers relocating to Asia',
-    'Personal guidance based on your situation',
+    "Based in Southeast Asia",
+    "Private advisory — one strategist, your project",
+    "On-ground execution, not outsourced coordination",
+  ],
+  en_mice: [
+    "Southeast Asia corporate event network — active across 6 markets",
+    "End-to-end execution from brief to debrief",
+    "One strategic point of contact for your entire event",
   ],
 };
 
+interface TrustBlockProps {
+  context?: "mice" | "nomad" | "default";
+}
+
 /**
  * Trust Block — three checkmark trust signals.
+ * Pass context="mice" for corporate event context.
  */
-export default function TrustBlock() {
+export default function TrustBlock({ context = "default" }: TrustBlockProps) {
   const { i18n } = useTranslation();
-  const items = i18n.language === 'tr' ? trustItems.tr : trustItems.en;
+  const isTR = i18n.language === "tr";
+
+  let items: string[];
+  if (isTR) {
+    items = trustItems.tr;
+  } else if (context === "mice") {
+    items = trustItems.en_mice;
+  } else {
+    items = trustItems.en;
+  }
 
   return (
     <section className="py-10 md:py-14 bg-secondary/50 border-b border-border">
