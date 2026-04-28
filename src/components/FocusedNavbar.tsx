@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useDomainScope } from '@/hooks/useDomainScope';
-import { Menu, X, Globe, ChevronDown } from 'lucide-react';
-import logoDark from '@/assets/Dark_Seffaf.png';
-import logoWhite from '@/assets/White_Seffaf.png';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useDomainScope } from "@/hooks/useDomainScope";
+import { Menu, X, Globe, ChevronDown } from "lucide-react";
+import logoDark from "@/assets/Dark_Seffaf.png";
+import logoWhite from "@/assets/White_Seffaf.png";
 
 interface NavGroup {
   label: string;
@@ -13,56 +13,50 @@ interface NavGroup {
 
 const TR_NAV_GROUPS: NavGroup[] = [
   {
-    label: 'Vizeler',
-    items: [
-      { to: '/tr/dtv-vize', label: 'Tayland DTV' },
-    ],
+    label: "Vizeler",
+    items: [{ to: "/vizeler/dtv-vize", label: "Tayland DTV" }],
   },
   {
-    label: 'Yaşam',
+    label: "Yaşam",
     items: [
-      { to: '/tr/soft-power', label: 'Soft Power / Eğitim' },
-      { to: '/tr/expeditions', label: 'Keşifler' },
-      { to: '/tr/nomad-incubator', label: 'Kuluçka Merkezi' },
-      { to: '/tr/mice', label: 'Kurumsal / MICE' },
+      { to: "/vizeler/soft-power", label: "Eğitim Paketleri" },
+      { to: "/deneyimler/expeditions", label: "Keşifler" },
+      { to: "/yerlesim/nomad-incubator", label: "Kuluçka Merkezi" },
+      { to: "/deneyimler/mice", label: "Kurumsal / MICE" },
     ],
   },
 ];
 
 const EN_NAV_GROUPS: NavGroup[] = [
   {
-    label: 'Visas',
+    label: "Visas",
     items: [
-      { to: '/visas/thailand-dtv', label: 'Thailand DTV' },
-      { to: '/visas/soft-power', label: 'Soft Power' },
+      { to: "/visas/thailand-dtv", label: "Thailand DTV" },
+      { to: "/visas/soft-power", label: "Soft Power" },
     ],
   },
   {
-    label: 'Relocation',
+    label: "Relocation",
+    items: [{ to: "/relocation/nomad-incubator", label: "Nomad Incubator" }],
+  },
+  {
+    label: "Experiences",
     items: [
-      { to: '/relocation/nomad-incubator', label: 'Nomad Incubator' },
+      { to: "/experiences/expeditions", label: "Expeditions" },
+      { to: "/experiences/wellness", label: "Wellness" },
+      { to: "/destinations/vietnam", label: "Vietnam" },
+      { to: "/destinations/cambodia", label: "Cambodia" },
     ],
   },
   {
-    label: 'Experiences',
-    items: [
-      { to: '/experiences/expeditions', label: 'Expeditions' },
-      { to: '/experiences/wellness', label: 'Wellness' },
-      { to: '/destinations/vietnam', label: 'Vietnam' },
-      { to: '/destinations/cambodia', label: 'Cambodia' },
-    ],
-  },
-  {
-    label: 'Corporate',
-    items: [
-      { to: '/corporate/mice', label: 'MICE & Events' },
-    ],
+    label: "Corporate",
+    items: [{ to: "/corporate/mice", label: "MICE & Events" }],
   },
 ];
 
 const langs = [
-  { code: 'en', label: 'EN' },
-  { code: 'hi', label: 'HI' },
+  { code: "en", label: "EN" },
+  { code: "hi", label: "HI" },
 ] as const;
 
 export default function FocusedNavbar() {
@@ -75,26 +69,26 @@ export default function FocusedNavbar() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    if (scope === 'tr' && i18n.language !== 'tr') {
-      i18n.changeLanguage('tr');
+    if (scope === "tr" && i18n.language !== "tr") {
+      i18n.changeLanguage("tr");
     }
   }, [scope, i18n]);
 
-  const navGroups = scope === 'tr' ? TR_NAV_GROUPS : EN_NAV_GROUPS;
+  const navGroups = scope === "tr" ? TR_NAV_GROUPS : EN_NAV_GROUPS;
 
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-500 ease-out ${
-        scrolled ? 'bg-corporate-navy shadow-lg' : 'bg-transparent'
+        scrolled ? "bg-corporate-navy shadow-lg" : "bg-transparent"
       }`}
     >
       <div className="container flex items-center justify-between h-16 md:h-20">
-        <Link to={scope === 'tr' ? '/tr' : '/'}>
+        <Link to={scope === "tr" ? "/tr" : "/"}>
           <img src={logoWhite} alt="Plan B Asia" className="h-9 md:h-10 transition-all duration-500" />
         </Link>
 
@@ -138,7 +132,7 @@ export default function FocusedNavbar() {
           })}
 
           {/* Language Switcher — only on global domain */}
-          {scope === 'en' && (
+          {scope === "en" && (
             <div className="relative">
               <button
                 onClick={() => setLangOpen(!langOpen)}
@@ -152,9 +146,12 @@ export default function FocusedNavbar() {
                   {langs.map((l) => (
                     <button
                       key={l.code}
-                      onClick={() => { i18n.changeLanguage(l.code); setLangOpen(false); }}
+                      onClick={() => {
+                        i18n.changeLanguage(l.code);
+                        setLangOpen(false);
+                      }}
                       className={`block w-full text-left px-3 py-1.5 text-sm hover:bg-muted transition-colors ${
-                        i18n.language === l.code ? 'text-secondary font-semibold' : 'text-foreground'
+                        i18n.language === l.code ? "text-secondary font-semibold" : "text-foreground"
                       }`}
                     >
                       {l.label}
@@ -182,7 +179,9 @@ export default function FocusedNavbar() {
                 className="flex items-center justify-between w-full text-sm font-medium text-holistic/80 hover:text-holistic py-2"
               >
                 {group.label}
-                <ChevronDown className={`h-4 w-4 transition-transform ${openGroup === group.label ? 'rotate-180' : ''}`} />
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${openGroup === group.label ? "rotate-180" : ""}`}
+                />
               </button>
               {openGroup === group.label && (
                 <div className="pl-4 space-y-1">
@@ -200,16 +199,18 @@ export default function FocusedNavbar() {
               )}
             </div>
           ))}
-          {scope === 'en' && (
+          {scope === "en" && (
             <div className="flex gap-2 pt-4 border-t border-border/20">
               {langs.map((l) => (
                 <button
                   key={l.code}
-                  onClick={() => { i18n.changeLanguage(l.code); }}
+                  onClick={() => {
+                    i18n.changeLanguage(l.code);
+                  }}
                   className={`px-3 py-1 text-xs rounded-full border ${
                     i18n.language === l.code
-                      ? 'bg-secondary text-secondary-foreground border-secondary'
-                      : 'border-border/30 text-holistic/60'
+                      ? "bg-secondary text-secondary-foreground border-secondary"
+                      : "border-border/30 text-holistic/60"
                   }`}
                 >
                   {l.label}
