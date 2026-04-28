@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDomainScope } from "@/hooks/useDomainScope";
 import { Menu, X, Globe, ChevronDown } from "lucide-react";
-import logoDark from "@/assets/Dark_Seffaf.png";
 import logoWhite from "@/assets/White_Seffaf.png";
 
 interface NavGroup {
@@ -11,15 +10,18 @@ interface NavGroup {
   items: { to: string; label: string }[];
 }
 
+// planbasya.com (TR) Navigasyon Yapısı
 const TR_NAV_GROUPS: NavGroup[] = [
   {
     label: "Vizeler",
-    items: [{ to: "/vizeler/dtv-vize", label: "Tayland DTV" }],
+    items: [
+      { to: "/vizeler/dtv-vize", label: "Tayland DTV" },
+      { to: "/vizeler/soft-power", label: "Eğitim Paketleri" },
+    ],
   },
   {
     label: "Yaşam",
     items: [
-      { to: "/vizeler/soft-power", label: "Eğitim Paketleri" },
       { to: "/deneyimler/expeditions", label: "Keşifler" },
       { to: "/yerlesim/nomad-incubator", label: "Kuluçka Merkezi" },
       { to: "/deneyimler/mice", label: "Kurumsal / MICE" },
@@ -27,6 +29,7 @@ const TR_NAV_GROUPS: NavGroup[] = [
   },
 ];
 
+// planbasia.com (Global) Navigasyon Yapısı
 const EN_NAV_GROUPS: NavGroup[] = [
   {
     label: "Visas",
@@ -54,13 +57,14 @@ const EN_NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-const langs = [
+// Global diller (Hintçe dahil, yeni diller buraya eklenebilir)
+const GLOBAL_LANGS = [
   { code: "en", label: "EN" },
   { code: "hi", label: "HI" },
 ] as const;
 
 export default function FocusedNavbar() {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const scope = useDomainScope();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -73,6 +77,7 @@ export default function FocusedNavbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // TR domaininde dili otomatik Türkçe yap, Global domainde mevcut dili koru
   useEffect(() => {
     if (scope === "tr" && i18n.language !== "tr") {
       i18n.changeLanguage("tr");
@@ -119,7 +124,7 @@ export default function FocusedNavbar() {
                       <Link
                         key={item.to}
                         to={item.to}
-                        className="block px-4 py-2.5 text-sm text-holistic/70 hover:text-holistic hover:bg-holistic/5 transition-colors"
+                        className="block px-4 py-2.5 text-sm text-holistic/70 hover:text-holistic hover:bg-white/5 transition-colors"
                         onClick={() => setOpenGroup(null)}
                       >
                         {item.label}
@@ -131,7 +136,7 @@ export default function FocusedNavbar() {
             );
           })}
 
-          {/* Language Switcher — only on global domain */}
+          {/* Language Switcher — Sadece Global Domain (planbasia.com) için */}
           {scope === "en" && (
             <div className="relative">
               <button
@@ -142,16 +147,16 @@ export default function FocusedNavbar() {
                 {i18n.language.toUpperCase()}
               </button>
               {langOpen && (
-                <div className="absolute top-full right-0 mt-2 py-1 bg-card border border-border rounded-md shadow-xl min-w-[60px]">
-                  {langs.map((l) => (
+                <div className="absolute top-full right-0 mt-2 py-1 bg-corporate-navy border border-border/20 rounded-md shadow-xl min-w-[60px]">
+                  {GLOBAL_LANGS.map((l) => (
                     <button
                       key={l.code}
                       onClick={() => {
                         i18n.changeLanguage(l.code);
                         setLangOpen(false);
                       }}
-                      className={`block w-full text-left px-3 py-1.5 text-sm hover:bg-muted transition-colors ${
-                        i18n.language === l.code ? "text-secondary font-semibold" : "text-foreground"
+                      className={`block w-full text-left px-3 py-1.5 text-sm hover:bg-white/5 transition-colors ${
+                        i18n.language === l.code ? "text-secondary font-semibold" : "text-holistic/70"
                       }`}
                     >
                       {l.label}
@@ -171,12 +176,12 @@ export default function FocusedNavbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="lg:hidden bg-corporate-navy border-t border-border/20 px-6 py-6 space-y-2">
+        <div className="lg:hidden bg-corporate-navy border-t border-border/20 px-6 py-6 space-y-2 max-h-[85vh] overflow-y-auto">
           {navGroups.map((group) => (
             <div key={group.label}>
               <button
                 onClick={() => setOpenGroup(openGroup === group.label ? null : group.label)}
-                className="flex items-center justify-between w-full text-sm font-medium text-holistic/80 hover:text-holistic py-2"
+                className="flex items-center justify-between w-full text-sm font-medium text-holistic/80 py-2"
               >
                 {group.label}
                 <ChevronDown
@@ -190,7 +195,7 @@ export default function FocusedNavbar() {
                       key={item.to}
                       to={item.to}
                       onClick={() => setMobileOpen(false)}
-                      className="block text-sm text-holistic/60 hover:text-holistic py-2"
+                      className="block text-sm text-holistic/60 py-2"
                     >
                       {item.label}
                     </Link>
@@ -201,15 +206,16 @@ export default function FocusedNavbar() {
           ))}
           {scope === "en" && (
             <div className="flex gap-2 pt-4 border-t border-border/20">
-              {langs.map((l) => (
+              {GLOBAL_LANGS.map((l) => (
                 <button
                   key={l.code}
                   onClick={() => {
                     i18n.changeLanguage(l.code);
+                    setMobileOpen(false);
                   }}
                   className={`px-3 py-1 text-xs rounded-full border ${
                     i18n.language === l.code
-                      ? "bg-secondary text-secondary-foreground border-secondary"
+                      ? "bg-secondary text-white border-secondary"
                       : "border-border/30 text-holistic/60"
                   }`}
                 >
