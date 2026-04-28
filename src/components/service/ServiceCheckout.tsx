@@ -6,7 +6,7 @@ import { trackPostHogEvent } from "@/lib/posthog";
 import { trackEvent } from "@/lib/analytics";
 import { normalizeEmail } from "@/lib/emailNormalize";
 import { safeGet, cleanupFallback } from "@/lib/safeStorage";
-import { getDomainScope } from "@/hooks/useDomainScope";
+import { useDomainScope } from "@/hooks/useDomainScope"; // Değiştirildi
 import { renderPrice } from "@/lib/formatPrice";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -23,9 +23,10 @@ interface Props {
   layout?: "standalone" | "grid";
 }
 
-const scope = getDomainScope();
+// ESKİ: const scope = getDomainScope(); <-- BURADAN SİLDİK
 
 export default function ServiceCheckout({ service, variant = "full", layout = "standalone" }: Props) {
+  const scope = useDomainScope(); // YENİ: Bileşen içinde hook olarak tanımlandı
   const { t } = useTranslation();
   const { toast } = useToast();
   const [isAgreed, setIsAgreed] = useState(false);
@@ -33,7 +34,6 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
   const [showRescue, setShowRescue] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Ref-based locks for reliability
   const sessionKey = useRef(window.__session_id || `s_${Date.now()}`);
   const clickLock = useRef(false);
 
@@ -103,7 +103,6 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
     service.stripe_price_id &&
     (/xxx|placeholder/i.test(service.stripe_price_id) || !service.stripe_price_id.startsWith("price_"));
 
-  // FAILSAFE: WhatsApp Rescue UI
   if (!service.stripe_price_id || isPlaceholder || showRescue) {
     const rescueWhatsapp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
       scope === "tr"
@@ -156,7 +155,6 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
           className="w-full rounded-xl font-medium h-12"
           onClick={() => {
             if (clickLock.current || modalOpen) return;
-            console.log("CTA CLICK FIRED", { service: service.slug, price: service.price });
             clickLock.current = true;
             try {
               trackEvent("checkout_click", {
@@ -189,7 +187,6 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
       )}
 
       <Dialog open={modalOpen} onOpenChange={handleModalChange}>
-        {/* MODAL FIX: Removed relative class to fix visibility bug */}
         <DialogContent className="z-[999] p-0 overflow-hidden max-w-[560px]" id={`checkout-dialog-${service.id}`}>
           <div className="max-h-[80vh] overflow-y-auto p-6 md:p-8 pb-32">
             <DialogHeader>
