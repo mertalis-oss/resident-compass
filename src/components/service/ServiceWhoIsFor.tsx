@@ -1,11 +1,7 @@
 import { useTranslation } from "react-i18next";
 import AnimatedSection from "@/components/AnimatedSection";
 
-// FIX: context prop added
-// context="mice"  → corporate event/MICE audience copy
-// context="nomad" → friction-free lifestyle transition copy (Nomad Incubator)
-// default         → existing generic copy (DTV, Soft Power, others — unchanged)
-
+// Global Content (EN, HI vb.)
 const content = {
   default: {
     whoForLabel: "Who this is for",
@@ -29,13 +25,41 @@ const content = {
   },
 };
 
+// BLOK-04: TR Content Patch
+const contentTR = {
+  default: {
+    whoForLabel: "Bu hizmet kime göre?",
+    whoForBody:
+      "Tayland'a taşınmayı ciddi düşünen, belge ve vize süreçlerini birinin halletmesini isteyen profesyoneller, girişimciler ve serbest çalışanlar için.",
+    notForLabel: "Kime göre değil?",
+    notForBody: "Ücretsiz genel bilgi arayanlar ya da süreci tek başına yönetmek isteyenler için değil.",
+  },
+  mice: {
+    whoForLabel: "Bu hizmet kime göre?",
+    whoForBody:
+      "Asya'da kurumsal etkinlik planlamak isteyen, operasyonel mükemmeliyetten taviz vermeyen şirketler ve organizatörler için.",
+    notForLabel: "Kime göre değil?",
+    notForBody: "En düşük maliyetli alternatifi arayanlar ya da tüm detayları kendisi yönetmek isteyenler için değil.",
+  },
+  nomad: {
+    whoForLabel: "Bu hizmet kime göre?",
+    whoForBody:
+      "Asya'ya taşınmaya hazır olanlar için. Altyapının kurulu gelmesini isteyen, operasyona hazır insanlar için.",
+    notForLabel: "Kime göre değil?",
+    notForBody: "Hâlâ araştırma aşamasındakiler ya da harekete geçmeye hazır olmayanlar için değil.",
+  },
+};
+
 interface ServiceWhoIsForProps {
   context?: "mice" | "nomad" | "default";
 }
 
 export default function ServiceWhoIsFor({ context = "default" }: ServiceWhoIsForProps) {
-  const { t } = useTranslation();
-  const copy = content[context] ?? content.default;
+  const { i18n } = useTranslation();
+
+  // Dil kontrolü ve doğru objenin seçilmesi
+  const isTR = i18n.language === "tr";
+  const copy = isTR ? (contentTR[context] ?? contentTR.default) : (content[context] ?? content.default);
 
   return (
     <AnimatedSection>
@@ -43,20 +67,12 @@ export default function ServiceWhoIsFor({ context = "default" }: ServiceWhoIsFor
         <div className="container max-w-3xl px-6">
           <div className="grid md:grid-cols-2 gap-12">
             <div>
-              <p className="caption-editorial text-accent mb-6">
-                {t(`service.whoForLabel_${context}`, { defaultValue: copy.whoForLabel })}
-              </p>
-              <p className="body-editorial text-foreground">
-                {t(`service.whoForBody_${context}`, { defaultValue: copy.whoForBody })}
-              </p>
+              <p className="caption-editorial text-accent mb-6">{copy.whoForLabel}</p>
+              <p className="body-editorial text-foreground">{copy.whoForBody}</p>
             </div>
             <div>
-              <p className="caption-editorial text-muted-foreground mb-6">
-                {t(`service.notForLabel_${context}`, { defaultValue: copy.notForLabel })}
-              </p>
-              <p className="body-editorial text-muted-foreground">
-                {t(`service.notForBody_${context}`, { defaultValue: copy.notForBody })}
-              </p>
+              <p className="caption-editorial text-muted-foreground mb-6">{copy.notForLabel}</p>
+              <p className="body-editorial text-muted-foreground">{copy.notForBody}</p>
             </div>
           </div>
         </div>
