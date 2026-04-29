@@ -94,10 +94,7 @@ export default function DTVVizePage() {
       />
       <FocusedNavbar />
       <TrustBar />
-      <StickyMobileCTA
-        label="Pakete Bak"
-        onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}
-      />
+      <StickyMobileCTA onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })} />
 
       {/* 1. HERO */}
       <section className="relative min-h-[90vh] flex items-center grain-overlay">
