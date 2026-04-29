@@ -13,19 +13,24 @@ interface NavGroup {
 // planbasya.com (TR) Navigasyon Yapısı
 const TR_NAV_GROUPS: NavGroup[] = [
   {
-    label: "Vizeler",
+    label: "Vize & Kalış",
     items: [
-      { to: "/vizeler/dtv-vize", label: "Tayland DTV" },
-      { to: "/vizeler/soft-power", label: "Eğitim Paketleri" },
+      { to: "/tr/dtv-vize", label: "Tayland DTV Vizesi" },
+      { to: "/tr/soft-power", label: "Öğren & Kal" },
     ],
   },
   {
-    label: "Yaşam",
+    label: "Yaşam & Gelişim",
     items: [
+      { to: "/tr/nomad-incubator", label: "Kuluçka Merkezi" },
       { to: "/deneyimler/expeditions", label: "Keşifler" },
-      { to: "/yerlesim/nomad-incubator", label: "Kuluçka Merkezi" },
-      { to: "/deneyimler/mice", label: "Kurumsal / MICE" },
+      { to: "/tr/vietnam", label: "Vietnam" },
+      { to: "/tr/cambodia", label: "Kamboçya" },
     ],
+  },
+  {
+    label: "Kurumsal",
+    items: [{ to: "/tr/mice", label: "MICE" }],
   },
 ];
 
@@ -57,7 +62,6 @@ const EN_NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-// Global diller (Hintçe dahil, yeni diller buraya eklenebilir)
 const GLOBAL_LANGS = [
   { code: "en", label: "EN" },
   { code: "hi", label: "HI" },
@@ -77,7 +81,6 @@ export default function FocusedNavbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // TR domaininde dili otomatik Türkçe yap, Global domainde mevcut dili koru
   useEffect(() => {
     if (scope === "tr" && i18n.language !== "tr") {
       i18n.changeLanguage("tr");
@@ -204,6 +207,7 @@ export default function FocusedNavbar() {
               )}
             </div>
           ))}
+
           {scope === "en" && (
             <div className="flex gap-2 pt-4 border-t border-border/20">
               {GLOBAL_LANGS.map((l) => (
