@@ -1,12 +1,11 @@
-// src/pages/tr/DTVVizePage.tsx
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useTranslation } from "react-i18next";
-import { Shield, Clock, ChevronDown, Loader } from "lucide-react";
+import { Shield, ChevronDown, Loader } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import FocusedNavbar from "@/components/FocusedNavbar";
 import TrustBar from "@/components/TrustBar";
 import SEOHead from "@/components/SEOHead";
+import StickyMobileCTA from "@/components/StickyMobileCTA";
 import ServiceCheckout from "@/components/service/ServiceCheckout";
 import ServiceWhoIsFor from "@/components/service/ServiceWhoIsFor";
 import ExpectationOutcome from "@/components/service/ExpectationOutcome";
@@ -55,16 +54,15 @@ const faqs = [
   },
   {
     q: "DTV vizesiyle Tayland'da çalışabilir miyim?",
-    a: "Uzaktan çalışma — yabancı bir şirkete/müşteriye hizmet — için tasarlanan bir vize. Tayland'da yerel işveren için çalışmak farklı kategoride.",
+    a: "Uzaktan çalışma — yabancı bir şirkete veya müşteriye hizmet — için tasarlanan bir vize. Tayland'da yerel işveren için çalışmak farklı kategoride.",
   },
   {
     q: "Vize başvurusu reddedilirse ne olur?",
-    a: "Red oranımız düşük — belge kalitesine çok dikkat ediyoruz. Nadir redlerde alternatif rotayı birlikte değerlendiriyoruz.",
+    a: "Belge hazırlığına titizlikle yaklaşıyoruz — eksik veya hatalı dosyayla başvurmuyoruz. Nihai karar konsolosluğa ait. Nadir redlerde alternatif rotayı birlikte değerlendiriyoruz.",
   },
 ];
 
 export default function DTVVizePage() {
-  const { t } = useTranslation();
   const { services, isLoading, hasError } = useServicesList("residency", "tr");
   const [formSubmitted, setFormSubmitted] = useState(false);
 
@@ -75,6 +73,7 @@ export default function DTVVizePage() {
       </div>
     );
   }
+
   if (hasError || services.length === 0) {
     return (
       <div className="min-h-screen bg-background">
@@ -90,11 +89,15 @@ export default function DTVVizePage() {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title={t("dtvVize.seoTitle", { defaultValue: "Tayland DTV Vizesi — Plan B Asya" })}
-        description={t("dtvVize.seoDesc", { defaultValue: "Tayland'da 5 yıl yaşama ve çalışma özgürlüğü." })}
+        title="Tayland DTV Vizesi — Plan B Asya"
+        description="Tayland'da 5 yıl yaşama ve çalışma özgürlüğü. DTV vize danışmanlığı."
       />
       <FocusedNavbar />
       <TrustBar />
+      <StickyMobileCTA
+        label="Pakete Bak"
+        onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}
+      />
 
       {/* 1. HERO */}
       <section className="relative min-h-[90vh] flex items-center grain-overlay">
@@ -116,36 +119,21 @@ export default function DTVVizePage() {
           >
             <div className="inline-flex items-center gap-2 bg-accent/20 backdrop-blur-sm border border-accent/30 px-4 py-2 mb-8">
               <Shield className="w-4 h-4 text-accent" />
-              <span className="text-sm text-background/90 tracking-wide">
-                {t("dtvVize.badge", { defaultValue: "Resmi Onaylı Danışmanlık" })}
-              </span>
+              <span className="text-sm text-background/90 tracking-wide">Resmi Süreç Danışmanlığı</span>
             </div>
             <h1 className="heading-display text-background mb-6">
-              {t("dtvVize.heroTitle", { defaultValue: "Tayland'da 5 Yıl Yaşama ve Çalışma Özgürlüğü." })}
-              <span className="block text-accent">{t("dtvVize.heroAccent", { defaultValue: "Tek Başvuru." })}</span>
+              Sistemi Geride Bırak.
+              <span className="block text-accent">Tayland'da 5 Yıl Yaşa.</span>
             </h1>
-            <p className="text-lg text-background/80 max-w-xl mb-8">
-              {t("dtvVize.heroDesc", {
-                defaultValue:
-                  "Dijital göçebeler için tasarlanan DTV vizesi ile 180 gün kalış hakkı, sınırsız giriş-çıkış ve 5 yıllık geçerlilik.",
-              })}
+            <p className="text-lg text-background/80 max-w-xl mb-10">
+              Dijital göçebeler için tasarlanan DTV vizesi ile 180 gün kalış hakkı, sınırsız giriş-çıkış ve 5 yıllık
+              geçerlilik.
             </p>
-            <div className="mb-8">
-              <p className="text-sm text-background/60">
-                {t("dtvVize.priceNote", { defaultValue: "Danışmanlık paketleri aşağıda listelenmektedir" })}
-              </p>
-            </div>
-            <div className="flex items-center gap-3 mb-10">
-              <Clock className="w-5 h-5 text-accent" />
-              <span className="text-background/90 font-medium">
-                {t("dtvVize.scarcity", { defaultValue: "2026 Kotaları Dolmadan Yerini Ayırt" })}
-              </span>
-            </div>
             <button
               onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}
               className="btn-luxury-gold inline-block"
             >
-              {t("dtvVize.heroCta", { defaultValue: "Hemen Başla" })}
+              Danışmanlık Paketlerini Gör
             </button>
           </motion.div>
         </div>
@@ -155,16 +143,14 @@ export default function DTVVizePage() {
           transition={{ delay: 1 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         >
-          <span className="text-background/50 text-xs uppercase tracking-widest">
-            {t("dtvVize.explore", { defaultValue: "Keşfet" })}
-          </span>
+          <span className="text-background/50 text-xs uppercase tracking-widest">Keşfet</span>
           <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
             <ChevronDown className="w-5 h-5 text-background/50" />
           </motion.div>
         </motion.div>
       </section>
 
-      {/* 2. EXPECTATION & REAL OUTCOME */}
+      {/* 2. EXPECTATION & OUTCOME */}
       <ExpectationOutcome />
 
       {/* 3. TRUST BLOCK */}
@@ -173,17 +159,13 @@ export default function DTVVizePage() {
       {/* 4. SOCIAL PROOF */}
       <SocialProofMini />
 
-      {/* 5. CHECKOUT GRID (id="checkout") — ALL residency services */}
+      {/* 5. CHECKOUT */}
       <div id="checkout" className="scroll-mt-28 md:scroll-mt-36">
         <section className="section-editorial border-t border-border py-16">
           <div className="container mx-auto px-6 lg:px-12">
             <div className="text-center mb-10">
-              <p className="caption-editorial text-accent mb-2">
-                {t("dtvVize.packagesLabel", { defaultValue: "Danışmanlık Paketleri" })}
-              </p>
-              <h2 className="heading-section">
-                {t("dtvVize.packagesTitle", { defaultValue: "İhtiyacınıza Uygun Paketi Seçin" })}
-              </h2>
+              <p className="caption-editorial text-accent mb-2">Danışmanlık Paketleri</p>
+              <h2 className="heading-section">İhtiyacınıza Uygun Paketi Seçin</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 min-h-[420px] md:min-h-[480px] items-stretch auto-rows-fr">
               {services.map((s, index) => (
@@ -194,15 +176,14 @@ export default function DTVVizePage() {
         </section>
       </div>
 
-      {/* 7. TRUST STATS */}
+      {/* 6. DTV GERÇEKLERI — sadece vize spesifik, servis metriği yok */}
       <section className="py-16 lg:py-20 bg-secondary">
         <div className="container mx-auto px-6 lg:px-12">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
             {[
-              { value: "5 Yıl", label: t("dtvVize.stat1", { defaultValue: "Geçerlilik Süresi" }) },
-              { value: "180 Gün", label: t("dtvVize.stat2", { defaultValue: "Her Girişte Kalış" }) },
-              { value: "Sınırsız", label: t("dtvVize.stat3", { defaultValue: "Giriş-Çıkış Hakkı" }) },
-              { value: "<24s", label: t("dtvVize.stat4", { defaultValue: "Danışman Yanıt Süresi" }) },
+              { value: "5 Yıl", label: "Geçerlilik Süresi" },
+              { value: "180 Gün", label: "Her Girişte Kalış" },
+              { value: "Sınırsız", label: "Giriş-Çıkış Hakkı" },
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -222,17 +203,15 @@ export default function DTVVizePage() {
         </div>
       </section>
 
-      {/* 8. WHO IS THIS FOR */}
+      {/* 7. WHO IS THIS FOR */}
       <ServiceWhoIsFor />
 
-      {/* 9. PROCESS */}
+      {/* 8. PROCESS */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <p className="caption-editorial text-accent mb-4">{t("dtvVize.processLabel", { defaultValue: "Süreç" })}</p>
-            <h2 className="heading-section">
-              {t("dtvVize.processTitle", { defaultValue: "Üç Adımda Yeni Hayatına Başla" })}
-            </h2>
+            <p className="caption-editorial text-accent mb-4">Süreç</p>
+            <h2 className="heading-section">Üç Adımda Yeni Hayatına Başla</h2>
           </div>
           <div className="max-w-2xl mx-auto">
             {processSteps.map((item, i) => (
@@ -262,14 +241,12 @@ export default function DTVVizePage() {
         </div>
       </section>
 
-      {/* 10. FAQ */}
+      {/* 9. FAQ */}
       <section className="py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <p className="caption-editorial text-accent mb-4">
-              {t("dtvVize.faqLabel", { defaultValue: "Sık Sorulan Sorular" })}
-            </p>
-            <h2 className="heading-section">{t("dtvVize.faqTitle", { defaultValue: "Merak Ettiklerin" })}</h2>
+            <p className="caption-editorial text-accent mb-4">Sık Sorulan Sorular</p>
+            <h2 className="heading-section">Merak Ettiklerin</h2>
           </div>
           <div className="max-w-3xl mx-auto">
             <Accordion type="single" collapsible className="space-y-4">
@@ -290,28 +267,23 @@ export default function DTVVizePage() {
         </div>
       </section>
 
-      {/* 11. FREE TOOL (PlanBForm) */}
+      {/* 10. FORM */}
       <section className="py-20 bg-card border-t border-border">
         <div className="container max-w-2xl px-6">
-          <h2 className="heading-section text-center mb-4">
-            {t("dtvVize.formTitle", { defaultValue: "Ücretsiz Uygunluk Kontrolü" })}
-          </h2>
+          <h2 className="heading-section text-center mb-4">Ücretsiz Uygunluk Kontrolü</h2>
           <p className="text-muted-foreground text-center mb-10 body-editorial">
-            {t("dtvVize.formDesc", {
-              defaultValue: "Hızlı bir ön değerlendirme yapın. Ardından danışmanlık paketinizi satın alabilirsiniz.",
-            })}
+            Hızlı bir ön değerlendirme yapın. Ardından danışmanlık paketinizi seçebilirsiniz.
           </p>
           {formSubmitted ? (
             <div className="text-center py-10 space-y-6">
               <p className="text-lg font-heading text-foreground">
-                Uygunluk ihtimaliniz yüksek. Süreci başlatmak için hemen yukarıdan danışmanlık paketini satın
-                alabilirsiniz.
+                Uygunluk ihtimaliniz yüksek. Süreci başlatmak için danışmanlık paketini seçin.
               </p>
               <Button
                 onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}
                 className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
               >
-                Danışmanlık Paketini Satın Al ↑
+                Danışmanlık Paketini Seç ↑
               </Button>
             </div>
           ) : (
@@ -320,7 +292,7 @@ export default function DTVVizePage() {
         </div>
       </section>
 
-      {/* 12. COMPARISON & CROSS-SELL */}
+      {/* 11. COMPARISON */}
       <ComparisonCrossSell currentSlug="dtv-vize" />
 
       <footer className="py-16 bg-corporate-navy border-t border-holistic/10">
