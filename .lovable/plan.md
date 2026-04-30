@@ -1,31 +1,45 @@
+## Add Turkish Vietnam Destination Page (revised routing)
 
+Create the TR counterpart to `VietnamPageEN.tsx` under the existing `/tr/*` namespace.
 
-## TikTok Verification File
+### 1. New file: `src/pages/tr/VietnamPage.tsx`
 
-Create a static verification file so TikTok can confirm ownership of the `/visas/thailand-dtv/` path.
+Mirror `src/pages/en/VietnamPageEN.tsx` structure (Hero → Context → Pathways → Form → Footer + StickyMobileCTA), substituting:
 
-### File to create
+- TR copy from your message (Kuzeyin Sessiz Güzergahı, Neden Vietnam, Güzergahlar, etc.).
+- Lead capture: use `PlanBForm` (TR pages pattern) instead of `AdvisoryForm`, wrapped in `<section id="vietnam-form">` with `formSubmitted` state and a WhatsApp fallback CTA after submit.
+- Hero CTA button → `scrollToForm()` (smooth scroll to `#vietnam-form`); secondary WhatsApp CTA via `buildWhatsAppUrl` + `trackPostHogEvent('whatsapp_click', { source: 'vietnam_tr' }, true)`.
+- Same Unsplash hero background, same icon set, same motion/grid/typography classes used in EN page (design parity preserved).
+- `useEffect(() => window.scrollTo(0,0), [])` on mount.
+- `<SEOHead>` with TR title/description, **`canonical="https://planbasya.com/tr/vietnam"`**, `schemaType="Service"`, `serviceName="Vietnam Danışmanlığı"`. Hreflang is auto-emitted by `SEOHead`.
+- `<FocusedNavbar />`, `<TrustBar />`, `<StickyMobileCTA onClick={scrollToForm} />`, footer identical to EN.
 
-**Path:** `public/visas/thailand-dtv/tiktok1WVnqnOBe9my8OoI9I9ac1MNMk39cwDI.txt`
+### 2. Register route in `src/App.tsx`
 
-**Content (single line, no trailing newline issues):**
+Import the page and add under the existing `/tr/*` block, **above** the `*` catch-all:
+
+```tsx
+import VietnamPage from "./pages/tr/VietnamPage";
+...
+<Route path="/tr/vietnam" element={<VietnamPage />} />
 ```
-tiktok-developers-site-verification=1WVnqnOBe9my8OoI9I9ac1MNMk39cwDI
-```
 
-### How it works
+### 3. Skip `useDomainScope.ts`
 
-- Files in `public/` are served as-is at the matching URL by Vite.
-- After publish, TikTok will be able to fetch:
-  - `https://planbasia.com/visas/thailand-dtv/tiktok1WVnqnOBe9my8OoI9I9ac1MNMk39cwDI.txt`
-  - `https://planbasya.com/visas/thailand-dtv/tiktok1WVnqnOBe9my8OoI9I9ac1MNMk39cwDI.txt`
-- No routing, SPA fallback, or React code changes needed — static asset only.
+`/tr` prefix is already in `TR_ROUTE_PREFIXES`, so scope detection works as-is.
 
-### Post-implementation
+### 4. Update `public/sitemap.xml`
 
-1. Hit **Publish/Update** so the file is served on the custom domains.
-2. Verify the URL returns the exact verification string (200, `text/plain`).
-3. Click "Verify" in TikTok's developer console.
+If a Vietnam TR entry exists referencing `/destinasyonlar/vietnam`, change it to `https://planbasya.com/tr/vietnam` with hreflang alternate pointing to `https://planbasia.com/destinations/vietnam`. If no entry exists yet, add it following the existing TR `<url>` pattern.
 
-No other files touched. No dependencies. No DB changes.
+### Out of scope (per "No Refactoring" rule)
 
+- Not touching the EN page or shared components.
+- TR navbar link to the new page is a separate follow-up.
+
+### Verification after build
+
+- `/tr/vietnam` on planbasya.com renders the TR Vietnam page.
+- Hero CTA + Sticky CTA scroll to `#vietnam-form`.
+- `PlanBForm` submit shows TR success state with WhatsApp fallback.
+- `<html lang="tr">` and canonical `https://planbasya.com/tr/vietnam` present in head.

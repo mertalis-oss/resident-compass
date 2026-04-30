@@ -119,10 +119,19 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Vietnam (EN-Only) -->
+  <!-- Vietnam (Dual) -->
   <url>
     <loc>https://planbasia.com/destinations/vietnam</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/destinations/vietnam" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/tr/vietnam" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/destinations/vietnam" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://planbasya.com/tr/vietnam</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/destinations/vietnam" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/tr/vietnam" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/destinations/vietnam" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

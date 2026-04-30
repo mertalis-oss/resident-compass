@@ -36,6 +36,7 @@ import ExpeditionsPageEN from "./pages/en/ExpeditionsPageEN";
 import WellnessPageEN from "./pages/en/WellnessPageEN";
 import MICEPageEN from "./pages/en/MICEPageEN";
 import VietnamPageEN from "./pages/en/VietnamPageEN";
+import VietnamPage from "./pages/tr/VietnamPage";
 import CambodiaPageEN from "./pages/en/CambodiaPageEN";
 
 const queryClient = new QueryClient();
@@ -98,6 +99,7 @@ const App = () => (
               {/* TR-specific pages */}
               <Route path="/tr" element={<Index />} />
               <Route path="/tr/rabbit-hole" element={<RabbitHolePage />} />
+              <Route path="/tr/vietnam" element={<VietnamPage />} />
 
               {/* TR canonical URLs per sitemap */}
               <Route path="/vizeler/dtv-vize" element={<DTVVizePage />} />
