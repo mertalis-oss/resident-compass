@@ -1,45 +1,42 @@
-## Add Turkish Vietnam Destination Page (revised routing)
+## Add Turkish Cambodia Destination Page
 
-Create the TR counterpart to `VietnamPageEN.tsx` under the existing `/tr/*` namespace.
+### 1. Create `src/pages/tr/CambodyaPage.tsx`
 
-### 1. New file: `src/pages/tr/VietnamPage.tsx`
+Mirror `src/pages/tr/VietnamPage.tsx` exactly (same structure, classes, motion, footer, sticky CTA pattern), substituting:
 
-Mirror `src/pages/en/VietnamPageEN.tsx` structure (Hero → Context → Pathways → Form → Footer + StickyMobileCTA), substituting:
-
-- TR copy from your message (Kuzeyin Sessiz Güzergahı, Neden Vietnam, Güzergahlar, etc.).
-- Lead capture: use `PlanBForm` (TR pages pattern) instead of `AdvisoryForm`, wrapped in `<section id="vietnam-form">` with `formSubmitted` state and a WhatsApp fallback CTA after submit.
-- Hero CTA button → `scrollToForm()` (smooth scroll to `#vietnam-form`); secondary WhatsApp CTA via `buildWhatsAppUrl` + `trackPostHogEvent('whatsapp_click', { source: 'vietnam_tr' }, true)`.
-- Same Unsplash hero background, same icon set, same motion/grid/typography classes used in EN page (design parity preserved).
-- `useEffect(() => window.scrollTo(0,0), [])` on mount.
-- `<SEOHead>` with TR title/description, **`canonical="https://planbasya.com/tr/vietnam"`**, `schemaType="Service"`, `serviceName="Vietnam Danışmanlığı"`. Hreflang is auto-emitted by `SEOHead`.
-- `<FocusedNavbar />`, `<TrustBar />`, `<StickyMobileCTA onClick={scrollToForm} />`, footer identical to EN.
+- **Icons**: `MapPin, Shield, Zap, Globe, Building2, Users, Briefcase, MessageCircle`
+- **Hero image**: `https://images.unsplash.com/photo-1528360983277-13d401cdc186?q=80&w=2070&auto=format&fit=crop`
+- **SEOHead**: title `"Kamboçya — Hızlı. Sakin. Esnek. | Plan B Asya"`, description `"Kamboçya'da concierge karşılama ve stratejik konumlanma."`, canonical `https://planbasya.com/tr/cambodia`, schemaType `Service`, serviceName `Kamboçya Danışmanlığı`.
+- **Hero**: badge "Destinasyon Danışmanlığı", H1 "Hızlı. Sakin. Esnek." + accent "Kamboçya.", subheading "Concierge karşılama ve stratejik konumlanma.", primary CTA "Danışmanlığı Başlat" → `scrollToForm()`, secondary "WhatsApp ile Konuş" → handler.
+- **Context** (caption "Neden Kamboçya", H2 "Hız ve Sükunetin Kesişimi"):
+  - Zap / Hızlı Kurulum / "Şirket kaydı ve bankacılık günler içinde tamamlanır. Kamboçya'nın düzenleyici ortamı hızı destekler."
+  - Shield / Sakin Operasyon / "Düşük yaşam maliyeti, minimal bürokratik yük ve uluslararası girişimcilere açık ortam."
+  - Globe / Stratejik Konum / "Tayland, Vietnam ve Laos arasındaki köprü. Büyüyen dijital altyapı ve ASEAN entegrasyonu."
+- **Pathways** (caption "Güzergahlar", H2 "Kamboçya'ya Giriş Yolunuz"):
+  - Building2 / Phnom Penh Üssü / "Kamboçya'nın dinamik başkentinde iş merkezini kur. Bankacılık, ko-çalışma ve topluluk."
+  - Users / Siem Reap Retreatı / "Angkor'un kapısından uzaktan çalışma ve kültürel bütünleşme. Yaratıcı ve wellness profesyonelleri için ideal."
+  - Briefcase / Şirket Kuruluşu / "Dijital işletmeler için şirket tescili, çalışma izinleri ve vergi verimli yapılandırma."
+- **Form** `<section id="cambodia-form">` (caption "Danışmanlığı Başlat", H2 "Kamboçya Sürecinizi Başlatın"): `<PlanBForm serviceId="cambodia-tr" onSubmitSuccess={() => setFormSubmitted(true)} />`. Post-submit: "Talebiniz alındı. En kısa sürede geri döneceğiz." + WhatsApp button "WhatsApp ile İletişime Geçin".
+- **Analytics**: `trackPostHogEvent('whatsapp_click', { source: 'cambodia_tr', intent: 'cambodia-advisory' }, true)`.
+- **WhatsApp message**: `Sayfa: Kamboçya | Domain: <hostname> | Merhaba, Kamboçya danışmanlığı hakkında bilgi almak istiyorum.` via `buildWhatsAppUrl`.
+- **StickyMobileCTA** `onClick={scrollToForm}`, footer identical to Vietnam TR.
 
 ### 2. Register route in `src/App.tsx`
 
-Import the page and add under the existing `/tr/*` block, **above** the `*` catch-all:
+- Add import: `import CambodyaPage from "./pages/tr/CambodyaPage";`
+- Add route under `/tr/*` block, above catch-all: `<Route path="/tr/cambodia" element={<CambodyaPage />} />`
 
-```tsx
-import VietnamPage from "./pages/tr/VietnamPage";
-...
-<Route path="/tr/vietnam" element={<VietnamPage />} />
-```
+### 3. Update `public/sitemap.xml`
 
-### 3. Skip `useDomainScope.ts`
+Convert the existing Cambodia entry from EN-only to dual-locale (matching Vietnam pattern):
 
-`/tr` prefix is already in `TR_ROUTE_PREFIXES`, so scope detection works as-is.
+- Update existing `https://planbasia.com/destinations/cambodia` block: add `hreflang="tr"` alternate `https://planbasya.com/tr/cambodia`. Rename comment to `<!-- Cambodia (Dual) -->`.
+- Add new `<url>` block for `https://planbasya.com/tr/cambodia` with both `hreflang` alternates and `x-default` pointing to EN.
 
-### 4. Update `public/sitemap.xml`
+### Out of scope
 
-If a Vietnam TR entry exists referencing `/destinasyonlar/vietnam`, change it to `https://planbasya.com/tr/vietnam` with hreflang alternate pointing to `https://planbasia.com/destinations/vietnam`. If no entry exists yet, add it following the existing TR `<url>` pattern.
+- No edits to `CambodiaPageEN.tsx`, shared components, navbar, or `useDomainScope.ts` (`/tr` already covered).
 
-### Out of scope (per "No Refactoring" rule)
+### Verification
 
-- Not touching the EN page or shared components.
-- TR navbar link to the new page is a separate follow-up.
-
-### Verification after build
-
-- `/tr/vietnam` on planbasya.com renders the TR Vietnam page.
-- Hero CTA + Sticky CTA scroll to `#vietnam-form`.
-- `PlanBForm` submit shows TR success state with WhatsApp fallback.
-- `<html lang="tr">` and canonical `https://planbasya.com/tr/vietnam` present in head.
+- `/tr/cambodia` renders page; Hero CTA + StickyMobileCTA both smooth-scroll to `#cambodia-form`; WhatsApp success state appears only after `PlanBForm` submit; sitemap has both EN and TR Cambodia URLs with correct hreflang pairs.

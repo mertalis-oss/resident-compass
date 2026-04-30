@@ -137,10 +137,19 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Cambodia (EN-Only) -->
+  <!-- Cambodia (Dual) -->
   <url>
     <loc>https://planbasia.com/destinations/cambodia</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/destinations/cambodia" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/tr/cambodia" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/destinations/cambodia" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://planbasya.com/tr/cambodia</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/destinations/cambodia" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/tr/cambodia" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/destinations/cambodia" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
