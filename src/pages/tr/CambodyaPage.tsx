@@ -90,7 +90,7 @@ export default function CambodyaPage() {
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1549294413-26f195200c16?q=80&w=2070&auto=format&fit=crop')`,
+              backgroundImage: `url('https://images.unsplash.com/photo-1540611025311-01df3cef54b5?q=80&w=4000&auto=format&fit=crop')`,
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/70 to-foreground/40" />
