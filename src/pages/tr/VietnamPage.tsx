@@ -1,29 +1,29 @@
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { MapPin, BookOpen, Briefcase, Globe, Route, Mountain, Users, MessageCircle } from 'lucide-react';
-import FocusedNavbar from '@/components/FocusedNavbar';
-import TrustBar from '@/components/TrustBar';
-import SEOHead from '@/components/SEOHead';
-import StickyMobileCTA from '@/components/StickyMobileCTA';
-import PlanBForm from '@/components/PlanBForm';
-import { Button } from '@/components/ui/button';
-import { buildWhatsAppUrl } from '@/lib/constants';
-import { trackPostHogEvent } from '@/lib/posthog';
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { MapPin, BookOpen, Briefcase, Globe, Route, Mountain, Users, MessageCircle } from "lucide-react";
+import FocusedNavbar from "@/components/FocusedNavbar";
+import TrustBar from "@/components/TrustBar";
+import SEOHead from "@/components/SEOHead";
+import StickyMobileCTA from "@/components/StickyMobileCTA";
+import PlanBForm from "@/components/PlanBForm";
+import { Button } from "@/components/ui/button";
+import { buildWhatsAppUrl } from "@/lib/constants";
+import { trackPostHogEvent } from "@/lib/posthog";
 
 const context = [
   {
     icon: BookOpen,
-    title: 'Kültürel Derinlik',
-    desc: 'Kuzey Vietnam dil programları, geleneksel zanaatlar ve kültürel bütünleşme.',
+    title: "Kültürel Derinlik",
+    desc: "Kuzey Vietnam dil programları, geleneksel zanaatlar ve kültürel bütünleşme.",
   },
   {
     icon: Briefcase,
-    title: 'Yumuşak İniş',
-    desc: 'Konaklama, bankacılık, SIM kart, yerel oryantasyon — ilk günden yapılandırılmış destek.',
+    title: "Yumuşak İniş",
+    desc: "Konaklama, bankacılık, SIM kart, yerel oryantasyon — ilk günden yapılandırılmış destek.",
   },
   {
     icon: Globe,
-    title: 'Yükselen Sınır',
+    title: "Yükselen Sınır",
     desc: "Güneydoğu Asya'nın en hızlı büyüyen ekonomisi. Dijital altyapısı hızla genişliyor.",
   },
 ];
@@ -31,18 +31,18 @@ const context = [
 const pathways = [
   {
     icon: Mountain,
-    title: 'Ha Giang Keşfi',
+    title: "Ha Giang Keşfi",
     desc: "Vietnam'ın en dramatik dağ geçitlerinden ve etnik azınlık köylerinden geçen rehberli motor turu.",
   },
   {
     icon: Route,
-    title: 'Hanoi Üs Kampı',
+    title: "Hanoi Üs Kampı",
     desc: "Vietnam'ın kültür başkentinde çalışma üssünü kur. Ko-çalışma alanı, topluluk ve bağlantı.",
   },
   {
     icon: Users,
-    title: 'Dil & Entegrasyon',
-    desc: 'Kültürel mentorluk ve yerel ağ kurulumla eşleştirilmiş Vietnamca dil programları.',
+    title: "Dil & Entegrasyon",
+    desc: "Kültürel mentorluk ve yerel ağ kurulumla eşleştirilmiş Vietnamca dil programları.",
   },
 ];
 
@@ -54,22 +54,22 @@ export default function VietnamPage() {
   }, []);
 
   const whatsappUrl = buildWhatsAppUrl(
-    'Sayfa: Vietnam | Domain: ' +
-      (typeof window !== 'undefined' ? window.location.hostname : '') +
-      ' | Merhaba, Vietnam danışmanlığı hakkında bilgi almak istiyorum.'
+    "Sayfa: Vietnam | Domain: " +
+      (typeof window !== "undefined" ? window.location.hostname : "") +
+      " | Merhaba, Vietnam danışmanlığı hakkında bilgi almak istiyorum.",
   );
 
   const handleWhatsAppClick = () => {
-    trackPostHogEvent('whatsapp_click', { source: 'vietnam_tr', intent: 'vietnam-advisory' }, true);
+    trackPostHogEvent("whatsapp_click", { source: "vietnam_tr", intent: "vietnam-advisory" }, true);
     try {
-      window.open(whatsappUrl, '_blank');
+      window.open(whatsappUrl, "_blank");
     } catch {
       window.location.href = whatsappUrl;
     }
   };
 
   const scrollToForm = () => {
-    document.getElementById('vietnam-form')?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById("vietnam-form")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -113,10 +113,9 @@ export default function VietnamPage() {
             <p className="text-lg text-background/80 max-w-xl mb-10">
               Asya'nın yükselen sınırında kültürel çalışma ve yumuşak iniş.
             </p>
-<button onClick={scrollToForm} className="btn-luxury-gold inline-flex items-center gap-2">
-  <MessageCircle className="w-4 h-4" /> Danışmanlığı Başlat
-</button>
-            </div>
+            <button onClick={scrollToForm} className="btn-luxury-gold inline-flex items-center gap-2">
+              <MessageCircle className="w-4 h-4" /> Danışmanlığı Başlat
+            </button>
           </motion.div>
         </div>
       </section>
@@ -178,7 +177,7 @@ export default function VietnamPage() {
       </section>
 
       {/* Form */}
-      <section id="vietnam-form" className="py-20 bg-background border-b border-border">
+      <section id="vietnam-form" className="py-20 bg-background border-b border-border scroll-mt-24">
         <div className="container max-w-2xl px-6">
           <div className="text-center mb-8">
             <p className="caption-editorial text-accent mb-4">Danışmanlığı Başlat</p>
