@@ -1,42 +1,35 @@
-## Add Turkish Cambodia Destination Page
+## Plan: Harden `email_send_state` and re-confirm SECURITY DEFINER lockdown
 
-### 1. Create `src/pages/tr/CambodyaPage.tsx`
+### Current state (verified against the live database)
 
-Mirror `src/pages/tr/VietnamPage.tsx` exactly (same structure, classes, motion, footer, sticky CTA pattern), substituting:
+- `email_send_state` — RLS is enabled but has **zero policies**. Default-deny is active, but the linter wants the intent declared explicitly.
+- All sensitive `SECURITY DEFINER` functions (`process_stripe_payment`, `enqueue_email`, `read_email_batch`, `move_to_dlq`, `delete_email`, `auto_assign_founder_admin`, `lock_profile_role`, `handle_new_user`, `enforce_ai_rate_limit`, `enforce_state_transition`) **already** have `EXECUTE` revoked from `anon` and `authenticated` (from the previous migration). Only `service_role` and `postgres` retain access.
+- `has_role` and `check_visa_status` retain `EXECUTE` for `authenticated` — intentional, untouched.
+- Trigger-only helpers `update_updated_at_column` and `prevent_ledger_modification` still have `EXECUTE` for `anon`/`authenticated`. Per your instruction "do not modify trigger functions", these are left as-is.
 
-- **Icons**: `MapPin, Shield, Zap, Globe, Building2, Users, Briefcase, MessageCircle`
-- **Hero image**: `https://images.unsplash.com/photo-1528360983277-13d401cdc186?q=80&w=2070&auto=format&fit=crop`
-- **SEOHead**: title `"Kamboçya — Hızlı. Sakin. Esnek. | Plan B Asya"`, description `"Kamboçya'da concierge karşılama ve stratejik konumlanma."`, canonical `https://planbasya.com/tr/cambodia`, schemaType `Service`, serviceName `Kamboçya Danışmanlığı`.
-- **Hero**: badge "Destinasyon Danışmanlığı", H1 "Hızlı. Sakin. Esnek." + accent "Kamboçya.", subheading "Concierge karşılama ve stratejik konumlanma.", primary CTA "Danışmanlığı Başlat" → `scrollToForm()`, secondary "WhatsApp ile Konuş" → handler.
-- **Context** (caption "Neden Kamboçya", H2 "Hız ve Sükunetin Kesişimi"):
-  - Zap / Hızlı Kurulum / "Şirket kaydı ve bankacılık günler içinde tamamlanır. Kamboçya'nın düzenleyici ortamı hızı destekler."
-  - Shield / Sakin Operasyon / "Düşük yaşam maliyeti, minimal bürokratik yük ve uluslararası girişimcilere açık ortam."
-  - Globe / Stratejik Konum / "Tayland, Vietnam ve Laos arasındaki köprü. Büyüyen dijital altyapı ve ASEAN entegrasyonu."
-- **Pathways** (caption "Güzergahlar", H2 "Kamboçya'ya Giriş Yolunuz"):
-  - Building2 / Phnom Penh Üssü / "Kamboçya'nın dinamik başkentinde iş merkezini kur. Bankacılık, ko-çalışma ve topluluk."
-  - Users / Siem Reap Retreatı / "Angkor'un kapısından uzaktan çalışma ve kültürel bütünleşme. Yaratıcı ve wellness profesyonelleri için ideal."
-  - Briefcase / Şirket Kuruluşu / "Dijital işletmeler için şirket tescili, çalışma izinleri ve vergi verimli yapılandırma."
-- **Form** `<section id="cambodia-form">` (caption "Danışmanlığı Başlat", H2 "Kamboçya Sürecinizi Başlatın"): `<PlanBForm serviceId="cambodia-tr" onSubmitSuccess={() => setFormSubmitted(true)} />`. Post-submit: "Talebiniz alındı. En kısa sürede geri döneceğiz." + WhatsApp button "WhatsApp ile İletişime Geçin".
-- **Analytics**: `trackPostHogEvent('whatsapp_click', { source: 'cambodia_tr', intent: 'cambodia-advisory' }, true)`.
-- **WhatsApp message**: `Sayfa: Kamboçya | Domain: <hostname> | Merhaba, Kamboçya danışmanlığı hakkında bilgi almak istiyorum.` via `buildWhatsAppUrl`.
-- **StickyMobileCTA** `onClick={scrollToForm}`, footer identical to Vietnam TR.
+### Changes (single migration)
 
-### 2. Register route in `src/App.tsx`
+**1. `email_send_state` — add explicit policies**
 
-- Add import: `import CambodyaPage from "./pages/tr/CambodyaPage";`
-- Add route under `/tr/*` block, above catch-all: `<Route path="/tr/cambodia" element={<CambodyaPage />} />`
+- `SELECT` policy: admins only, via `public.has_role(auth.uid(), 'admin'::user_role)`.
+- `INSERT`, `UPDATE`, `DELETE` policies: explicit deny (`WITH CHECK false` / `USING false`) for the `authenticated` role.
+- `service_role` bypasses RLS, so the email queue edge function continues to read/write normally.
 
-### 3. Update `public/sitemap.xml`
+**2. `SECURITY DEFINER` functions — idempotent re-revoke**
 
-Convert the existing Cambodia entry from EN-only to dual-locale (matching Vietnam pattern):
+Re-issue `REVOKE EXECUTE ... FROM anon, authenticated, public` on the sensitive functions (no-op where already revoked, hardens anything that drifted). Excludes `has_role`, `check_visa_status`, and trigger-only functions per your instruction.
 
-- Update existing `https://planbasia.com/destinations/cambodia` block: add `hreflang="tr"` alternate `https://planbasya.com/tr/cambodia`. Rename comment to `<!-- Cambodia (Dual) -->`.
-- Add new `<url>` block for `https://planbasya.com/tr/cambodia` with both `hreflang` alternates and `x-default` pointing to EN.
+### What this does NOT change
 
-### Out of scope
+- `has_role`, `check_visa_status` — untouched (intentional client access).
+- `update_updated_at_column`, `prevent_ledger_modification` — untouched (trigger functions, per your instruction).
+- Edge functions, app code, types — no client-side changes needed.
 
-- No edits to `CambodiaPageEN.tsx`, shared components, navbar, or `useDomainScope.ts` (`/tr` already covered).
+### Expected linter outcome
 
-### Verification
+- `email_send_state_no_policy` warning → resolved.
+- The remaining `SUPA_authenticated_security_definer_function_executable` warning will continue to flag `has_role` and `check_visa_status` only. Already documented as intentional in the security findings.
 
-- `/tr/cambodia` renders page; Hero CTA + StickyMobileCTA both smooth-scroll to `#cambodia-form`; WhatsApp success state appears only after `PlanBForm` submit; sitemap has both EN and TR Cambodia URLs with correct hreflang pairs.
+### Approval
+
+Once approved, I'll switch to build mode and run the single migration.
