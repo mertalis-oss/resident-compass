@@ -113,17 +113,9 @@ export default function VietnamPage() {
             <p className="text-lg text-background/80 max-w-xl mb-10">
               Asya'nın yükselen sınırında kültürel çalışma ve yumuşak iniş.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Button onClick={scrollToForm} className="btn-luxury-gold inline-flex items-center gap-2">
-                Danışmanlığı Başlat
-              </Button>
-              <Button
-                onClick={handleWhatsAppClick}
-                variant="outline"
-                className="inline-flex items-center gap-2 border-background/40 text-background hover:bg-background/10"
-              >
-                <MessageCircle className="w-4 h-4" /> WhatsApp ile Konuş
-              </Button>
+<button onClick={scrollToForm} className="btn-luxury-gold inline-flex items-center gap-2">
+  <MessageCircle className="w-4 h-4" /> Danışmanlığı Başlat
+</button>
             </div>
           </motion.div>
         </div>
