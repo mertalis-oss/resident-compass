@@ -1,48 +1,48 @@
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { MapPin, Shield, Zap, Globe, Building2, Users, Briefcase, MessageCircle } from 'lucide-react';
-import FocusedNavbar from '@/components/FocusedNavbar';
-import TrustBar from '@/components/TrustBar';
-import SEOHead from '@/components/SEOHead';
-import StickyMobileCTA from '@/components/StickyMobileCTA';
-import PlanBForm from '@/components/PlanBForm';
-import { Button } from '@/components/ui/button';
-import { buildWhatsAppUrl } from '@/lib/constants';
-import { trackPostHogEvent } from '@/lib/posthog';
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { MapPin, Shield, Zap, Globe, Building2, Users, Briefcase, MessageCircle } from "lucide-react";
+import FocusedNavbar from "@/components/FocusedNavbar";
+import TrustBar from "@/components/TrustBar";
+import SEOHead from "@/components/SEOHead";
+import StickyMobileCTA from "@/components/StickyMobileCTA";
+import PlanBForm from "@/components/PlanBForm";
+import { Button } from "@/components/ui/button";
+import { buildWhatsAppUrl } from "@/lib/constants";
+import { trackPostHogEvent } from "@/lib/posthog";
 
 const context = [
   {
     icon: Zap,
-    title: 'Hızlı Kurulum',
+    title: "Hızlı Kurulum",
     desc: "Şirket kaydı ve bankacılık günler içinde tamamlanır. Kamboçya'nın düzenleyici ortamı hızı destekler.",
   },
   {
     icon: Shield,
-    title: 'Sakin Operasyon',
-    desc: 'Düşük yaşam maliyeti, minimal bürokratik yük ve uluslararası girişimcilere açık ortam.',
+    title: "Sakin Operasyon",
+    desc: "Düşük yaşam maliyeti, minimal bürokratik yük ve uluslararası girişimcilere açık ortam.",
   },
   {
     icon: Globe,
-    title: 'Stratejik Konum',
-    desc: 'Tayland, Vietnam ve Laos arasındaki köprü. Büyüyen dijital altyapı ve ASEAN entegrasyonu.',
+    title: "Stratejik Konum",
+    desc: "Tayland, Vietnam ve Laos arasındaki köprü. Büyüyen dijital altyapı ve ASEAN entegrasyonu.",
   },
 ];
 
 const pathways = [
   {
     icon: Building2,
-    title: 'Phnom Penh Üssü',
+    title: "Phnom Penh Üssü",
     desc: "Kamboçya'nın dinamik başkentinde iş merkezini kur. Bankacılık, ko-çalışma ve topluluk.",
   },
   {
     icon: Users,
-    title: 'Siem Reap Retreatı',
+    title: "Siem Reap Retreatı",
     desc: "Angkor'un kapısından uzaktan çalışma ve kültürel bütünleşme. Yaratıcı ve wellness profesyonelleri için ideal.",
   },
   {
     icon: Briefcase,
-    title: 'Şirket Kuruluşu',
-    desc: 'Dijital işletmeler için şirket tescili, çalışma izinleri ve vergi verimli yapılandırma.',
+    title: "Şirket Kuruluşu",
+    desc: "Dijital işletmeler için şirket tescili, çalışma izinleri ve vergi verimli yapılandırma.",
   },
 ];
 
@@ -54,22 +54,22 @@ export default function CambodyaPage() {
   }, []);
 
   const whatsappUrl = buildWhatsAppUrl(
-    'Sayfa: Kamboçya | Domain: ' +
-      (typeof window !== 'undefined' ? window.location.hostname : '') +
-      ' | Merhaba, Kamboçya danışmanlığı hakkında bilgi almak istiyorum.'
+    "Sayfa: Kamboçya | Domain: " +
+      (typeof window !== "undefined" ? window.location.hostname : "") +
+      " | Merhaba, Kamboçya danışmanlığı hakkında bilgi almak istiyorum.",
   );
 
   const handleWhatsAppClick = () => {
-    trackPostHogEvent('whatsapp_click', { source: 'cambodia_tr', intent: 'cambodia-advisory' }, true);
+    trackPostHogEvent("whatsapp_click", { source: "cambodia_tr", intent: "cambodia-advisory" }, true);
     try {
-      window.open(whatsappUrl, '_blank');
+      window.open(whatsappUrl, "_blank");
     } catch {
       window.location.href = whatsappUrl;
     }
   };
 
   const scrollToForm = () => {
-    document.getElementById('cambodia-form')?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById("cambodia-form")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -110,21 +110,10 @@ export default function CambodyaPage() {
               Hızlı. Sakin. Esnek.
               <span className="block text-accent">Kamboçya.</span>
             </h1>
-            <p className="text-lg text-background/80 max-w-xl mb-10">
-              Concierge karşılama ve stratejik konumlanma.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Button onClick={scrollToForm} className="btn-luxury-gold inline-flex items-center gap-2">
-                Danışmanlığı Başlat
-              </Button>
-              <Button
-                onClick={handleWhatsAppClick}
-                variant="outline"
-                className="inline-flex items-center gap-2 border-background/40 text-background hover:bg-background/10"
-              >
-                <MessageCircle className="w-4 h-4" /> WhatsApp ile Konuş
-              </Button>
-            </div>
+            <p className="text-lg text-background/80 max-w-xl mb-10">Concierge karşılama ve stratejik konumlanma.</p>
+            <button onClick={scrollToForm} className="btn-luxury-gold inline-flex items-center gap-2">
+              <MessageCircle className="w-4 h-4" /> Danışmanlığı Başlat
+            </button>
           </motion.div>
         </div>
       </section>
@@ -186,7 +175,7 @@ export default function CambodyaPage() {
       </section>
 
       {/* Form */}
-      <section id="cambodia-form" className="py-20 bg-background border-b border-border">
+      <section id="cambodia-form" className="py-20 bg-background border-b border-border scroll-mt-24">
         <div className="container max-w-2xl px-6">
           <div className="text-center mb-8">
             <p className="caption-editorial text-accent mb-4">Danışmanlığı Başlat</p>
