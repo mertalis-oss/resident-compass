@@ -97,7 +97,7 @@ export default function FocusedNavbar() {
     >
       <div className="container flex items-center justify-between h-16 md:h-20">
         <Link to={scope === "tr" ? "/tr" : "/"}>
-          <img src={logoWhite} alt="Plan B Asia" className="h-9 md:h-10 transition-all duration-500" />
+          <img src={logoWhite} alt="Plan B Asia" width={160} height={40} decoding="async" className="h-9 md:h-10 w-auto transition-all duration-500" />
         </Link>
 
         {/* Desktop Nav */}
