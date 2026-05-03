@@ -1,35 +1,67 @@
-## Plan: Harden `email_send_state` and re-confirm SECURITY DEFINER lockdown
+## Performance Pass — LCP, INP, Idle Loading (Zero Visual Diff)
 
-### Current state (verified against the live database)
+### 1. `index.html` — Critical Path
 
-- `email_send_state` — RLS is enabled but has **zero policies**. Default-deny is active, but the linter wants the intent declared explicitly.
-- All sensitive `SECURITY DEFINER` functions (`process_stripe_payment`, `enqueue_email`, `read_email_batch`, `move_to_dlq`, `delete_email`, `auto_assign_founder_admin`, `lock_profile_role`, `handle_new_user`, `enforce_ai_rate_limit`, `enforce_state_transition`) **already** have `EXECUTE` revoked from `anon` and `authenticated` (from the previous migration). Only `service_role` and `postgres` retain access.
-- `has_role` and `check_visa_status` retain `EXECUTE` for `authenticated` — intentional, untouched.
-- Trigger-only helpers `update_updated_at_column` and `prevent_ledger_modification` still have `EXECUTE` for `anon`/`authenticated`. Per your instruction "do not modify trigger functions", these are left as-is.
+- Add to `<head>`:
+  - `<link rel="preload" as="image" href="/images/hero-home.webp" type="image/webp" fetchpriority="high">`
+  - `<link rel="preconnect" href="https://gjbuoyxwujpbaprcrnmg.supabase.co" crossorigin>`
+  - `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>`
+  - `<link rel="preconnect" href="https://app.posthog.com" crossorigin>`
+- Replace inline GTM IIFE with a deferred loader: `window.addEventListener('load', () => setTimeout(loadGTM, 1500))` where `loadGTM` injects the GTM script and seeds `dataLayer`. The `<noscript>` iframe in `<body>` stays.
+- Skip `<link rel="preload" as="style" href="/assets/index.css">` — Vite hashes the CSS filename per build (`/assets/index-[hash].css`); a static href would 404. Vite already injects its own preload for the hashed CSS.
 
-### Changes (single migration)
+### 2. `src/components/home/Hero.tsx` — LCP element
 
-**1. `email_send_state` — add explicit policies**
+- Switch import: drop `import heroImage from '@/assets/hero-beach.jpg'`; use the literal string `/images/hero-home.webp` for the `<img src>` so it matches the preload exactly.
+- Add `decoding="async"` (keep `fetchPriority="high"`, existing width/height).
+- Kill the entrance animation on the H1's first line: render the first line as a plain `<span className="block">` (no `motion.span`, no opacity/transform). Subsequent lines keep their staggered `motion.span` so visual rhythm is preserved (the first line is what paints LCP).
+- No other layout/copy changes.
 
-- `SELECT` policy: admins only, via `public.has_role(auth.uid(), 'admin'::user_role)`.
-- `INSERT`, `UPDATE`, `DELETE` policies: explicit deny (`WITH CHECK false` / `USING false`) for the `authenticated` role.
-- `service_role` bypasses RLS, so the email queue edge function continues to read/write normally.
+### 3. `src/main.tsx` — Idle utility
 
-**2. `SECURITY DEFINER` functions — idempotent re-revoke**
+- Add `runIdle` helper:
+  ```ts
+  const runIdle = (cb: () => void) =>
+    'requestIdleCallback' in window
+      ? (window as any).requestIdleCallback(cb)
+      : setTimeout(cb, 50);
+  ```
+- Wrap `initPostHog()` and `captureUtms()` in `runIdle(...)` so they don't compete with hydration.
 
-Re-issue `REVOKE EXECUTE ... FROM anon, authenticated, public` on the sensitive functions (no-op where already revoked, hardens anything that drifted). Excludes `has_role`, `check_visa_status`, and trigger-only functions per your instruction.
+### 4. `src/App.tsx` — Route splitting + critical prefetch
 
-### What this does NOT change
+- Convert all non-entry route components to `React.lazy`:
+  - Eager: `Index`, `NotFound`, `Login`, `LanguageRouter`, `ErrorBoundary`, `ProtectedRoute`, `AdminRoute`.
+  - Lazy: `Dashboard`, `ServicePage`, `Success`, `MobilityAssessment`, `TermsOfService`, `PrivacyPolicy`, `RefundPolicy`, all `pages/en/*`, all `pages/tr/*`, all `pages/admin/*`.
+- Wrap `<Routes>` in `<Suspense fallback={null}>` (null fallback = no flash, matches current UX).
+- **Conversion-critical prefetch** — after mount, on `runIdle`, trigger import calls for `MobilityAssessment` and `Success` (the `/checkout/advisory` + `/success` chunks) so navigation latency stays low without blocking initial render. Implement as a tiny `useEffect` inside `App` that calls the lazy components' underlying `import()` factories.
 
-- `has_role`, `check_visa_status` — untouched (intentional client access).
-- `update_updated_at_column`, `prevent_ledger_modification` — untouched (trigger functions, per your instruction).
-- Edge functions, app code, types — no client-side changes needed.
+### 5. Passive listeners audit
 
-### Expected linter outcome
+- Ripgrep across `src/` for `addEventListener('scroll'|'touchstart'|'wheel', …)` showed only one site: `src/components/StickyMobileCTA.tsx`, which already passes `{ passive: true }`. No change needed; will re-confirm during edit.
 
-- `email_send_state_no_policy` warning → resolved.
-- The remaining `SUPA_authenticated_security_definer_function_executable` warning will continue to flag `has_role` and `check_visa_status` only. Already documented as intentional in the security findings.
+### 6. Image hygiene
 
-### Approval
+- Audit homepage components (`Portals.tsx`, `TrustSignals.tsx`, `Testimonials.tsx`, `Philosophy.tsx`, `FocusedNavbar.tsx`) and add `loading="lazy" decoding="async"` plus `width`/`height` attributes to any `<img>` missing them. Do not touch the hero `<img>`.
+- Logo in `FocusedNavbar` stays eager (above-the-fold) but gets explicit `width`/`height` if missing.
 
-Once approved, I'll switch to build mode and run the single migration.
+### Out of Scope (explicit)
+
+- No visual, copy, color, spacing, typography, or animation-curve changes beyond removing the LCP-blocking H1 first-line fade.
+- No critical-CSS extraction, no AVIF, no new dependencies, no service-worker work.
+- No edits to generated files (`src/integrations/supabase/{client,types}.ts`).
+- No CSS preload (hashed filename).
+
+### Files Touched
+
+1. `index.html` — preload/preconnect, deferred GTM loader.
+2. `src/components/home/Hero.tsx` — switch hero src, kill H1 first-line motion.
+3. `src/main.tsx` — `runIdle` for PostHog + UTM.
+4. `src/App.tsx` — `React.lazy` + `Suspense` + idle prefetch of checkout/success.
+5. Homepage `<img>` audit pass — add `loading="lazy" decoding="async"` + width/height where missing.
+
+### Verification
+
+- Manual: `/` and `/tr` render hero immediately, no layout shift, navbar logo crisp, route navigation works.
+- Build succeeds (auto by harness).
+- Visual diff at 1154×638 and 390×844: none.
