@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { captureCTAClick } from '@/lib/tracking';
 import SimplifiedAssessmentModal from '@/components/home/SimplifiedAssessmentModal';
-import heroImage from '@/assets/hero-beach.jpg';
+
+const heroImage = '/images/hero-home.webp';
 
 export default function Hero() {
   const { t, i18n } = useTranslation();
@@ -70,6 +71,7 @@ export default function Hero() {
           width={1920}
           height={1080}
           fetchPriority="high"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/60 via-foreground/40 to-foreground/75" />
       </div>
@@ -86,17 +88,22 @@ export default function Hero() {
           className="max-w-4xl mx-auto"
         >
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight leading-[1.1] text-background mb-6">
-            {t('hero.title').split('\n').map((line, i) => (
-              <motion.span
-                key={i}
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.9, delay: 0.3 + i * 0.15 }}
-                className="block"
-              >
-                {line}
-              </motion.span>
-            ))}
+            {t('hero.title').split('\n').map((line, i) =>
+              i === 0 ? (
+                // LCP element — render immediately, no entrance animation
+                <span key={i} className="block">{line}</span>
+              ) : (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.9, delay: 0.3 + i * 0.15 }}
+                  className="block"
+                >
+                  {line}
+                </motion.span>
+              )
+            )}
           </h1>
 
           <motion.div

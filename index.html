@@ -8,8 +8,7 @@
     <meta name="description" content="Holistic relocation, visa management, and nomad incubator platform by Atropox OÜ. Relocate to Thailand with confidence.">
     <meta name="author" content="Atropox OÜ" />
     <meta name="google-site-verification" content="REPLACE_WITH_YOUR_CODE" />
-    
-    
+
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://planbasia.com/images/hero-home.webp">
     <meta name="twitter:card" content="summary_large_image" />
@@ -19,16 +18,36 @@
     <link rel="alternate" hreflang="en" href="https://planbasia.com/" />
     <link rel="alternate" hreflang="tr" href="https://planbasya.com/" />
     <link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
+
+    <!-- LCP preload + network hints -->
+    <link rel="preload" as="image" href="/images/hero-home.webp" type="image/webp" fetchpriority="high">
+    <link rel="preconnect" href="https://gjbuoyxwujpbaprcrnmg.supabase.co" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://app.posthog.com" crossorigin>
     <link rel="preconnect" href="https://js.stripe.com" />
     <link rel="dns-prefetch" href="https://js.stripe.com" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
-    <!-- Google Tag Manager -->
+    <!-- Google Tag Manager (deferred — load + 1500ms idle) -->
     <script>
-      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','GTM-MTGTMBGR');
+      (function(w,d,l,i){
+        w[l]=w[l]||[];
+        w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+        function loadGTM(){
+          var f=d.getElementsByTagName('script')[0],
+              j=d.createElement('script'),
+              dl=l!='dataLayer'?'&l='+l:'';
+          j.async=true;
+          j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+          f.parentNode.insertBefore(j,f);
+        }
+        if (d.readyState === 'complete') {
+          setTimeout(loadGTM, 1500);
+        } else {
+          w.addEventListener('load', function(){ setTimeout(loadGTM, 1500); });
+        }
+      })(window,document,'dataLayer','GTM-MTGTMBGR');
     </script>
     <!-- End Google Tag Manager -->
     <meta property="og:title" content="Plan B Asia – Expat Mobility &amp; Relocation Platform">
