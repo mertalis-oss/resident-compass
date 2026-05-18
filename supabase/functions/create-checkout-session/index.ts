@@ -166,7 +166,23 @@ Deno.serve(async (req) => {
       source: source || "direct",
     };
 
-    const origin = req.headers.get("origin") || `https://${source_domain}`;
+    // Origin allow-list to prevent post-payment redirect hijacking
+    const ALLOWED_ORIGINS = [
+      "https://planbasia.com",
+      "https://www.planbasia.com",
+      "https://planbasya.com",
+      "https://www.planbasya.com",
+      "https://planbasia-com.lovable.app",
+    ];
+    const rawOrigin = req.headers.get("origin") || "";
+    const candidate = ALLOWED_ORIGINS.includes(rawOrigin)
+      ? rawOrigin
+      : (source_domain && ALLOWED_ORIGINS.includes(`https://${source_domain}`))
+        ? `https://${source_domain}`
+        : null;
+    // Allow lovable.app preview subdomains (id-preview--*.lovable.app)
+    const isLovablePreview = /^https:\/\/[a-z0-9-]+\.lovable\.app$/.test(rawOrigin);
+    const origin = candidate || (isLovablePreview ? rawOrigin : ALLOWED_ORIGINS[0]);
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({

@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
         JSON.stringify({
           verified: true,
           status: "paid",
-          service_title: order?.service_title_snapshot || metadata.email || "",
+          service_title: order?.service_title_snapshot || "",
         }),
         {
           status: 200,
