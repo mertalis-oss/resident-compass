@@ -18,8 +18,12 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // Kurumsal Observability: Kırılım izini (componentStack) yakala
     console.error("[ErrorBoundary]", error, errorInfo);
+
     const target = this.props.fallbackPath || "/";
+
+    // Sonsuz döngü ve Duplicate Timer Guard koruması
     if (typeof window !== "undefined" && window.location.pathname !== target && this.redirectTimer === null) {
       this.redirectTimer = window.setTimeout(() => {
         window.location.assign(target);
