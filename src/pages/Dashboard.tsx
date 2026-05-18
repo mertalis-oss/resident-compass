@@ -70,7 +70,8 @@ export default function Dashboard() {
     setUploading(true);
     let uploadedCount = 0;
     for (const file of acceptedFiles) {
-      const path = `${user.id}/${file.name}`;
+      const safeName = file.name.replace(/[\/\\:*?"<>|\x00]/g, "_").replace(/\.\.+/g, "_");
+      const path = `${user.id}/${safeName}`;
       const { error } = await supabase.storage.from("documents").upload(path, file, { upsert: true });
       if (error) {
         toast.error(`Failed to upload ${file.name}: ${error.message}`);
