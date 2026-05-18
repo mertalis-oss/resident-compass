@@ -94,27 +94,27 @@
 
   <!-- MICE (Dual) -->
   <url>
-    <loc>https://planbasia.com/experiences/mice</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/experiences/mice" />
+    <loc>https://planbasia.com/corporate/mice</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/corporate/mice" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/deneyimler/mice" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/experiences/mice" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/corporate/mice" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://planbasya.com/deneyimler/mice</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/experiences/mice" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/corporate/mice" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/deneyimler/mice" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/experiences/mice" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/corporate/mice" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- Wellness (EN-Only) -->
   <url>
-    <loc>https://planbasia.com/wellness</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/wellness" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/wellness" />
+    <loc>https://planbasia.com/experiences/wellness</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/experiences/wellness" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/experiences/wellness" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -157,18 +157,18 @@
 
   <!-- Privacy (EN-Only) -->
   <url>
-    <loc>https://planbasia.com/privacy</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/privacy" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/privacy" />
+    <loc>https://planbasia.com/privacy-policy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/privacy-policy" />
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <!-- Terms (EN-Only) -->
   <url>
-    <loc>https://planbasia.com/terms</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/terms" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/terms" />
+    <loc>https://planbasia.com/terms-of-service</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/terms-of-service" />
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>

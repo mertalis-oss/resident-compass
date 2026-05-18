@@ -1,0 +1,23 @@
+# Plan B Asia
+
+> Sovereign Mobility Architecture for founders and global citizens — visa, residency, and relocation advisory across Southeast Asia.
+
+Plan B Asia (Atropox OÜ) is a strategic advisory practice helping founders, investors, and high-mobility professionals architect their second base in Asia. We operate in English at planbasia.com and in Turkish at planbasya.com (as "Plan B Asya").
+
+## Pages
+
+- [Home](/): Overview of Plan B Asia's sovereign mobility advisory.
+- [Thailand DTV Visa](/visas/thailand-dtv): Destination Thailand Visa advisory and processing.
+- [Soft Power Visa](/visas/soft-power): Thailand Soft Power LTR pathway.
+- [Nomad Incubator](/relocation/nomad-incubator): 30-day structured relocation program (limited to 10 per quarter).
+- [Expeditions](/experiences/expeditions): Curated experiential journeys across Southeast Asia.
+- [Wellness](/experiences/wellness): Breathwork, somatic regulation, and Vipassana retreats in Thailand.
+- [MICE / Corporate Retreats](/corporate/mice): Bespoke corporate retreats and offsites.
+- [Vietnam Advisory](/destinations/vietnam): Soft landing and cultural immersion in Vietnam.
+- [Cambodia Advisory](/destinations/cambodia): Cambodia relocation and residency advisory.
+
+## Optional
+
+- [Privacy Policy](/privacy-policy)
+- [Terms of Service](/terms-of-service)
+- [Refund Policy](/refund-policy)
