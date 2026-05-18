@@ -152,7 +152,6 @@ export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }:
       intent,
       timeline,
       budget,
-      score: finalScore,
       funnel_stage: isHighIntent ? 'hot' : 'warm',
       utm_source_first: utms.utm_source || null,
       utm_medium_first: utms.utm_medium || null,
@@ -165,11 +164,12 @@ export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }:
         submitted_at: now.toISOString(),
         source: 'hero_modal',
       },
+      company_website: honeypot || null,
     };
 
     try {
-      const { error } = await supabase.from('leads').insert(payload);
-      if (error) throw error;
+      const { data, error } = await supabase.functions.invoke<{ ok: boolean; error?: string }>('submit-lead', { body: payload });
+      if (error || !data?.ok) throw error || new Error('submit-lead failed');
       try {
         captureCTAClick({
           type: isHighIntent ? 'assessment_submit_hot' : 'assessment_submit_warm',

@@ -11,6 +11,7 @@ interface State {
 
 export default class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false };
+  private redirectTimer: number | null = null;
 
   static getDerivedStateFromError(): State {
     return { hasError: true };
@@ -18,6 +19,20 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error) {
     console.error('[ErrorBoundary]', error);
+    if (typeof window === 'undefined') return;
+    const target = this.props.fallbackPath || '/';
+    if (window.location.pathname !== target) {
+      this.redirectTimer = window.setTimeout(() => {
+        window.location.assign(target);
+      }, 3000);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.redirectTimer !== null) {
+      clearTimeout(this.redirectTimer);
+      this.redirectTimer = null;
+    }
   }
 
   render() {
@@ -30,7 +45,6 @@ export default class ErrorBoundary extends Component<Props, State> {
           <a href={path} className="btn-luxury-primary px-8 py-3 text-xs tracking-[0.15em] uppercase">
             Ana Sayfaya Dön
           </a>
-          <script dangerouslySetInnerHTML={{ __html: `setTimeout(function(){window.location.href='${path}'},3000)` }} />
         </div>
       );
     }

@@ -39,16 +39,18 @@ export default function PlanBForm({ serviceId, onSubmitSuccess }: PlanBFormProps
     const utms = getStoredUtms();
     const params = new URLSearchParams(window.location.search);
 
-    const { error } = await supabase.from('leads').insert({
-      name: form.name,
-      email: form.email,
-      customer_whatsapp: form.customer_whatsapp || null,
-      source_domain: window.location.hostname,
-      created_from: utms.utm_source || params.get('utm_source') || 'website',
-      service_id: serviceId || null,
+    const { data, error } = await supabase.functions.invoke<{ ok: boolean; id?: string; error?: string }>('submit-lead', {
+      body: {
+        name: form.name,
+        email: form.email,
+        customer_whatsapp: form.customer_whatsapp || null,
+        source_domain: window.location.hostname,
+        created_from: utms.utm_source || params.get('utm_source') || 'website',
+        service_id: serviceId || null,
+      },
     });
     setLoading(false);
-    if (error) {
+    if (error || !data?.ok) {
       toast.error(t('form.error', { defaultValue: 'Something went wrong. Please try again.' }));
       return;
     }

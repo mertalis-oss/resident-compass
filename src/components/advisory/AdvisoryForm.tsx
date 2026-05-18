@@ -80,13 +80,16 @@ export default function AdvisoryForm({ variant, defaultDestination, source_page 
     }
 
     try {
-      await supabase.from('leads').insert({
-        name,
-        email: normalizedEmail,
-        customer_whatsapp: cleanedWhatsapp || null,
-        source_domain: typeof window !== 'undefined' ? window.location.hostname || 'unknown' : 'unknown',
-        created_from: safeVariant === 'mice' ? 'mice_form' : 'advisory_form',
-        quiz_answers: quizAnswers,
+      await supabase.functions.invoke('submit-lead', {
+        body: {
+          name,
+          email: normalizedEmail,
+          customer_whatsapp: cleanedWhatsapp || null,
+          source_domain: typeof window !== 'undefined' ? window.location.hostname || 'unknown' : 'unknown',
+          created_from: safeVariant === 'mice' ? 'mice_form' : 'advisory_form',
+          quiz_answers: quizAnswers,
+          company_website: honeypot || null,
+        },
       });
     } catch {
       // Silent fail — always show success
