@@ -180,23 +180,22 @@ export default function MobilityAssessment() {
               .replace(/\.$/, "")
           : "";
 
-      const { data: leadData, error: leadErr } = await supabase
-        .from("leads")
-        .upsert(
-          {
-            email: cleanEmail,
-            source_domain: normalizedHost,
-            created_from: "quiz",
-            score,
-            quiz_answers: answers,
-          },
-          { onConflict: "email", ignoreDuplicates: false },
-        )
-        .select("id")
-        .single();
+      const { data: leadData, error: leadErr } = await supabase.functions.invoke<{
+        ok: boolean;
+        id?: string;
+        error?: string;
+      }>("submit-lead", {
+        body: {
+          email: cleanEmail,
+          source_domain: normalizedHost,
+          created_from: "quiz",
+          score,
+          quiz_answers: answers,
+        },
+      });
 
       if (leadErr) throw leadErr;
-      if (!leadData?.id) throw new Error("Lead upsert failed");
+      if (!leadData?.ok || !leadData.id) throw new Error(leadData?.error ?? "Lead upsert failed");
 
       trackPostHogEvent("email_submitted", { source: "quiz", score }, true);
       safeSet("planb_lead_id", leadData.id);

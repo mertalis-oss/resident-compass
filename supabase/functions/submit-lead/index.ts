@@ -64,6 +64,7 @@ const LeadSchema = z.object({
     .optional()
     .default({}),
   company_website: z.string().max(200).optional().nullable(),
+  score: z.number().int().min(0).max(100).nullable().optional(),
 }).strip();
 
 const intentMap: Record<string, number> = {
@@ -129,7 +130,8 @@ Deno.serve(async (req) => {
     return genericError(origin, 400);
   }
 
-  const { company_website: _hp, ...data } = parsed.data;
+  const { company_website: _hp, score: clientScore, ...data } = parsed.data;
+  const normalizedEmail = data.email.trim().toLowerCase();
 
   const lead_score = Math.min(
     100,
@@ -150,9 +152,18 @@ Deno.serve(async (req) => {
       },
     );
 
+    const payload = {
+      ...data,
+      email: normalizedEmail,
+      lead_score,
+      ...(data.created_from === "quiz" && typeof clientScore === "number"
+        ? { score: clientScore }
+        : {}),
+    };
+
     const { data: inserted, error } = await supabase
       .from("leads")
-      .insert({ ...data, lead_score })
+      .upsert(payload, { onConflict: "email", ignoreDuplicates: false })
       .select("id")
       .single();
 
