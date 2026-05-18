@@ -156,3 +156,10 @@ requirement.
 - Frontend `invoke` zaten tipli: `{ ok: boolean; id?: string; error?: string }`.
 - Yeni `score` alanı edge function Zod'da; client tipinde değişiklik gerekmez.
 - Diğer hiçbir dosya, hiçbir RLS okuma/güncelleme politikası, hiçbir SECURITY DEFINER fonksiyon değiştirilmez.
+
+## Phase 2 — Lockdown (Sealed)
+Phase 2 complete: direct client INSERT access to leads is permanently disabled.
+submit-lead edge function is now the sole write path. has_role and
+check_visa_status intentionally remain SECURITY DEFINER to prevent RLS
+recursion (Dashboard guard). Guest checkout is an intentional business
+requirement.
