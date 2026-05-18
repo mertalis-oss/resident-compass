@@ -1,4 +1,4 @@
-import { Component, type ReactNode } from 'react';
+import { Component, type ReactNode, type ErrorInfo } from "react";
 
 interface Props {
   children: ReactNode;
@@ -17,11 +17,10 @@ export default class ErrorBoundary extends Component<Props, State> {
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error) {
-    console.error('[ErrorBoundary]', error);
-    if (typeof window === 'undefined') return;
-    const target = this.props.fallbackPath || '/';
-    if (window.location.pathname !== target) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("[ErrorBoundary]", error, errorInfo);
+    const target = this.props.fallbackPath || "/";
+    if (typeof window !== "undefined" && window.location.pathname !== target && this.redirectTimer === null) {
       this.redirectTimer = window.setTimeout(() => {
         window.location.assign(target);
       }, 3000);
@@ -37,7 +36,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      const path = this.props.fallbackPath || '/';
+      const path = this.props.fallbackPath || "/";
       return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground px-6">
           <h1 className="heading-section mb-4">Bir sorun oluştu</h1>
