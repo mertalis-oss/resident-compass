@@ -1,15 +1,42 @@
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+const ALLOWED_ORIGINS = new Set([
+  "https://planbasia.com",
+  "https://www.planbasia.com",
+  "https://planbasya.com",
+  "https://www.planbasya.com",
+  "https://planbasia-com.lovable.app",
+  "http://localhost:3000",
+  "http://localhost:5173",
+]);
+const LOVABLE_PREVIEW = /^https:\/\/[a-z0-9-]+\.lovable\.app$/i;
+const FALLBACK_ORIGIN = "https://planbasia.com";
+
+function resolveOrigin(req: Request): string {
+  const o = req.headers.get("origin") ?? "";
+  if (ALLOWED_ORIGINS.has(o) || LOVABLE_PREVIEW.test(o)) return o;
+  return FALLBACK_ORIGIN;
+}
+
+function corsHeaders(origin: string) {
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Vary": "Origin",
+  };
+}
 
 Deno.serve(async (req) => {
+  const origin = resolveOrigin(req);
+
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, {
+      status: 204,
+      headers: { ...corsHeaders(origin), "Content-Length": "0" },
+    });
   }
 
   try {
@@ -25,7 +52,7 @@ Deno.serve(async (req) => {
     if (!session_id) {
       return new Response(JSON.stringify({ error: "session_id required" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders(origin), "Content-Type": "application/json" },
       });
     }
 
@@ -35,13 +62,12 @@ Deno.serve(async (req) => {
     if (!session) {
       return new Response(JSON.stringify({ error: "Session not found" }), {
         status: 404,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders(origin), "Content-Type": "application/json" },
       });
     }
 
     const metadata = session.metadata || {};
     const orderId = metadata.order_id;
-    const serviceTitle = metadata.service_id;
 
     // If paid, ensure DB is updated (reconciliation)
     if (session.payment_status === "paid" && orderId) {
@@ -92,7 +118,7 @@ Deno.serve(async (req) => {
         }),
         {
           status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...corsHeaders(origin), "Content-Type": "application/json" },
         }
       );
     }
@@ -106,16 +132,16 @@ Deno.serve(async (req) => {
       }),
       {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders(origin), "Content-Type": "application/json" },
       }
     );
-  } catch (err: any) {
+  } catch (err) {
     console.error("Verify error:", err);
     return new Response(
       JSON.stringify({ error: "An internal error occurred. Please try again." }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders(origin), "Content-Type": "application/json" },
       }
     );
   }
