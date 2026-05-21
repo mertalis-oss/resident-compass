@@ -1,16 +1,33 @@
-## Scope
-Two-file finalization. ErrorBoundary.tsx is already at target state — verified no `dangerouslySetInnerHTML` or inline `<script>`, `componentDidCatch(error, errorInfo)` signature is correct, duplicate timer guard (`this.redirectTimer === null`) is in place, `componentWillUnmount` clears + nulls the timer, and the manual `<a href={path}>` fallback link is preserved.
+## Sorun
+`src/pages/Index.tsx` içine yanlışlıkla `index.html` markup'ı (`<!doctype html>...`) yazılmış. TS/SWC bunu TSX olarak parse edemiyor → `TS1434: Unexpected keyword or identifier`.
 
-Only one actual change remains:
+Kök `index.html` doğru ve sağlam — tek bozuk dosya `Index.tsx`. Git HEAD'te orijinal React component intakt duruyor.
 
-## 1. `.lovable/plan.md`
-Append the exact architectural declaration line at the end of the file:
+## Düzeltme (tek adım)
+`src/pages/Index.tsx` dosyasını git HEAD'teki orijinal içerikle değiştir:
 
-> SECURITY DEFINER status for has_role and check_visa_status is intentional and required to prevent recursive RLS evaluation in dashboard authorization flows. This is an accepted architectural constraint, not a vulnerability.
+```tsx
+import { useTranslation } from 'react-i18next';
+import SEOHead from '@/components/SEOHead';
+import FocusedNavbar from '@/components/FocusedNavbar';
+import TrustBar from '@/components/TrustBar';
+import ConciergeButton from '@/components/ConciergeButton';
+import PlanBForm from '@/components/PlanBForm';
+import Hero from '@/components/home/Hero';
+import Philosophy from '@/components/home/Philosophy';
+import Portals from '@/components/home/Portals';
+import TrustSignals from '@/components/home/TrustSignals';
+import CTASection from '@/components/home/CTASection';
+import Testimonials from '@/components/home/Testimonials';
 
-## 2. `src/components/ErrorBoundary.tsx`
-No changes required — re-confirm contents match the spec; the stale `xss_errorboundary_script` linter finding is resolved by the existing file state.
+export default function Index() {
+  // ... ana sayfa render (Hero, Philosophy, Portals, TrustSignals, Testimonials, CTASection, PlanBForm, Footer, ConciergeButton)
+}
+```
 
-## Verification
-- TypeScript build clean (auto-run by harness).
-- Grep ErrorBoundary.tsx to confirm no `dangerouslySetInnerHTML` / `<script` remain.
+Tam dosya içeriği git HEAD'ten birebir geri yüklenecek. Başka hiçbir dosyaya dokunulmayacak.
+
+## Doğrulama
+- Vite dev-server `Index.tsx` hatasını temizleyecek
+- `/` route render olacak (Hero + diğer ana sayfa bölümleri)
+- `notlar`: i18n.ts içinde `defaultValue` kullanımı eski koddan geliyor; ayrı bir hijyen turu olarak ileride temizlenebilir, ama bu fix scope'una dahil değil.
