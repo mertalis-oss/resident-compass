@@ -5,68 +5,48 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Plan B Asia – Expat Mobility &amp; Relocation Platform</title>
-    <meta name="description" content="Holistic relocation, visa management, and nomad incubator platform by Atropox OÜ. Relocate to Thailand with confidence.">
+    <meta
+      name="description"
+      content="Holistic relocation, visa management, and nomad incubator platform by Atropox OÜ. Relocate to Thailand with confidence."
+    />
     <meta name="author" content="Atropox OÜ" />
     <meta name="google-site-verification" content="AhrHciaLkCHu7VplC_lcMhad4SPa8EF9lY0G7QNuZow" />
     <meta name="google-site-verification" content="AOnDRWhAPK-AT0ALuBXcggSrjT8X2AEdflHilOv81Lk" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://planbasia.com/images/hero-home.webp">
+    <meta property="og:image" content="https://planbasia.com/images/hero-home.webp" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@planbasia" />
-    <meta name="twitter:image" content="https://planbasia.com/images/hero-home.webp">
-    <link rel="canonical" href="https://planbasia.com/" />
-    <link rel="alternate" hreflang="en" href="https://planbasia.com/" />
-    <link rel="alternate" hreflang="tr" href="https://planbasya.com/" />
-    <link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
+    <meta name="twitter:image" content="https://planbasia.com/images/hero-home.webp" />
+
+    <!-- canonical + 3× hreflang SİLİNDİ (Plan v7 S0.1 kritik SEO bug çözümü).
+         SEOHead bileşeni her sayfada doğru canonical + hreflang üretir. -->
 
     <!-- LCP preload + network hints -->
-    <link rel="preload" as="image" href="/images/hero-home.webp" type="image/webp" fetchpriority="high">
-    <link rel="preconnect" href="https://gjbuoyxwujpbaprcrnmg.supabase.co" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://app.posthog.com" crossorigin>
+    <link rel="preload" as="image" href="/images/hero-home.webp" type="image/webp" fetchpriority="high" />
+    <link rel="preconnect" href="https://gjbuoyxwujpbaprcrnmg.supabase.co" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://app.posthog.com" crossorigin />
     <link rel="preconnect" href="https://js.stripe.com" />
     <link rel="dns-prefetch" href="https://js.stripe.com" />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
-    <!-- Google Tag Manager (deferred — load + 1500ms idle) -->
-    <script>
-      (function(w,d,l,i){
-        w[l]=w[l]||[];
-        w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
-        function loadGTM(){
-          var f=d.getElementsByTagName('script')[0],
-              j=d.createElement('script'),
-              dl=l!='dataLayer'?'&l='+l:'';
-          j.async=true;
-          j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-          f.parentNode.insertBefore(j,f);
-        }
-        if (d.readyState === 'complete') {
-          setTimeout(loadGTM, 1500);
-        } else {
-          w.addEventListener('load', function(){ setTimeout(loadGTM, 1500); });
-        }
-      })(window,document,'dataLayer','GTM-MTGTMBGR');
-    </script>
-    <!-- End Google Tag Manager -->
-    <meta property="og:title" content="Plan B Asia – Expat Mobility &amp; Relocation Platform">
-  <meta name="twitter:title" content="Plan B Asia – Expat Mobility &amp; Relocation Platform">
-  <meta property="og:description" content="Holistic relocation, visa management, and nomad incubator platform by Atropox OÜ. Relocate to Thailand with confidence.">
-  <meta name="twitter:description" content="Holistic relocation, visa management, and nomad incubator platform by Atropox OÜ. Relocate to Thailand with confidence.">
-</head>
+    <!-- GTM inline script SİLİNDİ — Plan v7 S1.2 src/lib/gtm.ts üzerinden consent-gated yüklenir. -->
+
+    <meta property="og:title" content="Plan B Asia – Expat Mobility &amp; Relocation Platform" />
+    <meta name="twitter:title" content="Plan B Asia – Expat Mobility &amp; Relocation Platform" />
+    <meta
+      property="og:description"
+      content="Holistic relocation, visa management, and nomad incubator platform by Atropox OÜ. Relocate to Thailand with confidence."
+    />
+    <meta
+      name="twitter:description"
+      content="Holistic relocation, visa management, and nomad incubator platform by Atropox OÜ. Relocate to Thailand with confidence."
+    />
+  </head>
   <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript
-      ><iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-MTGTMBGR"
-        height="0"
-        width="0"
-        style="display:none;visibility:hidden"
-      ></iframe
-    ></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+    <!-- GTM noscript iframe SİLİNDİ — consent gate sonrası gerekirse src/lib/gtm.ts ekler. -->
 
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
