@@ -2,13 +2,3 @@ User-agent: *
 Allow: /
 Sitemap: https://planbasia.com/sitemap.xml
 Sitemap: https://planbasya.com/sitemap.xml
-Host: https://planbasia.com
-DOSYA: public/robots.txt
-AKSİYON: DEĞİŞTİR (tam dosya replace)
-NE DEĞİŞTİ:
-SİLİNDİ: "Host: https://planbasia.com" satırı (Google için anlamsız, Yandex-only direktif; planbasya'yı ikincil ima ediyor)
-KALDI: User-agent + Allow + iki Sitemap satırı
-LOVABLE AI ALTERNATİF PROMPT:
-"public/robots.txt dosyasından 'Host: https://planbasia.com' satırını sil. Geri kalan içerik aynı kalsın."
-SMOKE TEST:
-https://[preview-url]/robots.txt → "Host:" satırı yok.
