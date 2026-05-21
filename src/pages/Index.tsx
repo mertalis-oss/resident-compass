@@ -1,31 +1,57 @@
-<!doctype html>
-<html>
-  <head>
-    <meta name="facebook-domain-verification" content="czst3u3pxeva2if5eefjzhvq0q825n" />
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="author" content="Atropox OÜ" />
-    <meta name="google-site-verification" content="AhrHciaLkCHu7VplC_lcMhad4SPa8EF9lY0G7QNuZow" />
-    <meta name="google-site-verification" content="AOnDRWhAPK-AT0ALuBXcggSrjT8X2AEdflHilOv81Lk" />
+index  import { useTranslation } from 'react-i18next';
+import SEOHead from '@/components/SEOHead';
+import FocusedNavbar from '@/components/FocusedNavbar';
+import TrustBar from '@/components/TrustBar';
+import ConciergeButton from '@/components/ConciergeButton';
+import PlanBForm from '@/components/PlanBForm';
+import Hero from '@/components/home/Hero';
+import Philosophy from '@/components/home/Philosophy';
+import Portals from '@/components/home/Portals';
+import TrustSignals from '@/components/home/TrustSignals';
+import CTASection from '@/components/home/CTASection';
+import Testimonials from '@/components/home/Testimonials';
 
-    <!-- SEO meta (title/description/canonical/hreflang/OG/Twitter) per-sayfa SEOHead bileşeni tarafından üretilir.
-         index.html'de hardcoded meta YOK — kaldırıldı (Plan v7 S0.1). -->
+export default function Index() {
+  const { t } = useTranslation();
 
-    <!-- LCP preload + network hints -->
-    <link rel="preload" as="image" href="/images/hero-home.webp" type="image/webp" fetchpriority="high">
-    <link rel="preconnect" href="https://gjbuoyxwujpbaprcrnmg.supabase.co" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://app.posthog.com" crossorigin>
-    <link rel="preconnect" href="https://js.stripe.com" />
-    <link rel="dns-prefetch" href="https://js.stripe.com" />
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+  return (
+    <div className="min-h-screen bg-background">
+      <SEOHead
+        title={t('seo.homeTitle', { defaultValue: 'Plan B Asia — Sovereign Mobility Architecture' })}
+        description={t('hero.subtitle')}
+        schemaType="Organization"
+      />
+      <FocusedNavbar />
+      <TrustBar />
+      <Hero />
+      <Philosophy />
+      <Portals />
+      <TrustSignals />
+      <Testimonials />
+      <CTASection />
+      <PlanBForm />
 
-    <!-- GTM consent-gated olarak src/lib/gtm.ts üzerinden yüklenir (Plan v7 S1.2).
-         index.html'den GTM script + noscript iframe kaldırıldı (Plan v7 S0.2). -->
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+      {/* Footer */}
+      <footer className="py-16 bg-corporate-navy border-t border-border/10">
+        <div className="container max-w-5xl px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+          <span className="text-xs text-holistic/40 tracking-[0.2em] uppercase">
+            © {new Date().getFullYear()} Atropox OÜ
+          </span>
+          <div className="flex gap-10 text-xs text-holistic/40 tracking-[0.2em] uppercase">
+            <a href="/privacy-policy" className="hover:text-holistic/70 transition-colors duration-500">
+              {t('footer.privacy', { defaultValue: 'Privacy' })}
+            </a>
+            <a href="/terms-of-service" className="hover:text-holistic/70 transition-colors duration-500">
+              {t('footer.terms', { defaultValue: 'Terms' })}
+            </a>
+            <a href="/refund-policy" className="hover:text-holistic/70 transition-colors duration-500">
+              {t('footer.refund', { defaultValue: 'Refund Policy' })}
+            </a>
+          </div>
+        </div>
+      </footer>
+
+      <ConciergeButton />
+    </div>
+  );
+}
