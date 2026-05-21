@@ -11,18 +11,19 @@ interface NavGroup {
 }
 
 // planbasya.com (TR) Navigasyon Yapısı
+// Canonical path'ler kullanılır (App.tsx redirect hop'u önler) — Plan v7 S0.4
 const TR_NAV_GROUPS: NavGroup[] = [
   {
     label: "Vize & Kalış",
     items: [
-      { to: "/tr/dtv-vize", label: "Tayland DTV Vizesi" },
-      { to: "/tr/soft-power", label: "Öğren & Kal" },
+      { to: "/vizeler/dtv-vize", label: "Tayland DTV Vizesi" },
+      { to: "/vizeler/soft-power", label: "Öğren & Kal" },
     ],
   },
   {
     label: "Yaşam & Gelişim",
     items: [
-      { to: "/tr/nomad-incubator", label: "Kuluçka Merkezi" },
+      { to: "/yerlesim/nomad-incubator", label: "Kuluçka Merkezi" },
       { to: "/deneyimler/expeditions", label: "Keşifler" },
       { to: "/tr/vietnam", label: "Vietnam" },
       { to: "/tr/cambodia", label: "Kamboçya" },
@@ -30,7 +31,7 @@ const TR_NAV_GROUPS: NavGroup[] = [
   },
   {
     label: "Kurumsal",
-    items: [{ to: "/tr/mice", label: "MICE" }],
+    items: [{ to: "/deneyimler/mice", label: "MICE" }],
   },
 ];
 
@@ -96,8 +97,15 @@ export default function FocusedNavbar() {
       }`}
     >
       <div className="container flex items-center justify-between h-16 md:h-20">
-        <Link to={scope === "tr" ? "/tr" : "/"}>
-          <img src={logoWhite} alt="Plan B Asia" width={160} height={40} decoding="async" className="h-9 md:h-10 w-auto transition-all duration-500" />
+        <Link to={scope === "tr" ? "/" : "/"}>
+          <img
+            src={logoWhite}
+            alt={scope === "tr" ? "Plan B Asya" : "Plan B Asia"}
+            width={160}
+            height={40}
+            decoding="async"
+            className="h-9 md:h-10 w-auto transition-all duration-500"
+          />
         </Link>
 
         {/* Desktop Nav */}
