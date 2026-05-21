@@ -1,4 +1,4 @@
-index  import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import SEOHead from '@/components/SEOHead';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
