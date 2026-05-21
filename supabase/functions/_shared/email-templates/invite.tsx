@@ -8,9 +8,11 @@ import {
   Container,
   Head,
   Heading,
+  Hr,
   Html,
   Link,
   Preview,
+  Section,
   Text,
 } from 'npm:@react-email/components@0.0.22'
 
@@ -27,25 +29,31 @@ export const InviteEmail = ({
 }: InviteEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>You've been invited to join {siteName}</Preview>
+    <Preview>A private invitation to {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>You've been invited</Heading>
-        <Text style={text}>
-          You've been invited to join{' '}
-          <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
-          </Link>
-          . Click the button below to accept the invitation and create your
-          account.
-        </Text>
-        <Button style={button} href={confirmationUrl}>
-          Accept Invitation
-        </Button>
-        <Text style={footer}>
-          If you weren't expecting this invitation, you can safely ignore this
-          email.
-        </Text>
+        <Section style={card}>
+          <Text style={brand}>PLAN B ASIA</Text>
+          <Text style={tagline}>The Sovereign OS</Text>
+          <Hr style={rule} />
+          <Heading style={h1}>You have been invited</Heading>
+          <Text style={text}>
+            You have been invited to join{' '}
+            <Link href={siteUrl} style={link}>
+              {siteName}
+            </Link>
+            . Accept below to activate your account.
+          </Text>
+          <Section style={{ textAlign: 'center' as const, margin: '32px 0' }}>
+            <Button style={button} href={confirmationUrl}>
+              Accept Invitation
+            </Button>
+          </Section>
+          <Text style={footer}>
+            If this invitation was unexpected, you may safely disregard this
+            message.
+          </Text>
+        </Section>
       </Container>
     </Body>
   </Html>
@@ -53,27 +61,14 @@ export const InviteEmail = ({
 
 export default InviteEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const link = { color: 'inherit', textDecoration: 'underline' }
-const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
-  fontSize: '14px',
-  borderRadius: '8px',
-  padding: '12px 20px',
-  textDecoration: 'none',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+const main = { backgroundColor: '#ffffff', fontFamily: 'Georgia, "Times New Roman", serif', margin: 0, padding: '40px 0' }
+const container = { maxWidth: '560px', margin: '0 auto', padding: '0 20px' }
+const card = { backgroundColor: '#f5f1e8', padding: '48px 40px', borderRadius: '4px', border: '1px solid #e8e0d0' }
+const brand = { fontFamily: 'Arial, sans-serif', fontSize: '11px', letterSpacing: '0.3em', color: '#15402F', margin: '0 0 4px', fontWeight: 'bold' as const }
+const tagline = { fontFamily: 'Georgia, serif', fontSize: '13px', fontStyle: 'italic' as const, color: '#7a7363', margin: '0 0 20px' }
+const rule = { borderColor: '#c9b88a', borderWidth: '0.5px', margin: '0 0 32px' }
+const h1 = { fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '26px', fontWeight: 400 as const, color: '#15402F', margin: '0 0 20px', lineHeight: '1.3' }
+const text = { fontFamily: 'Arial, sans-serif', fontSize: '15px', color: '#3d3d3d', lineHeight: '1.6', margin: '0 0 20px' }
+const link = { color: '#15402F', textDecoration: 'underline' }
+const button = { backgroundColor: '#15402F', color: '#f5f1e8', fontFamily: 'Arial, sans-serif', fontSize: '13px', letterSpacing: '0.15em', textTransform: 'uppercase' as const, borderRadius: '4px', padding: '14px 32px', textDecoration: 'none', fontWeight: 'bold' as const }
+const footer = { fontFamily: 'Arial, sans-serif', fontSize: '12px', color: '#8a8275', margin: '32px 0 0', lineHeight: '1.5' }
