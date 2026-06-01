@@ -462,6 +462,7 @@ export type Database = {
           stripe_session_id: string | null
           updated_at: string | null
           updated_by: string | null
+          user_id: string | null
           utm_campaign: string | null
           utm_source: string | null
         }
@@ -491,6 +492,7 @@ export type Database = {
           stripe_session_id?: string | null
           updated_at?: string | null
           updated_by?: string | null
+          user_id?: string | null
           utm_campaign?: string | null
           utm_source?: string | null
         }
@@ -520,6 +522,7 @@ export type Database = {
           stripe_session_id?: string | null
           updated_at?: string | null
           updated_by?: string | null
+          user_id?: string | null
           utm_campaign?: string | null
           utm_source?: string | null
         }
