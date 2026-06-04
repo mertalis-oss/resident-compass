@@ -114,8 +114,8 @@ export default function ServicePage() {
       if (e.clientY <= 0 && !exitIntentFired.current) {
         exitIntentFired.current = true;
         toast({
-          title: t('service.exitIntentTitle', { defaultValue: 'Before you go…' }),
-          description: t('service.exitIntentDesc', { defaultValue: 'This process gets harder the longer you wait.' }),
+          title: t('service.exitIntentTitle'),
+          description: t('service.exitIntentDesc'),
         });
       }
     };
