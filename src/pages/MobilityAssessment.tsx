@@ -694,7 +694,7 @@ export default function MobilityAssessment() {
 
                       {/* FIX: was 'Sonuçlarınız kişiselleştirilmiştir.' */}
                       <p className="text-xs text-accent/80 font-body font-medium">
-                        {t("quiz.resultsPersonalized", { defaultValue: "Results are personalized to your profile." })}
+                        {t("quiz.resultsPersonalized")}
                       </p>
 
                       {/* Alternative (overchoice prevention) */}
