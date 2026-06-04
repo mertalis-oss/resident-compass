@@ -236,7 +236,7 @@ export default function ServicePage() {
   if (notFound) {
     return (
       <div className="min-h-screen bg-background">
-        <SEOHead title={t('service.notFoundTitle', { defaultValue: 'Service Not Available' })} description="" />
+        <SEOHead title={t('service.notFoundTitle')} description="" />
         <FocusedNavbar />
         <TrustBar />
         <ServiceFallback services={fallbackServices} />
