@@ -43,7 +43,7 @@ const checkoutKeys = {
   hesitationKiller: "You don't need to have everything figured out. That's exactly why this exists.",
   agreementLabel: 'I agree to the Terms of Service, Privacy Policy, and Refund Policy. I understand this is an advisory service and government decisions are independent.',
   legalReinforce: 'By proceeding, you confirm you understand the scope of the service.',
-  processing: 'Processing your secure session...',
+  processing: 'Processing...',
   whatsNextLabel: 'What happens next',
   step1: 'Secure Payment',
   step2: 'We contact you via WhatsApp / Email (Within 24h)',
