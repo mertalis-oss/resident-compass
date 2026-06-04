@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -15,14 +15,24 @@ export default function Hero() {
   const isTR = i18n.language === 'tr';
   const [assessmentOpen, setAssessmentOpen] = useState(false);
 
+  // Analytics dedup guard — UI state is NEVER gated by this.
+  const lastFireMs = useRef<number>(0);
+
   const scrollToContent = () => {
     window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
   };
 
-  const trackIfVisible = (type: string) => {
-    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
-      try { captureCTAClick({ type, site: isTR ? 'tr' : 'global' }); } catch { /* noop */ }
+  /** Fire-and-forget analytics with 500ms dedup. Never blocks UI. */
+  const trackOnce = (type: string) => {
+    const now = Date.now();
+    if (now - lastFireMs.current < 500) return;
+    lastFireMs.current = now;
+    try {
+      captureCTAClick({ type, site: isTR ? 'tr' : 'global' });
+    } catch (err) {
+      if (import.meta.env.DEV) console.warn('[Hero] tracking failed', err);
     }
+    if (import.meta.env.DEV) console.log('[Hero] CTA click fired', { type, isTR });
   };
 
   const safeNavigate = (path: string) => {
@@ -38,16 +48,15 @@ export default function Hero() {
   };
 
   const handlePrimaryCTA = () => {
-    trackIfVisible('hero_primary_assessment');
-    if (isTR) {
-      safeNavigate('/tr/mobility-assessment');
-    } else {
-      setAssessmentOpen(true);
-    }
+    // UI first — synchronous, immediate, unconditional. Modal pops on click.
+    setAssessmentOpen(true);
+    if (import.meta.env.DEV) console.log('[Hero] setAssessmentOpen(true)', { isTR });
+    // Analytics second — decoupled, debounced.
+    trackOnce('hero_primary_assessment');
   };
 
   const handleSecondaryCTA = () => {
-    trackIfVisible('hero_secondary_advisory');
+    trackOnce('hero_secondary_advisory');
     if (isTR) {
       const portalsEl = document.getElementById('portals-section');
       if (portalsEl) {
@@ -211,13 +220,12 @@ export default function Hero() {
         </motion.div>
       </motion.button>
 
-      {!isTR && (
-        <SimplifiedAssessmentModal
-          open={assessmentOpen}
-          onClose={() => setAssessmentOpen(false)}
-          sourceSite="global"
-        />
-      )}
+      {/* Phase 4: unconditional mount for both EN and TR; sourceSite reflects locale */}
+      <SimplifiedAssessmentModal
+        open={assessmentOpen}
+        onClose={() => setAssessmentOpen(false)}
+        sourceSite={isTR ? 'tr' : 'global'}
+      />
     </section>
   );
 }
