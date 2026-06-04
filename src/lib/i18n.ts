@@ -332,6 +332,12 @@ const resources = {
         bundleIntro: 'We partner with accredited language schools across Thailand, securing your legal stay while immersing you in a new language and culture.',
         bundleRequired: 'Please select a package to continue.',
       },
+      quiz: {
+        bridge1: 'Based on your answers, this is the most efficient path for your situation.',
+        bridge2: 'Most people in your situation choose this.',
+        bridge3: 'Why this fits you: based on your budget, urgency, and income.',
+        resultsPersonalized: 'Results are personalized to your profile.',
+      },
       service: serviceKeys,
       checkout: checkoutKeys,
       advisory: {
