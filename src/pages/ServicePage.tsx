@@ -102,8 +102,8 @@ export default function ServicePage() {
   useEffect(() => {
     if (searchParams.get('canceled') === 'true') {
       toast({
-        title: t('service.canceledTitle', { defaultValue: 'Payment not completed' }),
-        description: t('service.canceledDesc', { defaultValue: 'Your payment was not completed. You can try again anytime.' }),
+        title: t('service.canceledTitle'),
+        description: t('service.canceledDesc'),
       });
     }
   }, [searchParams, toast, t]);
