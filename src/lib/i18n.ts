@@ -124,7 +124,7 @@ const checkoutKeysTr: Record<string, string> = {
   hesitationKiller: 'Her şeyi çözmüş olmanıza gerek yok. Tam da bu yüzden bu hizmet var.',
   agreementLabel: 'Hizmet Şartlarını, Gizlilik Politikasını ve İade Politikasını kabul ediyorum. Bunun bir danışmanlık hizmeti olduğunu ve devlet kararlarının bağımsız olduğunu anlıyorum.',
   legalReinforce: 'Devam ederek hizmetin kapsamını anladığınızı onaylıyorsunuz.',
-  processing: 'Güvenli oturumunuz hazırlanıyor...',
+  processing: 'Onaylanıyor...',
   whatsNextLabel: 'Sonra ne olacak',
   step1: 'Güvenli Ödeme',
   step2: 'WhatsApp / E-posta ile iletişime geçeriz (24 saat içinde)',
