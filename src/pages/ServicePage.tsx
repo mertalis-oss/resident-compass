@@ -291,10 +291,10 @@ export default function ServicePage() {
         <section className="py-20 bg-corporate-navy text-holistic text-center">
           <div className="container max-w-3xl px-6">
             <h2 className="heading-section text-holistic mb-4">
-              {t('service.finalCtaTitle', { defaultValue: 'Ready to move forward?' })}
+              {t('service.finalCtaTitle')}
             </h2>
             <p className="body-editorial text-holistic/60 mb-8">
-              {t('service.finalCtaBody', { defaultValue: 'Start your process now.' })}
+              {t('service.finalCtaBody')}
             </p>
             <ServiceCheckout service={service} variant="mirror" />
           </div>
