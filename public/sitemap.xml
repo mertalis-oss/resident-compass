@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  EN/global sitemap — served at https://planbasia.com/sitemap.xml
+  Contains ONLY EN-owned indexable routes. TR alternates are emitted via
+  xhtml:link only when both sides of the pair are indexable on planbasya.com.
+  NOINDEX_PATHS (admin/login/dashboard/success/checkout/tools/tr/rabbit-hole)
+  are excluded entirely.
+-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
-  <!-- Home (Dual) -->
+  <!-- Home -->
   <url>
     <loc>https://planbasia.com/</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/" />
@@ -11,173 +18,109 @@
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-  <url>
-    <loc>https://planbasya.com/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
 
-  <!-- DTV Visa (Dual) -->
+  <!-- DTV Visa -->
   <url>
     <loc>https://planbasia.com/visas/thailand-dtv</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/visas/thailand-dtv" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/vizeler/dtv-vize" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/visas/thailand-dtv" />
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://planbasya.com/vizeler/dtv-vize</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/visas/thailand-dtv" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/vizeler/dtv-vize" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/visas/thailand-dtv" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- Soft Power (Dual) -->
+  <!-- Soft Power -->
   <url>
     <loc>https://planbasia.com/visas/soft-power</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/visas/soft-power" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/vizeler/soft-power" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/visas/soft-power" />
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://planbasya.com/vizeler/soft-power</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/visas/soft-power" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/vizeler/soft-power" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/visas/soft-power" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- Nomad Incubator (Dual) -->
+  <!-- Nomad Incubator -->
   <url>
     <loc>https://planbasia.com/relocation/nomad-incubator</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/relocation/nomad-incubator" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/yerlesim/nomad-incubator" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/relocation/nomad-incubator" />
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://planbasya.com/yerlesim/nomad-incubator</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/relocation/nomad-incubator" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/yerlesim/nomad-incubator" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/relocation/nomad-incubator" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- Expeditions (Dual) -->
+  <!-- Expeditions -->
   <url>
     <loc>https://planbasia.com/experiences/expeditions</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/experiences/expeditions" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/deneyimler/expeditions" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/experiences/expeditions" />
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://planbasya.com/deneyimler/expeditions</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/experiences/expeditions" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/deneyimler/expeditions" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/experiences/expeditions" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- MICE (Dual) -->
+  <!-- MICE -->
   <url>
     <loc>https://planbasia.com/corporate/mice</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/corporate/mice" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/deneyimler/mice" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/corporate/mice" />
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://planbasya.com/deneyimler/mice</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/corporate/mice" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/deneyimler/mice" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/corporate/mice" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Wellness (EN-Only) -->
+  <!-- Wellness (EN-only) -->
   <url>
     <loc>https://planbasia.com/experiences/wellness</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/experiences/wellness" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/experiences/wellness" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Vietnam (Dual) -->
+  <!-- Vietnam -->
   <url>
     <loc>https://planbasia.com/destinations/vietnam</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/destinations/vietnam" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/tr/vietnam" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/destinations/vietnam" />
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://planbasya.com/tr/vietnam</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/destinations/vietnam" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/tr/vietnam" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/destinations/vietnam" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Cambodia (Dual) -->
+  <!-- Cambodia -->
   <url>
     <loc>https://planbasia.com/destinations/cambodia</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/destinations/cambodia" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/tr/cambodia" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/destinations/cambodia" />
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://planbasya.com/tr/cambodia</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/destinations/cambodia" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://planbasya.com/tr/cambodia" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/destinations/cambodia" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Privacy (EN-Only) -->
+  <!-- Privacy (EN-only) -->
   <url>
     <loc>https://planbasia.com/privacy-policy</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/privacy-policy" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
 
-  <!-- Terms (EN-Only) -->
+  <!-- Terms (EN-only) -->
   <url>
     <loc>https://planbasia.com/terms-of-service</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/terms-of-service" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
 
-  <!-- Refund Policy (EN-Only) -->
+  <!-- Refund (EN-only) -->
   <url>
     <loc>https://planbasia.com/refund-policy</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/refund-policy" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/refund-policy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>

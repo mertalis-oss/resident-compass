@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { getDomainScope } from "@/hooks/useDomainScope";
+import { EN_TO_TR, TR_TO_EN, isNoIndex } from "@/config/routeMapping";
 
 interface SEOHeadProps {
   title: string;
@@ -19,6 +20,9 @@ const DOMAIN_MAP: Record<"tr" | "en", string> = {
   en: "https://planbasia.com",
 };
 
+const EN_BASE = "https://planbasia.com";
+const TR_BASE = "https://planbasya.com";
+
 export default function SEOHead({
   title,
   description,
@@ -35,12 +39,26 @@ export default function SEOHead({
   const lang = scope === "tr" ? "tr" : "en";
 
   const baseUrl = DOMAIN_MAP[scope];
-  const currentPath = location.pathname;
-  const cleanPath = currentPath.split(/[?#]/)[0];
-  const absoluteUrl = `${baseUrl}${cleanPath}`.toLowerCase().replace(/\/$/, "") || baseUrl;
+  const currentPath = location.pathname || "/";
+  const cleanPath = currentPath.split(/[?#]/)[0] || "/";
+  const absoluteUrl =
+    `${baseUrl}${cleanPath}`.toLowerCase().replace(/\/$/, "") || baseUrl;
 
   const metaDescription = description || t("hero.subtitle");
   const defaultOgImage = ogImage || `${baseUrl}/images/hero-home.webp`;
+
+  // ── Phase 1.4 — Double-Indexability Hreflang Guard ──────────────────────
+  // Only emit hreflang for routes whose BOTH sides are mapped + indexable.
+  // Anything noindex (route-level or page prop) suppresses ALL hreflang.
+  const pageIsNoIndex = noIndex || isNoIndex(cleanPath);
+
+  const enPath: string | null | undefined =
+    scope === "en" ? cleanPath : TR_TO_EN[cleanPath];
+  const trPath: string | null | undefined =
+    scope === "tr" ? cleanPath : EN_TO_TR[cleanPath];
+
+  const enValid = !pageIsNoIndex && typeof enPath === "string" && !isNoIndex(enPath);
+  const trValid = !pageIsNoIndex && typeof trPath === "string" && !isNoIndex(trPath);
 
   const orgSchema = {
     "@context": "https://schema.org",
@@ -76,17 +94,23 @@ export default function SEOHead({
       {/* Meta Domain Verification — Phase 3 */}
       <meta name="facebook-domain-verification" content="czst3u3pxeva2if5eefjzhvq0q825n" />
 
-      {/* Canonical — always absolute */}
+      {/* Self-canonical — never cross-domain */}
       <link rel="canonical" href={canonical || absoluteUrl} />
 
-      {/* Hreflang — explicit absolute URLs */}
-      <link rel="alternate" hrefLang="tr" href={`https://planbasya.com${currentPath}`} />
-      <link rel="alternate" hrefLang="en" href={`https://planbasia.com${currentPath}`} />
-      <link rel="alternate" hrefLang="hi" href={`https://planbasia.com${currentPath}`} />
-      <link rel="alternate" hrefLang="x-default" href={`https://planbasia.com${currentPath}`} />
+      {/* Hreflang — emitted ONLY for verified, indexable, mapped pairs. */}
+      {!pageIsNoIndex && enValid && (
+        <link rel="alternate" hrefLang="en" href={`${EN_BASE}${enPath}`} />
+      )}
+      {!pageIsNoIndex && enValid && (
+        <link rel="alternate" hrefLang="hi" href={`${EN_BASE}${enPath}`} />
+      )}
+      {!pageIsNoIndex && trValid && (
+        <link rel="alternate" hrefLang="tr" href={`${TR_BASE}${trPath}`} />
+      )}
+      {!pageIsNoIndex && <link rel="alternate" hrefLang="x-default" href={`${EN_BASE}/`} />}
 
-      {noIndex && <meta name="robots" content="noindex, nofollow" />}
-      {noIndex && <meta name="googlebot" content="noindex, nofollow" />}
+      {pageIsNoIndex && <meta name="robots" content="noindex, nofollow" />}
+      {pageIsNoIndex && <meta name="googlebot" content="noindex, nofollow" />}
 
       {/* Open Graph */}
       <meta property="og:title" content={title} />
