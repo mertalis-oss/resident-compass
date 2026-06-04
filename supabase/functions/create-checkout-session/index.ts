@@ -11,6 +11,31 @@ const ALLOWED_ORIGINS = new Set([
 ]);
 const LOVABLE_PREVIEW = /^https:\/\/[a-z0-9-]+\.lovable\.app$/i;
 
+// Phase 0.2 — Strict return-URL host allowlist
+const ALLOWED_DOMAINS = ['planbasia.com', 'planbasya.com'] as const;
+const HOST_RE = /^[a-z0-9.-]+$/;
+
+function sanitizeHost(raw: unknown): string | null {
+  if (typeof raw !== 'string') return null;
+  const v = raw.trim().toLowerCase();
+  if (!v || v.length > 64) return null;
+  if (!HOST_RE.test(v)) return null;
+  if (v.includes('/') || v.includes(':') || v.includes('?') || v.includes('#')) return null;
+  return (ALLOWED_DOMAINS as readonly string[]).includes(v) ? v : null;
+}
+
+function resolveReturnHost(bodySourceDomain: unknown, originHeader: string | null): string {
+  const fromBody = sanitizeHost(bodySourceDomain);
+  if (fromBody) return fromBody;
+  if (originHeader) {
+    try {
+      const fromOrigin = sanitizeHost(new URL(originHeader).hostname);
+      if (fromOrigin) return fromOrigin;
+    } catch { /* ignore */ }
+  }
+  return 'planbasia.com';
+}
+
 function resolveOrigin(req: Request): string | null {
   const o = req.headers.get("origin") ?? "";
   if (ALLOWED_ORIGINS.has(o) || LOVABLE_PREVIEW.test(o)) return o;
@@ -204,9 +229,11 @@ Deno.serve(async (req) => {
       source: source || "direct",
     };
 
-    // Trusted origin: server-derived only
-    const success_url = `${origin}/success?session_id={CHECKOUT_SESSION_ID}&service=${encodeURIComponent(service.title)}`;
-    const cancel_url = `${origin}/services/${service.slug}?canceled=true`;
+    // Trusted return host: allowlist-sanitized (body → Origin → fallback)
+    const returnHost = resolveReturnHost(source_domain, req.headers.get("origin"));
+    const baseReturnUrl = `https://${returnHost}`;
+    const success_url = `${baseReturnUrl}/success?session_id={CHECKOUT_SESSION_ID}&service=${encodeURIComponent(service.title)}`;
+    const cancel_url = `${baseReturnUrl}/services/${service.slug}?canceled=true`;
 
     const session = await stripe.checkout.sessions.create({
       customer_email: userEmail || undefined,

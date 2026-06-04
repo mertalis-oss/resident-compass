@@ -57,7 +57,9 @@ export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }:
 
   // Body scroll lock
   useEffect(() => {
+    if (import.meta.env.DEV) console.log('[Modal] open changed', open);
     if (!open) return;
+    if (import.meta.env.DEV) console.log('[Modal] mounted successfully (portal rendered dynamically)');
     const original = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = original; };

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 Sitemap: https://planbasia.com/sitemap.xml
-Sitemap: https://planbasya.com/sitemap.xml
+Sitemap: https://planbasya.com/sitemap-tr.xml
