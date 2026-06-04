@@ -218,13 +218,13 @@ export default function ServicePage() {
           <div className="container max-w-2xl text-center px-6">
             <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-6" />
             <h1 className="heading-section text-foreground mb-4">
-              {t('service.errorTitle', { defaultValue: 'Something went wrong' })}
+              {t('service.errorTitle')}
             </h1>
             <p className="body-editorial text-muted-foreground mb-8">
-              {t('service.errorBody', { defaultValue: 'Please try again.' })}
+              {t('service.errorBody')}
             </p>
             <Button onClick={() => window.location.reload()} className="btn-luxury-primary">
-              {t('service.retry', { defaultValue: 'Try Again' })}
+              {t('service.retry')}
             </Button>
           </div>
         </section>
