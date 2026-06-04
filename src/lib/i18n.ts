@@ -565,6 +565,10 @@ const resources = {
         viewServices: 'Tüm Hizmetleri Gör',
         invalidEmail: 'Lütfen geçerli bir e-posta adresi girin.',
         submitError: 'Bir şeyler yanlış gitti. Lütfen tekrar deneyin.',
+        bridge1: 'Profiline en uygun yol bu.',
+        bridge2: 'Senin gibi profiller genelde bu yolu seçiyor.',
+        bridge3: 'Senin profiline göre seçildi.',
+        resultsPersonalized: 'Sonuçlar profiline özel.',
       },
       testimonials: {
         title: 'Müşteri Görüşleri',
