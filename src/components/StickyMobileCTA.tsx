@@ -94,7 +94,7 @@ export default function StickyMobileCTA({ id, onClick, disabled, loading, classN
         style={{ minHeight: '48px' }}
       >
         {loading
-          ? t('checkout.processing', { defaultValue: 'İşleniyor...' })
+          ? t('checkout.processing')
           : label}
       </Button>
     </div>

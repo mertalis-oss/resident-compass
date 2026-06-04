@@ -102,8 +102,8 @@ export default function ServicePage() {
   useEffect(() => {
     if (searchParams.get('canceled') === 'true') {
       toast({
-        title: t('service.canceledTitle', { defaultValue: 'Payment not completed' }),
-        description: t('service.canceledDesc', { defaultValue: 'Your payment was not completed. You can try again anytime.' }),
+        title: t('service.canceledTitle'),
+        description: t('service.canceledDesc'),
       });
     }
   }, [searchParams, toast, t]);
@@ -114,8 +114,8 @@ export default function ServicePage() {
       if (e.clientY <= 0 && !exitIntentFired.current) {
         exitIntentFired.current = true;
         toast({
-          title: t('service.exitIntentTitle', { defaultValue: 'Before you go…' }),
-          description: t('service.exitIntentDesc', { defaultValue: 'This process gets harder the longer you wait.' }),
+          title: t('service.exitIntentTitle'),
+          description: t('service.exitIntentDesc'),
         });
       }
     };
@@ -218,13 +218,13 @@ export default function ServicePage() {
           <div className="container max-w-2xl text-center px-6">
             <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-6" />
             <h1 className="heading-section text-foreground mb-4">
-              {t('service.errorTitle', { defaultValue: 'Something went wrong' })}
+              {t('service.errorTitle')}
             </h1>
             <p className="body-editorial text-muted-foreground mb-8">
-              {t('service.errorBody', { defaultValue: 'Please try again.' })}
+              {t('service.errorBody')}
             </p>
             <Button onClick={() => window.location.reload()} className="btn-luxury-primary">
-              {t('service.retry', { defaultValue: 'Try Again' })}
+              {t('service.retry')}
             </Button>
           </div>
         </section>
@@ -236,7 +236,7 @@ export default function ServicePage() {
   if (notFound) {
     return (
       <div className="min-h-screen bg-background">
-        <SEOHead title={t('service.notFoundTitle', { defaultValue: 'Service Not Available' })} description="" />
+        <SEOHead title={t('service.notFoundTitle')} description="" />
         <FocusedNavbar />
         <TrustBar />
         <ServiceFallback services={fallbackServices} />
@@ -291,10 +291,10 @@ export default function ServicePage() {
         <section className="py-20 bg-corporate-navy text-holistic text-center">
           <div className="container max-w-3xl px-6">
             <h2 className="heading-section text-holistic mb-4">
-              {t('service.finalCtaTitle', { defaultValue: 'Ready to move forward?' })}
+              {t('service.finalCtaTitle')}
             </h2>
             <p className="body-editorial text-holistic/60 mb-8">
-              {t('service.finalCtaBody', { defaultValue: 'Start your process now.' })}
+              {t('service.finalCtaBody')}
             </p>
             <ServiceCheckout service={service} variant="mirror" />
           </div>

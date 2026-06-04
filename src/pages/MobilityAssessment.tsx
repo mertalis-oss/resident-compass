@@ -646,17 +646,13 @@ export default function MobilityAssessment() {
                     {/* Psychological Bridges */}
                     <div className="space-y-3 pt-2">
                       <p className="text-sm text-foreground font-medium font-body">
-                        {t("quiz.bridge1", {
-                          defaultValue: "Based on your answers, this is the most efficient path for your situation.",
-                        })}
+                        {t("quiz.bridge1")}
                       </p>
                       <p className="text-sm text-muted-foreground font-body italic">
-                        {t("quiz.bridge2", { defaultValue: "Most people in your situation choose this." })}
+                        {t("quiz.bridge2")}
                       </p>
                       <p className="text-xs text-accent/80 font-body">
-                        {t("quiz.bridge3", {
-                          defaultValue: "Why this fits you: Based on your budget, urgency, and income.",
-                        })}
+                        {t("quiz.bridge3")}
                       </p>
                     </div>
 
@@ -698,7 +694,7 @@ export default function MobilityAssessment() {
 
                       {/* FIX: was 'Sonuçlarınız kişiselleştirilmiştir.' */}
                       <p className="text-xs text-accent/80 font-body font-medium">
-                        {t("quiz.resultsPersonalized", { defaultValue: "Results are personalized to your profile." })}
+                        {t("quiz.resultsPersonalized")}
                       </p>
 
                       {/* Alternative (overchoice prevention) */}
