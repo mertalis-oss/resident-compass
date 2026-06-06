@@ -125,4 +125,13 @@
     <priority>0.5</priority>
   </url>
 
+  <!-- DTV Visa Calculator (EN-only public SEO tool — Override 3) -->
+  <url>
+    <loc>https://planbasia.com/tools/dtv-visa-calculator</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://planbasia.com/tools/dtv-visa-calculator" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://planbasia.com/" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
 </urlset>

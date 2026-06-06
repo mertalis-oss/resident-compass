@@ -21,7 +21,11 @@ function sanitizeHost(raw: unknown): string | null {
   if (!v || v.length > 64) return null;
   if (!HOST_RE.test(v)) return null;
   if (v.includes('/') || v.includes(':') || v.includes('?') || v.includes('#')) return null;
-  return (ALLOWED_DOMAINS as readonly string[]).includes(v) ? v : null;
+  // Override 2 (Option B): canonical-apex stripping — accept www.* variants
+  // but always return the clean non-www apex so return_url / cancel_url never
+  // scatter across www subdomains.
+  const stripped = v.replace(/^www\./, '');
+  return (ALLOWED_DOMAINS as readonly string[]).includes(stripped) ? stripped : null;
 }
 
 function resolveReturnHost(bodySourceDomain: unknown, originHeader: string | null): string {

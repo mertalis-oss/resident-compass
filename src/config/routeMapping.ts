@@ -62,14 +62,24 @@ export const EN_OWNED_PREFIXES = [
 /** Path prefixes whose canonical ownership is the TR domain (planbasya.com). */
 export const TR_OWNED_PREFIXES = ['/tr', '/vizeler', '/yerlesim', '/deneyimler'];
 
+/**
+ * Tools that ARE indexable. Override 3: granular `/tools` SEO registry —
+ * public funnel tools are high-value long-tail SEO entries and must stay open
+ * to crawlers. Listed here to short-circuit any future broad `/tools` block.
+ */
+export const INDEXABLE_TOOL_PATHS = new Set<string>([
+  '/tools/dtv-visa-calculator',
+]);
+
 /** Routes that must never appear in sitemaps or hreflang tags. */
 export const NOINDEX_PATHS = new Set<string>([
+  '/tools/mobility-assessment',
+  '/tools/internal-checkout',
   '/admin',
   '/login',
   '/dashboard',
   '/success',
   '/checkout',
-  '/tools',
   '/tr/rabbit-hole',
 ]);
 
@@ -78,6 +88,8 @@ function startsWithPrefix(path: string, prefixes: readonly string[]): boolean {
 }
 
 export function isNoIndex(path: string): boolean {
+  // Override 3 short-circuit: explicit indexable tools always win.
+  if (INDEXABLE_TOOL_PATHS.has(path)) return false;
   if (NOINDEX_PATHS.has(path)) return true;
   for (const p of NOINDEX_PATHS) {
     if (path === p || path.startsWith(p + '/')) return true;
