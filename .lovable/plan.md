@@ -1,134 +1,89 @@
-# Phase 2.4 — Revised Pipeline (3 Overrides Applied)
+# Phase 2.4 — Tier 3A Marketing & Funnel (DRAFT / Awaiting Sign-Off)
 
-Overrides 1–3 acknowledged and folded in. No file writes happen until you approve this plan.
+## Status
+- **Step 1 infrastructure: SHIPPED** — `src/lib/i18n.test.ts`, `package.json` script, Override 2 (`sanitizeHost` www-strip), Override 3 (granular `/tools` SEO registry + sitemap entry).
+- **Step 3 draft proposals: AUTHORED** (this file) — no source-component commits, no `src/lib/i18n.ts` injection.
 
----
+## Locked Brand Voice (enforced in every TR row below)
+- Informal **"sen"** (formal "siz" reserved for legal/admin).
+- Banned verbs: `satın al`, `ödeme yap` → use `Süreci Başlat` / `Danışmanlığı Başlat`.
+- Banned vocab: `optimize`, `projeksiyon`, `stratejik karar vericiler`, `ölçeklendirilmiş`, `entegrasyon`.
+- No rule-of-three list patterns • no FOMO/urgency • no passive corporate jargon.
 
-## Override Acknowledgements
+## Diagnostic Results — `bunx vitest run src/lib/i18n.test.ts`
+- **Scanned:** 138 files, 313 static `t()` calls, 7 dynamic sites, 0 empty values.
+- **Missing keys:** 190 (test fails as designed — this is the Tier 3+4 dictionary gap the safety brake exists to surface).
+- **Tier 3B legal files excluded** from the walker per Override 1 (technical debt; re-enabled after legal-review loop).
+- **Dynamic warnings:** 7 unique sites, well under the 50-line cap; no truncation needed.
 
-### Override 1 — Tier 3B legal extraction EXCLUSION
-Tier 3B files are removed from the integrity-test walker entirely (not merely flagged). Hardcoded exclusion set inside `src/lib/i18n.test.ts`:
-```ts
-const EXCLUDED_PATHS = new Set([
-  'src/pages/TermsOfService.tsx',
-  'src/pages/PrivacyPolicy.tsx',
-  'src/pages/RefundPolicy.tsx',
-]);
-```
-The walker skips these by normalized relative path before reading file contents. Documented inline as `// TEMPORARY TECHNICAL DEBT — re-enable after legal-review loop`.
+## Tier 3A — Temporary Review Artifact (DO NOT TREAT AS SOURCE-OF-TRUTH)
+Full proposal array for the 56 extracted keys. Removed from this file once Tier 3A commits land.
 
-### Override 2 — Stripe canonical-apex stripping (Option B)
-Replace the current strict `includes(v)` check in `sanitizeHost` (`supabase/functions/create-checkout-session/index.ts`, lines 18–25) with:
-```ts
-function sanitizeHost(raw: unknown): string | null {
-  if (typeof raw !== 'string') return null;
-  const v = raw.trim().toLowerCase();
-  if (!v || v.length > 64) return null;
-  if (!HOST_RE.test(v)) return null;
-  if (v.includes('/') || v.includes(':') || v.includes('?') || v.includes('#')) return null;
-  const stripped = v.replace(/^www\./, '');
-  return (ALLOWED_DOMAINS as readonly string[]).includes(stripped) ? stripped : null;
-}
-```
-Effect: `www.planbasia.com` → `planbasia.com`, `www.planbasya.com` → `planbasya.com`, every other www-prefixed input still rejected. `resolveReturnHost` consumers unchanged — they always receive the clean apex. Return/cancel URLs never scatter across www subdomains.
+| Key | EN Current | Proposed TR | Source File:Line |
+|---|---|---|---|
+| seo.homeTitle | Plan B Asia — Sovereign Mobility Architecture | Plan B Asya — Egemen Mobilite Mimarisi | Index.tsx:20 |
+| footer.privacy | Privacy | Gizlilik | Index.tsx:42 |
+| footer.terms | Terms | Şartlar | Index.tsx:45 |
+| footer.refund | Refund Policy | İade Politikası | Index.tsx:48 |
+| rabbitHole.seoTitle | Private Wellness Experiences — Plan B Asia | Özel Wellness Deneyimleri — Plan B Asya | RabbitHolePage.tsx:36 |
+| rabbitHole.badge | Private Wellness Experiences | Özel Wellness Deneyimleri | RabbitHolePage.tsx:60 |
+| rabbitHole.heroTitle | Derinlere Dalış | Derinlere Dalış | RabbitHolePage.tsx:63 |
+| rabbitHole.heroSub | İçsel Keşif Yolculuğu | İçsel Keşif Yolculuğu | RabbitHolePage.tsx:65 |
+| rabbitHole.heroDesc | Bilinçaltının katmanlarını keşfet. Binlerce yıllık geleneksel pratiklerin modern güvenlik standartlarıyla buluştuğu eşsiz deneyimler. | Bilinçaltının katmanlarını keşfet. Binlerce yıllık geleneksel pratikler, modern güvenlik standartlarıyla buluşuyor. | RabbitHolePage.tsx:69 |
+| rabbitHole.ctaExplore | Deneyimleri Keşfet | Deneyimleri Keşfet | RabbitHolePage.tsx:73 |
+| rabbitHole.ctaSafety | Güvenlik İlkelerimiz | Güvenlik İlkelerimiz | RabbitHolePage.tsx:76 |
+| rabbitHole.programsLabel | Programlar | Programlar | RabbitHolePage.tsx:87 |
+| rabbitHole.programsTitle | Doğa Ana'nın Hediyeleri | Doğa Ana'nın Hediyeleri | RabbitHolePage.tsx:88 |
+| rabbitHole.principlesLabel | Taahhütlerimiz | Taahhütlerimiz | RabbitHolePage.tsx:115 |
+| rabbitHole.principlesTitle | Güvenlik İlkelerimiz | Güvenlik Yaklaşımımız | RabbitHolePage.tsx:116 |
+| rabbitHole.ctaTitle | Bu Yolculuk Sana Uygun mu? | Bu Yolculuk Sana Uygun mu? | RabbitHolePage.tsx:136 |
+| rabbitHole.ctaBody | Gizli, bağlayıcı olmayan bir görüşme ile senin için doğru olup olmadığını birlikte değerlendirelim. | Gizli, bağlayıcı olmayan bir görüşmede senin için doğru olup olmadığını birlikte değerlendirelim. | RabbitHolePage.tsx:137 |
+| rabbitHole.legalDisclaimer | Sunulan tüm hizmetler danışmanlık ve yönlendirme kapsamındadır. Plan B Asia sadece aracıdır. Herhangi bir yasa dışı faaliyet teşvik edilmez veya desteklenmez. | Sunulan tüm hizmetler danışmanlık ve yönlendirme kapsamındadır. Plan B Asya yalnızca aracı konumundadır. Hiçbir yasa dışı faaliyet teşvik edilmez. | RabbitHolePage.tsx:141 |
+| rabbitHole.ctaBtn | Değerlendirme Başlat | Değerlendirme Başlat | RabbitHolePage.tsx:145 |
+| rabbitHole.backHome | Ana Sayfaya Dön | Ana Sayfaya Dön | RabbitHolePage.tsx:153 |
+| success.verifying | We're verifying your payment... | Ödemen doğrulanıyor... | Success.tsx:104 |
+| success.pageTitle | Order Confirmed — Plan B Asia | Sürecin Onaylandı — Plan B Asya | Success.tsx:120 |
+| success.timeoutTitle | Payment received | Ödemen alındı | Success.tsx:127 |
+| success.timeoutBody | Ödemeniz sistemimize ulaşmıştır. Teknik doğrulama süreci devam ediyor. Her durumda sizinle manuel olarak iletişime geçeceğiz. | Ödemen sistemimize ulaştı. Teknik doğrulama sürüyor. Her halükarda seninle manuel iletişime geçeceğiz. | Success.tsx:130 |
+| success.teamWorking | Ekibimiz şu an planınızı hazırlıyor. | Ekibimiz şu an planını hazırlıyor. | Success.tsx:133 |
+| success.timeoutCta | Didn't receive confirmation? Contact us on WhatsApp. | Onay e-postası gelmedi mi? WhatsApp üzerinden bize yaz. | Success.tsx:136 |
+| success.contactSupport | Contact Support | Bize Ulaş | Success.tsx:140 |
+| success.title | Order Successfully Received | Sürecin Başarıyla Alındı | Success.tsx:162 |
+| success.dopamine | You just removed a major uncertainty from your path. | Yolundaki büyük bir belirsizliği az önce ortadan kaldırdın. | Success.tsx:165 |
+| success.vipNote | Size özel süreciniz başlatıldı. Şu anda sistemde önceliklendirildiniz. Genellikle birkaç saat, en geç 24 saat içinde sizinle iletişime geçiyoruz. | Sana özel sürecin başlatıldı. Şu an sistemde önceliklisin. Genelde birkaç saat, en geç 24 saat içinde seninle iletişime geçiyoruz. | Success.tsx:171 |
+| success.nextStepsLabel | What happens now | Şimdi ne oluyor | Success.tsx:177 |
+| success.step1 | Our team reviews your case | Ekibimiz durumunu inceliyor | Success.tsx:180 |
+| success.step2 | We contact you within 24 hours | 24 saat içinde seninle iletişime geçiyoruz | Success.tsx:181 |
+| success.step3 | You receive your personalized next steps | Sana özel sonraki adımları alıyorsun | Success.tsx:182 |
+| success.relief | No further action is required from your side right now. | Şu an senin tarafından ek bir işlem gerekmiyor. | Success.tsx:194 |
+| success.avgResponse | Avg. first response: 2h | Ortalama ilk yanıt: 2 saat | Success.tsx:197 |
+| success.whatsappPush | We already have your request. Most clients message us here to get faster responses. | Talebin elimizde. Müşterilerimizin çoğu daha hızlı yanıt almak için bize buradan yazıyor. | Success.tsx:202 |
+| success.whatsappCta | Message Us on WhatsApp | WhatsApp'tan Yaz | Success.tsx:210 |
+| form.error | Something went wrong. Please try again. | Bir şey ters gitti. Tekrar dene. | PlanBForm.tsx:54 |
+| form.submitting | Submitting… | Gönderiliyor… | PlanBForm.tsx:97 |
+| service.bundleLabel | Bundle Contents | Paket İçeriği | ServiceBundleItems.tsx:53 |
+| service.bundleContext | Everything you need in one structured process. | Tek bir yapılandırılmış süreçte ihtiyacın olan her şey. | ServiceBundleItems.tsx:56 |
+| service.deliveryDays | Delivery Days | Teslim Süresi | ServiceDeliveryInfo.tsx:19 |
+| service.location | Location | Lokasyon | ServiceDeliveryInfo.tsx:27 |
+| service.capacity | Capacity | Kapasite | ServiceDeliveryInfo.tsx:35 |
+| service.faqLabel | Frequently Asked Questions | Sıkça Sorulan Sorular | ServiceFAQ.tsx:16 |
+| service.faqPush | Still unsure? Start your process and we'll guide you step by step. | Hâlâ kararsız mısın? Süreci başlat, adım adım yanındayız. | ServiceFAQ.tsx:31 |
+| service.fallbackTitle | Not available in your region (yet) | Bölgende henüz mevcut değil | ServiceFallback.tsx:14 |
+| service.fallbackBody | We're expanding fast. You can still start with these: | Hızla büyüyoruz. Bu hizmetlerle başlayabilirsin: | ServiceFallback.tsx:17 |
+| service.getStarted | Get Started | Süreci Başlat | ServiceFallback.tsx:35 |
+| service.whatYouGet | What you'll get: | Sana sunulanlar: | ServiceFeatures.tsx:16 |
+| service.featuresContext | Designed to give you clarity, speed, and a clear path forward. Based on real cases and proven processes. | Sana netlik ve hız kazandırmak için tasarlandı. Gerçek vakalardan ve denenmiş süreçlerden doğdu. | ServiceFeatures.tsx:19 |
+| service.upsellLabel | Clients who chose this service often also needed: | Bu hizmeti seçen danışanların sıklıkla ihtiyaç duyduğu: | ServiceUpsell.tsx:36 |
+| service.learnMore | Learn More | Daha Fazla | ServiceUpsell.tsx:52 |
 
-### Override 3 — Granular `/tools` SEO registry
-Update `src/config/routeMapping.ts`:
-```ts
-export const INDEXABLE_TOOL_PATHS = new Set<string>([
-  '/tools/dtv-visa-calculator',
-]);
-
-export const NOINDEX_PATHS = new Set<string>([
-  '/tools/mobility-assessment',
-  '/tools/internal-checkout',
-  '/admin',
-  '/login',
-  '/dashboard',
-  '/success',
-  '/checkout',
-  '/tr/rabbit-hole',
-]);
-```
-- Remove blanket `'/tools'` from `NOINDEX_PATHS`.
-- `isNoIndex(path)` short-circuit: if `INDEXABLE_TOOL_PATHS.has(path)` → return `false` before prefix scan (prevents a future broader `/tools` rule from accidentally re-blocking the calculator).
-- `EN_OWNED_PREFIXES` keeps `/tools` so cross-domain routing still treats the calculator as EN-owned.
-- Sitemap split (`public/sitemap.xml`) must add `https://planbasia.com/tools/dtv-visa-calculator` in this loop's sitemap edit (EN-only, no TR alternate since no TR mapping exists). `sitemap-tr.xml` untouched.
-
----
-
-## Execution Order (after sign-off)
-
-### Step 1 — Infrastructure (this loop, writes only after approval)
-
-**1a. Create `src/lib/i18n.test.ts`**
-- `beforeAll` 5-second `Promise.race` init guard against `i18n.isInitialized`.
-- **Resource-tree failsafe:** assert `i18n.options.resources?.en?.translation` and `…tr.translation` are objects; throw a clear `i18n resources missing for locale X` error immediately if either is undefined (does not silently pass).
-- Recursive walker over `src/`, skip: `node_modules`, `*.d.ts`, `src/lib/i18n.ts`, this test file itself, `src/test/**`, and the `EXCLUDED_PATHS` set from Override 1.
-- Per-file preprocessing: strip `/* … */` (DOTALL) then strip `// …` per line (line numbers preserved by replacing with empty same-line content).
-- Static key regex: `/\bt\(\s*(['"\`])([^'"\`\n]+)\1/g` — captures namespaced keys, dashes, underscores, dots.
-- Dynamic-key regex: `/\bt\(\s*(\`[^\`]*\$\{|[A-Za-z_$][A-Za-z0-9_$]*\s*[,)])/g` — emitted as `console.warn`, **deduped by `file:line`, hard-capped at 50 lines**, followed by `console.warn('[i18n] dynamic key warnings truncated: showing 50 of N total')`.
-- Validation via `getByPath(tree, 'a.b.c')`:
-  - missing in EN or TR → **FAIL** with sorted output `key [EN ✗ TR ✓] file:line`.
-  - present but empty string → **WARN only**, counted in summary.
-- Final `expect(missing).toEqual([])`.
-
-**1b. `package.json` — append script**
-```json
-"test:i18n": "bunx vitest run src/lib/i18n.test.ts"
-```
-(No pre-commit hook installed — project has no Husky / lint-staged config; per directive, no new tooling added.)
-
-**1c. Apply Override 2 + Override 3 file edits**
-- `supabase/functions/create-checkout-session/index.ts` — replace `sanitizeHost` body only.
-- `src/config/routeMapping.ts` — add `INDEXABLE_TOOL_PATHS`, update `NOINDEX_PATHS`, update `isNoIndex()` short-circuit.
-- `public/sitemap.xml` — add `/tools/dtv-visa-calculator` entry (EN-only, no `xhtml:link tr`).
-
-**1d. Run `bunx vitest run src/lib/i18n.test.ts`** and dump to chat:
-- pass/fail status,
-- full missing-key list (expected empty if Tier 1+2 work was clean),
-- empty-string warning count,
-- truncated dynamic-key warning block + total-count summary line.
-
-### Step 3 — Tier 3A Marketing Draft (Review-Only, no source commits)
-
-**Scope (parsed only):**
-`src/pages/Index.tsx`, `src/pages/tr/RabbitHolePage.tsx`, `src/pages/Success.tsx`, `src/pages/ServicePage.tsx` + all `src/components/service/*.tsx`, `src/components/PlanBForm.tsx`, `src/components/advisory/AdvisoryForm.tsx`.
-
-**Excluded (untouched, hard-coded):** `TermsOfService.tsx`, `PrivacyPolicy.tsx`, `RefundPolicy.tsx`.
-
-**Pipeline:**
-1. Extract every `t('key', { defaultValue: '...' })` into `{ key, en, file, line, bucket }`. Bucket inferred from key namespace + suffix (`hero`/`cta`/`body`/`form`).
-2. Compose TR strings under **locked brand-voice rules**: informal "sen" only • banned verbs `satın al`, `ödeme yap` → `Süreci Başlat` / `Danışmanlığı Başlat` • banned vocab `optimize`, `projeksiyon`, `stratejik karar vericiler`, `ölçeklendirilmiş`, `entegrasyon` • no rule-of-three • no FOMO/urgency • active voice only.
-3. **Deterministic stratified sample (fixed seed = 1337):** per bucket, FNV-1a hash `${key}|${file}|1337` → sort asc → take first N. Output exactly 3 hero + 3 cta + 2 body + 2 form = 10 rows.
-4. Render gate table in chat:
-   ```
-   | Key | EN Current | Proposed TR | hasEN | hasTR | Source File | Tier |
-   ```
-   `hasEN`/`hasTR` reflect live dictionary state BEFORE injection.
-5. **Persistence:** full proposal array written to `.lovable/plan.md` under a clearly labeled **"Phase 2.4 Tier 3A — Temporary Review Artifact (DO NOT TREAT AS SOURCE-OF-TRUTH)"** section. Will be deleted from `plan.md` once Tier 3A commits land.
-6. **Translation Collision Audit** across the full proposal array, grouped by proposed TR string, `count ≥ 2`:
-   ```
-   | EN Key | Proposed TR Value | Collision Count | Source Files |
-   ```
-   Rows with values in `{ 'Devam Et', 'Gönder', 'İleri', 'Yeniden Dene', 'Geri', 'Kapat' }` prefixed `[expected]` — informational, never blocking.
-
-### HALT
-
-After Step 1d output + Step 3 sample + collision report print to chat, stop. Wait for explicit sign-off before:
-- injecting any new keys into `src/lib/i18n.ts`,
-- stripping `defaultValue` in Tier 3A components,
-- starting Tier 4 (admin) pipeline.
-
----
-
-## Files Touched This Loop (post-approval)
-- **Create:** `src/lib/i18n.test.ts`
-- **Edit:** `package.json` (script only)
-- **Edit:** `supabase/functions/create-checkout-session/index.ts` (Override 2 — `sanitizeHost` body)
-- **Edit:** `src/config/routeMapping.ts` (Override 3 — `INDEXABLE_TOOL_PATHS`, `NOINDEX_PATHS`, `isNoIndex` short-circuit)
-- **Edit:** `public/sitemap.xml` (Override 3 — add DTV calculator entry)
-- **Edit:** `.lovable/plan.md` (append temporary Tier 3A review artifact)
+Duplicate rows (`success.pageTitle` Success.tsx:152 and `success.teamWorking` Success.tsx:168) share the same proposed TR as their first occurrence — listed once above for clarity.
 
 ## Out of Scope
-Tier 3A source-component commits • Tier 3B legal content • Tier 4 admin • TR Wellness page (PR-2 backlog) • HI locale • `LanguageRouter.tsx` • sitemap generator script • Stripe ledger • Post-Deploy Verification Report.
+Tier 3A source-component commits • Tier 3B legal content (TermsOfService, PrivacyPolicy, RefundPolicy) • Tier 4 admin pipeline • TR Wellness page (PR-2) • HI locale • `LanguageRouter.tsx` • Post-Deploy Verification Report.
+
+## HALT
+Awaiting explicit sign-off before:
+1. Injecting all 56 keys into `src/lib/i18n.ts` (`en` + `tr` trees).
+2. Stripping `defaultValue` from the 7 Tier 3A source files.
+3. Re-running `test:i18n` to confirm green.
+4. Starting Tier 4 (admin) pipeline.
