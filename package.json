@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:i18n": "bunx vitest run src/lib/i18n.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
