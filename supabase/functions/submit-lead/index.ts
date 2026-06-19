@@ -9,10 +9,11 @@ const ALLOWED_ORIGINS = new Set([
   "https://planbasia-com.lovable.app",
 ]);
 const LOVABLE_PREVIEW = /^https:\/\/[a-z0-9-]+\.lovable\.app$/i;
+const VERCEL_PREVIEW = /^https:\/\/[a-z0-9-]+\.vercel\.app$/i;
 
 function resolveOrigin(req: Request): string | null {
   const o = req.headers.get("origin") ?? "";
-  if (ALLOWED_ORIGINS.has(o) || LOVABLE_PREVIEW.test(o)) return o;
+  if (ALLOWED_ORIGINS.has(o) || LOVABLE_PREVIEW.test(o) || VERCEL_PREVIEW.test(o)) return o;
   return null;
 }
 

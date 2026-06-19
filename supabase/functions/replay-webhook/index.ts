@@ -10,11 +10,12 @@ const ALLOWED_ORIGINS = new Set([
   "http://localhost:5173",
 ]);
 const LOVABLE_PREVIEW = /^https:\/\/[a-z0-9-]+\.lovable\.app$/i;
+const VERCEL_PREVIEW = /^https:\/\/[a-z0-9-]+\.vercel\.app$/i;
 const FALLBACK_ORIGIN = "https://planbasia.com";
 
 function resolveOrigin(req: Request): string {
   const o = req.headers.get("origin") ?? "";
-  if (ALLOWED_ORIGINS.has(o) || LOVABLE_PREVIEW.test(o)) return o;
+  if (ALLOWED_ORIGINS.has(o) || LOVABLE_PREVIEW.test(o) || VERCEL_PREVIEW.test(o)) return o;
   return FALLBACK_ORIGIN;
 }
 
