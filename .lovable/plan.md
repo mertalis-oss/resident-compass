@@ -1,74 +1,42 @@
-# Read-Only QA Verification Pass — Phase 2 / Tier 3A
 
-Comprehensive smoke + SEO + route-ownership + UI/UX audit. **Zero source edits.** Output a single consolidated markdown report in chat.
+## Goal
+Fix `planbasya.com/vizeler/dtv-vize` (and all other deep links) returning 404 on the Vercel deployment, and add baseline security headers to both domains served by Vercel.
 
----
+## Context
+- `planbasya.com` is now connected directly to a separate Vercel project (DNS A `76.76.21.21`, Cloudflare DNS-only). Vercel has no implicit SPA fallback, so deep-link refreshes 404.
+- `planbasia.com` flows Cloudflare → Lovable proxy → Vercel; Lovable's proxy currently masks the missing fallback.
+- The project's existing `docs/HOSTING_LIMITATION.md` only forbids these config files for the Lovable-hosted path. It does not apply to a separate Vercel deployment of the same repo. The doc needs a small clarifying note so future maintainers don't delete `vercel.json` thinking it's dead config.
 
-## Execution Steps
+## Changes
 
-### Step 1 — Infrastructure & Static Checks (parallel shell)
-- `bun run test:i18n` → capture: files scanned, static keys extracted, missing keys, dynamic warnings. **Guard:** if extracted=0, flag as suite failure.
-- `bunx vitest run` → full suite pass/fail. Separate Phase-2 regressions from pre-existing legacy failures.
-- Grep audits (read-only):
-  - `supabase/functions/create-checkout-session/index.ts` → confirm `v.replace(/^www\./, '')` Option-B apex strip present and active in `sanitizeHost`
-  - `src/config/routeMapping.ts` → confirm `INDEXABLE_TOOL_PATHS` contains `/tools/dtv-visa-calculator` and `isNoIndex()` short-circuits it
-  - `public/sitemap.xml` + `public/sitemap-tr.xml` → parse URL counts + cross-ownership leak check
-  - `public/robots.txt` → verify both sitemap directives + no global Disallow
+### 1. Create `vercel.json` at project root
+Exact content provided by the user:
+- `headers` block applied to `/(.*)`:
+  - `Content-Security-Policy` — allows Stripe, GTM, PostHog, Cloudflare Turnstile, Google Fonts, Supabase, GA; `frame-ancestors 'none'`; `upgrade-insecure-requests`.
+  - `X-Frame-Options: DENY`
+  - `Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(self "https://js.stripe.com")`
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `X-Content-Type-Options: nosniff`
+- `rewrites`: `/((?!api/|images/|.*\..*).*)` → `/index.html` (SPA fallback that skips API routes and any path with a file extension).
 
-### Step 2 — Cross-Domain Redirect & Route Ownership (code-level)
-- Trace `src/components/CrossDomainRedirect.tsx` + `routeMapping.ts` logic against scenarios:
-  - `planbasia.com/vizeler/dtv-vize` → expected `replace()` to `planbasya.com/vizeler/dtv-vize`
-  - `planbasya.com/visas/thailand-dtv` → expected `replace()` to `planbasia.com/visas/thailand-dtv`
-  - Query/hash preservation via `window.location.search + hash` concatenation
-  - `planbasia.com/vizeler/unknown-page-test` → `isMappedRoute()` returns false → no redirect → falls to `<NotFound />`
-  - Loop guard: `target === hostname` early return; localhost + `*.lovable.app` bypass
-- Sitemap ownership quantification:
-  - EN sitemap: count `<loc>`, assert 0 `planbasya.com` or TR-prefixed paths
-  - TR sitemap: count `<loc>`, assert 0 `planbasia.com` or EN-prefixed paths
-  - Hreflang cross-leak audit per `<xhtml:link>` entries
+### 2. Update `docs/HOSTING_LIMITATION.md`
+Add a short subsection noting that `vercel.json` IS used because the TR domain (`planbasya.com`) is served by a separate Vercel project. Keep the existing "do not add to Lovable-only deployments" guidance intact.
 
-### Step 3 — SPA Smoke Test (browser, desktop 1366×768)
-Routes: `/`, `/visas/thailand-dtv`, `/relocation/nomad-incubator`, `/experiences/wellness`, `/tools/dtv-visa-calculator`, `/tr`, `/vizeler/dtv-vize`, `/deneyimler/mice`, `/login`, `/nonexistent-route-test`.
+## CSP risk review (pre-flight)
+The CSP in the file allows the origins currently used by the app:
+- Stripe (`js.stripe.com`, `api.stripe.com`), Supabase (`*.supabase.co`), PostHog (`app.posthog.com`), GTM/GA (`googletagmanager.com`, `google-analytics.com`), Google Fonts, Cloudflare Turnstile.
+- `'unsafe-inline'` is permitted for both `script-src` and `style-src` (required by current GTM snippet + Tailwind/inline styles). Acceptable for now; tightening to nonces is out of scope.
+- No `worker-src`/`media-src` overrides — fine since the app doesn't use service workers or video.
 
-Per route capture: console errors, `<html lang>`, `<title>`, canonical href, visible H1 text. For `/nonexistent-route-test`: verify `<NotFound />` redirect-to-home (current behavior per code) and report — explicitly note that current NotFound is a `<Navigate>` redirect, not a 404 UI.
+If any third-party domain is later added (e.g., a new analytics provider), CSP must be updated or requests will be blocked.
 
-If browser session unavailable: degrade to static route-register evaluation and flag the limitation honestly.
+## Out of scope
+- No code changes to React, routing, or Supabase functions.
+- No changes to `public/robots.txt`, sitemaps, or `routeMapping.ts`.
+- No Lovable-side hosting changes.
 
-### Step 4 — SEO Surface Audit (3 representative routes)
-For `/`, `/visas/thailand-dtv`, `/tools/dtv-visa-calculator` — extract from rendered DOM via `browser--extract`:
-- Self-canonical match against current URL (hostname per ownership)
-- Hreflang entries all absent from `NOINDEX_PATHS`
-- `x-default` points to `https://planbasia.com/`
-- DTV calculator: self-canonical present, no noindex, in EN sitemap, single H1
-
-### Step 5 — UI/UX Visual Review
-- Desktop: Home hero overflow + font load (1 screenshot)
-- Service page (`/visas/thailand-dtv`): `formatPrice` output — no decimal leak, no raw 0
-- Mobile 390×844: Sticky CTA appears past ~40% scroll, hides on input focus
-- AdvisoryForm code grep: confirm `company_website` honeypot is rendered with hidden/sr-only styling
-
-### Step 6 — Consolidated Report Output
-Single markdown block following user's exact template:
-1. Infrastructure & Testing Matrix
-2. Cross-Domain Redirect & Route Ownership Isolation
-3. SPA Smoke Testing Surface (10 routes)
-4. SEO Surface Properties Audit
-5. UI/UX Visual Component Stability
-6. (skipped per template numbering)
-7. Critical Engineering Findings (P0/P1/P2)
-8. Release Sign-off Recommendation (GREEN/YELLOW/RED + one-liner)
-- APPENDIX A: Translation collision audit (filtered for noise)
-
----
-
-## Halt Condition
-Stop immediately after the consolidated report prints. No edits, no follow-ups unless user approves a P0/P1 remediation.
-
-## Files Touched
-**None.** Read-only verification only.
-
-## Tooling
-- `code--exec` for shell (test:i18n, vitest, grep, xml parse)
-- `code--view` for code excerpts
-- `browser--view_preview`, `browser--read_console_logs`, `browser--extract`, `browser--screenshot` for smoke + SEO surface
-- `browser--set_viewport_size` for mobile 390×844 sweep
+## Verification (post-deploy, manual)
+1. `curl -I https://planbasya.com/vizeler/dtv-vize` → expect `200` and the five security headers.
+2. Browser load of the same URL → TR DTV page renders, no CSP violations in console.
+3. `curl -I https://planbasya.com/` → headers present, still 200.
+4. Spot-check `https://planbasia.com/visas/thailand-dtv` for no CSP regressions in console.
