@@ -43,7 +43,7 @@ function resolveReturnHost(bodySourceDomain: unknown, originHeader: string | nul
 
 function resolveOrigin(req: Request): string | null {
   const o = req.headers.get("origin") ?? "";
-  if (ALLOWED_ORIGINS.has(o) || LOVABLE_PREVIEW.test(o)) return o;
+  if (ALLOWED_ORIGINS.has(o) || LOVABLE_PREVIEW.test(o) || VERCEL_PREVIEW.test(o)) return o;
   return null;
 }
 
