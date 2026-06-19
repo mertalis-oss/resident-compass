@@ -10,6 +10,7 @@ const ALLOWED_ORIGINS = new Set([
   "https://planbasia-com.lovable.app",
 ]);
 const LOVABLE_PREVIEW = /^https:\/\/[a-z0-9-]+\.lovable\.app$/i;
+const VERCEL_PREVIEW = /^https:\/\/[a-z0-9-]+\.vercel\.app$/i;
 
 // Phase 0.2 — Strict return-URL host allowlist
 const ALLOWED_DOMAINS = ['planbasia.com', 'planbasya.com'] as const;
