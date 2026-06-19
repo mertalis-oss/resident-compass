@@ -17,5 +17,13 @@ Bu nedenle `planbasia.com` (EN/global) ↔ `planbasya.com` (TR) izolasyonu **tam
 ## Neden edge yok
 Lovable preview ve published deployment'larda yalnız SPA fallback ve statik dosya servisi vardır. Bu yüzden 301 redirect'leri sunucu seviyesinde yapamıyoruz; JS tabanlı `window.location.replace()` kullanıyoruz. Bu yaklaşım crawlerlar için de yeterlidir: Googlebot JS execute eder ve `replace` sonrası canonical/hreflang'leri görür.
 
-## Eklenmemesi gereken dosyalar
-- `vercel.json`, `netlify.toml`, `public/_redirects`, `public/_headers` — Lovable bunları okumaz; eklenirse yanıltıcı olur.
+## Eklenmemesi gereken dosyalar (Lovable hosting için)
+- `netlify.toml`, `public/_redirects`, `public/_headers` — Lovable bunları okumaz; eklenirse yanıltıcı olur.
+
+## İstisna: `vercel.json` (AKTİF KULLANIMDA)
+`planbasya.com` (TR) ayrı bir **Vercel** projesine doğrudan bağlı (DNS A `76.76.21.21`, Cloudflare DNS-only). Vercel'in implicit SPA fallback'i olmadığı için kök `vercel.json` dosyası şunları sağlar:
+1. SPA rewrite: `/((?!api/|images/|.*\..*).*)` → `/index.html` — `planbasya.com/vizeler/...` gibi deep link'lerin 404 dönmesini engeller.
+2. Güvenlik header'ları: CSP, `X-Frame-Options: DENY`, `Permissions-Policy`, `Referrer-Policy`, `X-Content-Type-Options`.
+
+Bu dosya **silinmemeli**. Lovable-only deployment'larda etkisizdir ama Vercel tarafında kritiktir. CSP'ye yeni bir 3rd-party origin eklenirse (yeni analytics, CDN vb.) `vercel.json` içindeki ilgili directive güncellenmeli — aksi halde istekler bloklanır.
+
