@@ -36,6 +36,7 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
 
   const sessionKey = useRef(window.__session_id || `s_${Date.now()}`);
   const clickLock = useRef(false);
+  const inFlightRef = useRef(false);
 
   const handleModalChange = (open: boolean) => {
     if (!open) {
@@ -43,6 +44,7 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
       setIsCheckoutLoading(false);
       setShowRescue(false);
       clickLock.current = false;
+      inFlightRef.current = false;
     }
     setModalOpen(open);
     document.body.style.overflow = open ? "hidden" : "";
@@ -55,6 +57,8 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
 
   const handleCheckout = async () => {
     if (isCheckoutLoading || !isAgreed) return;
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
     setIsCheckoutLoading(true);
 
     try {
@@ -67,7 +71,7 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
         body: {
           service_id: service.id,
           source_domain: normalizedHost,
-          agreed_to_terms: "true",
+          agreed_to_terms: isAgreed,
           utm_source: String(utms?.utm_source || ""),
           utm_campaign: String(utms?.utm_campaign || ""),
           utm_medium: String(utms?.utm_medium || ""),
@@ -79,6 +83,7 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
       if (error || !data?.url) {
         if (data?.error === "INVALID_PRICE_ID") {
           showLeadRescue();
+          inFlightRef.current = false;
         } else {
           throw new Error("Stripe session failed");
         }
@@ -87,6 +92,7 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
 
       trackPostHogEvent("cta_clicked", { service_id: service.id, destination: "stripe" }, true);
       cleanupFallback("planb_lead_id");
+      // Keep inFlightRef true through navigation to prevent any late re-trigger
       window.location.href = data.url;
     } catch (err) {
       console.error("Checkout process failed:", err);
@@ -96,6 +102,7 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
         description: t("checkout.errorDesc"),
       });
       setIsCheckoutLoading(false);
+      inFlightRef.current = false;
     }
   };
 
