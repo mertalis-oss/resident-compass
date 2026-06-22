@@ -1,28 +1,19 @@
-# Fix Checkout: boolean payload + in-flight guard
+Update the `BodySchema` in `supabase/functions/create-checkout-session/index.ts` so optional string fields sent as `""` are coerced to `null` before validation, preventing 400 errors when the frontend omits them.
 
-## Scope
-Single file: `src/components/service/ServiceCheckout.tsx`.
+Changes
+- Add a reusable preprocessor:
+  ```ts
+  const emptyStringToNull = <T extends z.ZodTypeAny>(schema: T) =>
+    z.preprocess((v) => (v === "" ? null : v), schema);
+  ```
+- Wrap the affected fields with it:
+  - `email` → `emptyStringToNull(z.string().trim().toLowerCase().email().max(200).optional().nullable())`
+  - `lead_id` → `emptyStringToNull(z.string().uuid().optional().nullable())`
+  - `source` → `emptyStringToNull(z.string().max(50).optional().nullable())`
+  - `utm_source`, `utm_medium`, `utm_campaign` → `emptyStringToNull(z.string().max(200).optional().nullable())`
+- Leave required and non-string fields unchanged.
 
-## Bug 1 — agreed_to_terms type
-Line 70 currently sends `agreed_to_terms: "true"` (string). Zod schema expects boolean → 400.
-Change to `agreed_to_terms: isAgreed` (already a boolean from the Checkbox state). Since the button is disabled unless `isAgreed` is true, this is always `true` at call time.
-
-## Bug 2 — Infinite retry storm
-Add a useRef in-flight guard inside `handleCheckout` and ensure no auto-retry:
-
-1. Add a dedicated `inFlightRef = useRef(false)` (separate from the existing `clickLock` which only guards modal opening).
-2. At the top of `handleCheckout`: if `inFlightRef.current` is true, return immediately. Otherwise set it to true.
-3. On error path (catch block AND the `INVALID_PRICE_ID` rescue path): reset `inFlightRef.current = false` alongside `setIsCheckoutLoading(false)`. Do NOT auto-retry — user must click again.
-4. On success (redirect via `window.location.href`): leave the ref true so any late re-renders don't fire a second request before navigation.
-5. Also reset `inFlightRef.current = false` in `handleModalChange` when the dialog closes.
-
-No `useEffect` currently triggers checkout — confirmed by reading the file. No removal needed.
-
-## Out of scope
-- No edge function changes.
-- No styling, copy, or analytics changes.
-- No changes to `clickLock` modal-open guard.
-
-## Verification
-- Click "Danışmanlığa Devam Et" on `/vizeler/dtv-vize`, accept terms, click CTA → exactly one POST to `create-checkout-session` in Network tab → 200 with `url` → Stripe Checkout opens.
-- If the function errors, toast appears and a second manual click is required to retry.
+Verification
+- Deploy the updated `create-checkout-session` edge function.
+- Use the live preview or curl to submit a checkout request with empty `email`, `lead_id`, and UTM fields; expect a 200 response containing `{ url: "..." }` instead of 400.
+- End-to-end: open the TR DTV service page, accept terms, click "Danışmanlığa Devam Et", and confirm Stripe Checkout opens.
