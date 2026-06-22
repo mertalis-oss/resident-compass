@@ -57,16 +57,19 @@ function corsHeaders(origin: string) {
   };
 }
 
+const emptyStringToNull = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess((v) => (v === "" ? null : v), schema);
+
 const BodySchema = z.object({
   service_id: z.string().uuid(),
   source_domain: z.string().max(200).optional().nullable(),
   agreed_to_terms: z.boolean().optional(),
-  email: z.string().trim().toLowerCase().email().max(200).optional().nullable(),
-  lead_id: z.string().uuid().optional().nullable(),
-  source: z.string().max(50).optional().nullable(),
-  utm_source: z.string().max(200).optional().nullable(),
-  utm_medium: z.string().max(200).optional().nullable(),
-  utm_campaign: z.string().max(200).optional().nullable(),
+  email: emptyStringToNull(z.string().trim().toLowerCase().email().max(200).optional().nullable()),
+  lead_id: emptyStringToNull(z.string().uuid().optional().nullable()),
+  source: emptyStringToNull(z.string().max(50).optional().nullable()),
+  utm_source: emptyStringToNull(z.string().max(200).optional().nullable()),
+  utm_medium: emptyStringToNull(z.string().max(200).optional().nullable()),
+  utm_campaign: emptyStringToNull(z.string().max(200).optional().nullable()),
 }).strip();
 
 function jsonError(origin: string, status: number, msg = "Invalid request") {
