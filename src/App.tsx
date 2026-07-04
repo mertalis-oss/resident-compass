@@ -13,6 +13,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import LanguageRouter from "./components/LanguageRouter";
 import CrossDomainRedirect from "./components/CrossDomainRedirect";
+import CookieConsent from "./components/CookieConsent";
 
 // Lazy-loaded routes — split off the entry bundle
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -82,6 +83,7 @@ const App = () => (
             <CrossDomainRedirect />
             <LanguageRouter />
             <CriticalPrefetch />
+            <CookieConsent />
             <Suspense fallback={null}>
               <Routes>
                 <Route path="/" element={<Index />} />

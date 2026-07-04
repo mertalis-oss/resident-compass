@@ -10,8 +10,8 @@ const EN_ITEMS = [
 
 const TR_ITEMS = [
   { icon: Shield, label: "15+ Yıl Uluslararası Deneyim", mobile: true },
-  { icon: Globe, label: "Çok Ülkeli Operasyon", mobile: false },
-  { icon: UserCheck, label: "Özel Danışmanlık Modeli", mobile: true },
+  { icon: Globe, label: "Tayland'da Yerleşik Ekip", mobile: false },
+  { icon: UserCheck, label: "Tek Tek Konuşuruz. Otomatik Yanıt Yok.", mobile: true },
 ];
 
 export default function TrustBar() {

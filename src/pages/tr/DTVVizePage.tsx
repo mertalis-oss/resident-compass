@@ -119,12 +119,12 @@ export default function DTVVizePage() {
               <span className="text-sm text-background/90 tracking-wide">Resmi Süreç Danışmanlığı</span>
             </div>
             <h1 className="heading-display text-background mb-6">
-              Sistemi Geride Bırak.
-              <span className="block text-accent">Tayland'da 5 Yıl Yaşa.</span>
+              Tayland'da 5 Yıl.
+              <span className="block text-accent">Yasal. Yolun Net.</span>
             </h1>
             <p className="text-lg text-background/80 max-w-xl mb-10">
-              Dijital göçebeler için tasarlanan DTV vizesi ile 180 gün kalış hakkı, sınırsız giriş-çıkış ve 5 yıllık
-              geçerlilik.
+              180 günlük kalış. Sınırsız giriş-çıkış. Belgelerini biz hazırlarız,
+              sen Bangkok'ta sabah kahveni içersin.
             </p>
             <button
               onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}

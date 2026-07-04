@@ -2,10 +2,32 @@
 <html lang="en">
   <head>
     <script>
+      // Inline SEO bootstrap — runs BEFORE React hydration so Googlebot
+      // sees canonical + og:url + html[lang] on FIRST HTML render, not only
+      // after Helmet mounts. Fixes GSC "Alternate page with proper canonical
+      // tag" false positives on TR/EN sub-routes (planbasya.com/vizeler/*,
+      // planbasia.com/visas/*, etc.). Logic mirrors SEOHead.tsx absoluteUrl.
       (function () {
         var h = window.location.hostname;
-        document.documentElement.lang =
-          (h === 'planbasya.com' || h.endsWith('.planbasya.com')) ? 'tr' : 'en';
+        var isTR = (h === 'planbasya.com' || h.endsWith('.planbasya.com'));
+        var origin = isTR ? 'https://planbasya.com' : 'https://planbasia.com';
+        var p = (window.location.pathname || '/').split(/[?#]/)[0].toLowerCase();
+        if (p.length > 1 && p.charAt(p.length - 1) === '/') p = p.slice(0, -1);
+        var canonicalUrl = (p === '/' || p === '') ? origin : (origin + p);
+
+        document.documentElement.lang = isTR ? 'tr' : 'en';
+
+        var link = document.createElement('link');
+        link.rel = 'canonical';
+        link.href = canonicalUrl;
+        link.setAttribute('data-inline-seo', '1');
+        document.head.appendChild(link);
+
+        var og = document.createElement('meta');
+        og.setAttribute('property', 'og:url');
+        og.setAttribute('content', canonicalUrl);
+        og.setAttribute('data-inline-seo', '1');
+        document.head.appendChild(og);
       })();
     </script>
     <meta name="facebook-domain-verification" content="czst3u3pxeva2if5eefjzhvq0q825n" />
