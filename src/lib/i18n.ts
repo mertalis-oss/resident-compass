@@ -326,7 +326,10 @@ const resources = {
         ],
       },
       footer: { privacy: 'Privacy', terms: 'Terms', refund: 'Refund Policy', contact: 'Contact' },
-      concierge: { label: 'Speak with Concierge' },
+      concierge: {
+        label: 'Speak with Concierge',
+        subtitle: 'Discreet & confidential communication. Responds within 2 hours.',
+      },
       notFound: { message: 'The page you are looking for does not exist.', cta: 'Return to Strategic Overview' },
       softPower: {
         bundleIntro: 'We partner with accredited language schools across Thailand, securing your legal stay while immersing you in a new language and culture.',
@@ -580,7 +583,10 @@ const resources = {
         ],
       },
       footer: { privacy: 'Gizlilik', terms: 'Şartlar', refund: 'İade Politikası', contact: 'İletişim' },
-      concierge: { label: 'Concierge ile Konuşun' },
+      concierge: {
+        label: 'Danışmanla Konuş',
+        subtitle: 'Aramızda kalır. 2 saat içinde dönüş.',
+      },
       notFound: { message: 'Aradığınız sayfa mevcut değil.', cta: 'Stratejik Genel Bakışa Dön' },
       softPower: {
         bundleIntro: "İstediğiniz lokasyonda anlaşmalı olduğumuz dil okullarıyla Tayland'da hem yasal kalış hakkınızı güvence altına alıyor hem de yeni bir dil ve kültür deneyimi yaşamanızı sağlıyoruz.",
@@ -755,7 +761,10 @@ const resources = {
         ],
       },
       footer: { privacy: 'गोपनीयता', terms: 'शर्तें', refund: 'रिफंड नीति', contact: 'संपर्क' },
-      concierge: { label: 'कंसीयज से बात करें' },
+      concierge: {
+        label: 'कंसीयज से बात करें',
+        subtitle: 'गुप्त और गोपनीय संचार। 2 घंटे के भीतर जवाब।',
+      },
       notFound: { message: 'आप जो पृष्ठ खोज रहे हैं वह मौजूद नहीं है।', cta: 'रणनीतिक अवलोकन पर लौटें' },
       service: serviceKeysHi,
       checkout: checkoutKeysHi,

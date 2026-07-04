@@ -26,7 +26,7 @@ export default function ConciergeButton() {
               {t('concierge.label')}
             </h3>
             <p className="text-sm text-muted-foreground">
-              Discreet & confidential communication. Responds within 2 hours.
+              {t('concierge.subtitle', { defaultValue: 'Discreet & confidential communication. Responds within 2 hours.' })}
             </p>
             <div className="space-y-3">
               <a
