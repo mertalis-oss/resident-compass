@@ -90,6 +90,7 @@ export default function DTVPageEN() {
         canonical="https://planbasia.com/visas/thailand-dtv"
         schemaType="Service"
         serviceName="Thailand DTV Visa Advisory"
+        faq={faqs.map(({ q, a }) => ({ question: q, answer: a }))}
       />
       <FocusedNavbar />
       <TrustBar />

@@ -41,6 +41,29 @@ const SENDER_DOMAIN = "notify.planbasia.com"
 const ROOT_DOMAIN = "planbasia.com"
 const FROM_DOMAIN = "notify.planbasia.com" // Domain shown in From address (may be root or sender subdomain)
 
+// Host-aware branding: if the user signed up on planbasya.com (TR), the
+// verification email should show planbasya.com branding + link even though
+// the FROM address stays on the verified sender domain.
+// Extracts the destination site from the Supabase-generated verification URL's
+// redirect_to query param, which reflects the origin the user came from.
+function resolveTemplateContext(authUrl: string): {
+  siteName: string
+  siteUrl: string
+} {
+  try {
+    const redirectTo = new URL(authUrl).searchParams.get("redirect_to")
+    if (redirectTo) {
+      const host = new URL(redirectTo).hostname.replace(/^www\./i, "").toLowerCase()
+      if (host === "planbasya.com" || host.endsWith(".planbasya.com")) {
+        return { siteName: "planbasya-com", siteUrl: "https://planbasya.com" }
+      }
+    }
+  } catch {
+    // Fallthrough to default EN context on any parse error.
+  }
+  return { siteName: SITE_NAME, siteUrl: `https://${ROOT_DOMAIN}` }
+}
+
 // Sample data for preview mode ONLY (not used in actual email sending).
 // URLs are baked in at scaffold time from the project's real data.
 // The sample email uses a fixed placeholder (RFC 6761 .test TLD) so the Go backend
@@ -219,9 +242,10 @@ async function handleWebhook(req: Request): Promise<Response> {
   }
 
   // Build template props from payload.data (HookData structure)
+  const { siteName, siteUrl } = resolveTemplateContext(payload.data.url)
   const templateProps = {
-    siteName: SITE_NAME,
-    siteUrl: `https://${ROOT_DOMAIN}`,
+    siteName,
+    siteUrl,
     recipient: payload.data.email,
     confirmationUrl: payload.data.url,
     token: payload.data.token,

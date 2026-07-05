@@ -91,6 +91,7 @@ export default function DTVVizePage() {
       <SEOHead
         title="Tayland DTV Vizesi — Plan B Asya"
         description="Tayland'da 5 yıl yaşama ve çalışma özgürlüğü. DTV vize danışmanlığı."
+        faq={faqs.map(({ q, a }) => ({ question: q, answer: a }))}
       />
       <FocusedNavbar />
       <TrustBar />

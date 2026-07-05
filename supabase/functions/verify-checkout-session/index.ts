@@ -111,11 +111,15 @@ Deno.serve(async (req) => {
           .eq("id", orderId);
       }
 
+      // Return amount_total + currency so Meta/TikTok Purchase events fire
+      // with real value for ad optimization (Success.tsx divides by 100).
       return new Response(
         JSON.stringify({
           verified: true,
           status: "paid",
           service_title: order?.service_title_snapshot || "",
+          amount_total: session.amount_total,
+          currency: session.currency,
         }),
         {
           status: 200,

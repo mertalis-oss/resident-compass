@@ -13,6 +13,7 @@ interface SEOHeadProps {
   serviceDescription?: string;
   ogImage?: string;
   noIndex?: boolean;
+  faq?: Array<{ question: string; answer: string }>;
 }
 
 const DOMAIN_MAP: Record<"tr" | "en", string> = {
@@ -32,6 +33,7 @@ export default function SEOHead({
   serviceDescription,
   ogImage,
   noIndex = false,
+  faq,
 }: SEOHeadProps) {
   const { t } = useTranslation();
   const location = useLocation();
@@ -132,6 +134,22 @@ export default function SEOHead({
       <script type="application/ld+json">
         {JSON.stringify(schemaType === "Organization" ? orgSchema : serviceSchema)}
       </script>
+      {faq && faq.length > 0 && !pageIsNoIndex && (
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faq.map(({ question, answer }) => ({
+              "@type": "Question",
+              name: question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: answer,
+              },
+            })),
+          })}
+        </script>
+      )}
     </Helmet>
   );
 }
