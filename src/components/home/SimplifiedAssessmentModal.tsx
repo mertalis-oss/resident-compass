@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { getSessionId, getStoredUtms } from '@/lib/utmStorage';
 import { captureCTAClick } from '@/lib/tracking';
+import { trackPixelEvent } from '@/lib/metaPixel';
+import { trackTikTokEvent } from '@/lib/tiktokPixel';
 import { handleVipWhatsAppClick, buildWaUrl } from '@/lib/vipWhatsApp';
 
 type Intent = 'exploring' | 'planning_6_12' | 'relocating_now';
@@ -180,6 +182,16 @@ export default function SimplifiedAssessmentModal({ open, onClose, sourceSite }:
       } catch (err) {
         if (import.meta.env.DEV) console.warn('[Tracking failed]', err);
       }
+      trackPixelEvent('Lead', {
+        content_name: 'assessment_modal',
+        content_category: intent || 'unknown',
+        value: finalScore,
+      });
+      trackTikTokEvent('SubmitForm', {
+        content_name: 'assessment_modal',
+        content_category: intent || 'unknown',
+        value: finalScore,
+      });
       setSubmitted(true);
     } catch (err) {
       if (import.meta.env.DEV) console.error('[LEAD INSERT FAILED]', err);

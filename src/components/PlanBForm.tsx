@@ -8,6 +8,8 @@ import { z } from 'zod';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
 import { trackPostHogEvent } from '@/lib/posthog';
+import { trackPixelEvent } from '@/lib/metaPixel';
+import { trackTikTokEvent } from '@/lib/tiktokPixel';
 import { getStoredUtms } from '@/lib/utmStorage';
 
 const leadSchema = z.object({
@@ -57,6 +59,14 @@ export default function PlanBForm({ serviceId, onSubmitSuccess }: PlanBFormProps
     trackEvent('lead_form_submit', { source: 'plan_b_form' });
     trackEvent('form_submit', { service: serviceId || 'general' });
     trackPostHogEvent('lead_form_submit', { source: 'plan_b_form' });
+    trackPixelEvent('Lead', {
+      content_name: 'plan_b_form',
+      content_category: serviceId || 'general',
+    });
+    trackTikTokEvent('SubmitForm', {
+      content_name: 'plan_b_form',
+      content_category: serviceId || 'general',
+    });
     setSubmitted(true);
     onSubmitSuccess?.();
   };

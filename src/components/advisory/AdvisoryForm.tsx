@@ -2,6 +2,8 @@ import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { trackPostHogEvent } from '@/lib/posthog';
+import { trackPixelEvent } from '@/lib/metaPixel';
+import { trackTikTokEvent } from '@/lib/tiktokPixel';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -106,6 +108,14 @@ export default function AdvisoryForm({ variant, defaultDestination, source_page 
       },
       true
     );
+    trackPixelEvent('Lead', {
+      content_name: safeVariant === 'mice' ? 'mice_advisory_form' : 'individual_advisory_form',
+      content_category: (safeVariant === 'mice' ? eventDestination : destination) || 'global',
+    });
+    trackTikTokEvent('SubmitForm', {
+      content_name: safeVariant === 'mice' ? 'mice_advisory_form' : 'individual_advisory_form',
+      content_category: (safeVariant === 'mice' ? eventDestination : destination) || 'global',
+    });
 
     setSuccess(true);
     setIsSubmitting(false);
