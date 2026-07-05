@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { trackPostHogEvent } from '@/lib/posthog';
 import { trackEvent } from '@/lib/analytics';
+import { trackPixelEvent } from '@/lib/metaPixel';
+import { trackTikTokEvent } from '@/lib/tiktokPixel';
 import SEOHead from '@/components/SEOHead';
 import FocusedNavbar from '@/components/FocusedNavbar';
 import TrustBar from '@/components/TrustBar';
@@ -55,6 +57,25 @@ export default function Success() {
               service_title: data.service_title || '',
             }, true);
             trackEvent('purchase_success', { session_id: sessionId || 'unknown' });
+            // Meta + TikTok conversion event — value/currency from verify response
+            // (verify-checkout-session must return amount_total + currency; if
+            // absent we still fire the event so Meta counts the conversion).
+            const rawAmount = (data as { amount_total?: unknown }).amount_total;
+            const rawCurrency = (data as { currency?: unknown }).currency;
+            const value = typeof rawAmount === 'number' ? rawAmount / 100 : undefined;
+            const currency = typeof rawCurrency === 'string' ? rawCurrency.toUpperCase() : 'USD';
+            trackPixelEvent('Purchase', {
+              ...(value !== undefined && { value }),
+              currency,
+              content_name: data.service_title || '',
+              content_type: 'product',
+            });
+            trackTikTokEvent('CompletePayment', {
+              ...(value !== undefined && { value }),
+              currency,
+              content_name: data.service_title || '',
+              content_type: 'product',
+            });
           }
           return;
         }

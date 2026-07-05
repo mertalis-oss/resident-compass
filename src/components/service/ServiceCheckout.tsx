@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { getStoredUtms } from "@/lib/utmStorage";
 import { trackPostHogEvent } from "@/lib/posthog";
 import { trackEvent } from "@/lib/analytics";
+import { trackPixelEvent } from "@/lib/metaPixel";
+import { trackTikTokEvent } from "@/lib/tiktokPixel";
 import { normalizeEmail } from "@/lib/emailNormalize";
 import { safeGet, cleanupFallback } from "@/lib/safeStorage";
 import { useDomainScope } from "@/hooks/useDomainScope"; // Değiştirildi
@@ -164,10 +166,26 @@ export default function ServiceCheckout({ service, variant = "full", layout = "s
             if (clickLock.current || modalOpen) return;
             clickLock.current = true;
             try {
+              const currency = service.currency || "USD";
               trackEvent("checkout_click", {
                 service: service.slug || service.id,
                 price: service.price,
-                currency: service.currency || "USD",
+                currency,
+              });
+              // Meta + TikTok standard conversion event — value passed for ad optimization
+              trackPixelEvent("InitiateCheckout", {
+                value: service.price,
+                currency,
+                content_ids: service.id,
+                content_type: "product",
+                content_name: service.title,
+              });
+              trackTikTokEvent("InitiateCheckout", {
+                value: service.price,
+                currency,
+                content_id: service.id,
+                content_type: "product",
+                content_name: service.title,
               });
               setModalOpen(true);
             } catch (err) {
