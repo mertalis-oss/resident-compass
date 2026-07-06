@@ -1,0 +1,135 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "plan-b-asia-mcp",
+      "version": "0.1.0",
+      "title": "Plan B Asia MCP"
+    },
+    "tools": [
+      {
+        "name": "list_services",
+        "title": "List services",
+        "description": "List Plan B Asia's active advisory services (visas, relocation, wellness, expeditions, etc). Optionally filter by category or locale.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "string",
+              "description": "Optional category filter, e.g. 'visa', 'wellness', 'expedition'."
+            },
+            "locale": {
+              "type": "string",
+              "enum": [
+                "en",
+                "tr",
+                "all"
+              ],
+              "description": "Restrict to services visible on the EN, TR, or all sites. Defaults to 'all'."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "description": "Max services to return. Default 50."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_service",
+        "title": "Get service",
+        "description": "Fetch the full details of a single Plan B Asia service by its slug (e.g. 'dtv-visa', 'thailand-elite'). Includes description, features, FAQ, price, and delivery time.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Service slug (lowercase, hyphenated)."
+            }
+          },
+          "required": [
+            "slug"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "submit_lead",
+        "title": "Submit lead inquiry",
+        "description": "Submit a new advisory inquiry to Plan B Asia. Use when the user wants to start a conversation with the strategic advisory team about relocation, visas, or wellness. Returns a lead id.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "description": "Full name of the prospective client."
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "maxLength": 200
+            },
+            "whatsapp": {
+              "type": "string",
+              "maxLength": 50,
+              "description": "Optional WhatsApp number in E.164 format."
+            },
+            "intent": {
+              "type": "string",
+              "maxLength": 2000,
+              "description": "What the client is looking for (short free text)."
+            },
+            "service_slug": {
+              "type": "string",
+              "description": "Optional slug of the service the lead is interested in."
+            },
+            "language": {
+              "type": "string",
+              "enum": [
+                "en",
+                "tr"
+              ],
+              "description": "Preferred contact language."
+            }
+          },
+          "required": [
+            "name",
+            "email"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

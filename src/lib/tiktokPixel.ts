@@ -50,7 +50,7 @@ function loadPixel(): void {
     ];
     ttq.setAndDefer = function (target: any, method: string) {
       target[method] = function (...args: unknown[]) {
-        target.push([method].concat(args));
+        target.push(([method] as unknown[]).concat(args));
       };
     };
     for (let i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
