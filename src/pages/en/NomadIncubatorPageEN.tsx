@@ -96,8 +96,8 @@ export default function NomadIncubatorPageEN() {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Digital Nomad Incubator — Plan B Asia"
-        description="Company formation, tax optimization, second passport, and full life setup in Asia within 30 days."
+        title="Comprehensive Relocation & Administrative Management — Plan B Asia"
+        description="3-month end-to-end relocation program: administrative & operational guidance, regulatory compliance audit, document preparation, official correspondence, and logistics. Delivered by Plan B Asia's Thailand-resident team. €5,000."
         canonical="https://planbasia.com/relocation/nomad-incubator"
       />
       <FocusedNavbar />

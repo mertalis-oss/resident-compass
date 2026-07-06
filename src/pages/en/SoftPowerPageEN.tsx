@@ -85,7 +85,7 @@ export default function SoftPowerPageEN() {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Education & Living Packages in Asia — Plan B Asia"
-        description="Muay Thai, culinary arts, language programs and wellness training with visa support in Thailand."
+        description="Thailand Soft Power Program: 6-12 month legal residency via accredited Thai or English language education. Includes school enrollment, full visa management, all extensions. €1,350-2,199."
         canonical="https://planbasia.com/visas/soft-power"
         schemaType="Service"
         serviceName="Soft Power Education Packages"

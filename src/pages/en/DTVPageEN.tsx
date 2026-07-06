@@ -86,7 +86,7 @@ export default function DTVPageEN() {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Thailand DTV Visa — 5-Year Freedom Protocol | Plan B Asia"
-        description="Secure your 5-year Thailand DTV visa with strategic advisory. 180-day stays, unlimited re-entries."
+        description="Thailand DTV Visa: 5-year multi-entry, 180-day stays per entry, unlimited re-entries, no local income tax for remote workers earning from foreign employers. Plan B Asia strategic advisory from $150."
         canonical="https://planbasia.com/visas/thailand-dtv"
         schemaType="Service"
         serviceName="Thailand DTV Visa Advisory"

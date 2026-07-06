@@ -90,7 +90,7 @@ export default function DTVVizePage() {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Tayland DTV Vizesi — Plan B Asya"
-        description="Tayland'da 5 yıl yaşama ve çalışma özgürlüğü. DTV vize danışmanlığı."
+        description="Tayland DTV vizesi: 5 yıl geçerli, çok girişli, 180 gün kalış hakkı. Uzaktan çalışanlar için — Türk vatandaşları başvurabilir. Plan B Asya birebir stratejik başvuru danışmanlığı — 150 USD."
         faq={faqs.map(({ q, a }) => ({ question: q, answer: a }))}
       />
       <FocusedNavbar />

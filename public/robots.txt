@@ -1,4 +1,68 @@
+# Plan B Asia — robots.txt
+# Traditional web crawlers
 User-agent: *
 Allow: /
+
+# ── AI crawlers (GEO — Generative Engine Optimization) ──
+# Explicitly allowed so ChatGPT, Perplexity, Claude, Google Gemini, and
+# other LLM-powered search engines can index and cite Plan B Asia's
+# advisory content. Removing any of these blocks that engine from citing
+# us in AI-generated answers.
+
+# OpenAI — ChatGPT training + search + browsing
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Perplexity — real-time cited answers
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# Anthropic — Claude.ai + Claude Search
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+# Google Gemini + AI Overviews
+User-agent: Google-Extended
+Allow: /
+
+# Common Crawl (used by many LLMs for training data)
+User-agent: CCBot
+Allow: /
+
+# Apple Intelligence
+User-agent: Applebot-Extended
+Allow: /
+
+# Meta AI
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+# ByteDance / TikTok / Doubao
+User-agent: Bytespider
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+
+# Sitemaps
 Sitemap: https://planbasia.com/sitemap.xml
 Sitemap: https://planbasya.com/sitemap-tr.xml

@@ -105,8 +105,8 @@ export default function NomadIncubatorPage() {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Dijital Göçebe Kuluçka — Plan B Asya"
-        description="Şirket kurulumu, vergi optimizasyonu, ikinci pasaport ve Tayland'da güçlü bir topluluk."
+        title="Kapsamlı Yerleşim Danışmanlığı — Plan B Asya"
+        description="3 aylık uçtan uca yerleşim ve idari yönetim programı: mesleki uyumluluk denetimi, kişiselleştirilmiş dosya hazırlığı, resmi yazışma yönetimi, lojistik destek. Tayland'da yerleşik ekiple. 5.000 EUR."
       />
       <FocusedNavbar />
       <TrustBar />

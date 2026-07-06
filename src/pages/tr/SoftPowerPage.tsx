@@ -77,7 +77,7 @@ export default function SoftPowerPage() {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Öğren & Kal — Tayland'da Eğitim ve Yaşam Paketleri"
-        description="Muay Thai, mutfak sanatları, dil programları ve wellness eğitimleri. Vize dahil."
+        description="Tayland Soft Power programı: 6-12 ay yasal ikamet, akredite Tay dili veya İngilizce eğitim, tam vize yönetimi ve idari destek. Fiyat aralığı 1.350-2.199 EUR."
         schemaType="Service"
         serviceName="Öğren & Kal Eğitim Paketleri"
       />
