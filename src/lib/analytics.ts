@@ -3,6 +3,7 @@ declare global {
     dataLayer: Record<string, unknown>[];
   }
 }
+export {};
 
 export function trackEvent(
   eventName: string,
