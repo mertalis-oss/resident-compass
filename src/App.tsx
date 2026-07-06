@@ -23,6 +23,7 @@ const MobilityAssessment = lazy(() => import("./pages/MobilityAssessment"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
+const Connect = lazy(() => import("./pages/Connect"));
 
 const RabbitHolePage = lazy(() => import("./pages/tr/RabbitHolePage"));
 const NomadIncubatorPage = lazy(() => import("./pages/tr/NomadIncubatorPage"));
@@ -124,6 +125,7 @@ const App = () => (
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/refund-policy" element={<RefundPolicy />} />
+                <Route path="/connect" element={<Connect />} />
 
                 {/* TR-specific pages */}
                 <Route path="/tr" element={<Index />} />

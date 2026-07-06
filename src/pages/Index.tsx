@@ -47,6 +47,9 @@ export default function Index() {
             <a href="/refund-policy" className="hover:text-holistic/70 transition-colors duration-500">
               {t('footer.refund', { defaultValue: 'Refund Policy' })}
             </a>
+            <a href="/connect" className="hover:text-holistic/70 transition-colors duration-500">
+              {t('footer.connect', { defaultValue: 'Connect AI' })}
+            </a>
           </div>
         </div>
       </footer>
