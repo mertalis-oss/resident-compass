@@ -123,16 +123,22 @@ export default function DTVVizePage() {
               Tayland'da 5 Yıl.
               <span className="block text-accent">Yasal. Yolun Net.</span>
             </h1>
-            <p className="text-lg text-background/80 max-w-xl mb-10">
+            <p className="text-lg text-background/80 max-w-xl mb-6">
               180 günlük kalış. Sınırsız giriş-çıkış. Belgelerini biz hazırlarız,
               sen Bangkok'ta sabah kahveni içersin.
             </p>
-            <button
-              onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}
-              className="btn-luxury-gold inline-block"
-            >
-              Danışmanlık Paketlerini Gör
-            </button>
+            <div className="inline-flex items-center gap-3 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">
+              <span className="text-accent font-heading text-2xl">150 USD</span>
+              <span className="text-background/70 text-sm">45 dk stratejik danışmanlık</span>
+            </div>
+            <div>
+              <button
+                onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}
+                className="btn-luxury-gold inline-block"
+              >
+                Danışmanlığı Başlat
+              </button>
+            </div>
           </motion.div>
         </div>
         <motion.div

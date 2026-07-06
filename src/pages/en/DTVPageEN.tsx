@@ -129,7 +129,7 @@ export default function DTVPageEN() {
               in Southeast Asia.
             </p>
 
-            <div className="bg-accent/10 border border-accent/20 px-6 py-4 mb-8 max-w-xl">
+            <div className="bg-accent/10 border border-accent/20 px-6 py-4 mb-6 max-w-xl">
               <p className="text-background font-heading text-lg">
                 While your application moves quietly in the background —
               </p>
@@ -137,6 +137,11 @@ export default function DTVPageEN() {
                 you could be riding Ha Giang's mountain passes or working from a Chiang Mai rooftop. Our advisory
                 handles the complexity. You handle the adventure.
               </p>
+            </div>
+
+            <div className="inline-flex items-center gap-3 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">
+              <span className="text-accent font-heading text-2xl">From $150</span>
+              <span className="text-background/70 text-sm">45-min strategic advisory session</span>
             </div>
 
             {/* FIX line 163: primary CTA → assessment modal. No direct WhatsApp. */}

@@ -135,16 +135,18 @@ export default function NomadIncubatorPage() {
               <span className="block text-accent">İşini Global Yap.</span>
             </h1>
             <p className="text-lg text-background/70 max-w-xl mb-4">
-              Şirket kurulumu, vergi optimizasyonu, ikinci pasaport ve güçlü bir topluluk.
+              3 aylık uçtan uca yerleşim programı — şirket kurulumu, uyumluluk denetimi, dosya yönetimi ve lojistik destek. Tayland'da yerleşik ekiple.
             </p>
             <div className="bg-accent/10 border border-accent/20 px-6 py-4 mb-10 max-w-xl">
-              <p className="text-background font-heading text-lg">Asya'da 30 gün içinde tamamen kurulu bir hayat.</p>
+              <p className="text-background font-heading text-lg">
+                <span className="text-accent">€5.000</span> — 3 ay içinde tamamen kurulu bir hayat.
+              </p>
             </div>
             <button
               onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}
               className="btn-luxury-gold inline-flex items-center gap-2"
             >
-              Kuluçkaya Katıl <ArrowRight className="w-4 h-4" />
+              Kuluçkaya Başla <ArrowRight className="w-4 h-4" />
             </button>
           </motion.div>
         </div>
