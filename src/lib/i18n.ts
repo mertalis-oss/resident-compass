@@ -240,6 +240,10 @@ const resources = {
     translation: {
       nav: { residency: 'Residency', wellness: 'Wellness', corporate: 'Corporate', expeditions: 'Expeditions', getStarted: 'Get Started' },
       trustBar: { secure: 'Secure process', noHidden: 'No hidden fees', realHuman: 'Real human support' },
+      seo: {
+        homeTitle: 'Plan B Asia — Sovereign Mobility for Southeast Asia',
+        homeDescription: 'Strategic mobility, visa, and relocation advisory for Southeast Asia — Thailand focus. Bangkok-resident team, human-led delivery, 2-hour response on WhatsApp. Thailand DTV visa from $150. Serving global expats, remote workers, and Turkish nomads relocating to Southeast Asia.',
+      },
       hero: {
         title: 'Live Legally in Asia.\nLeave the Bureaucracy to Us.',
         subtitle: 'Professional guidance for Thailand DTV visas, language schools, and legal residency processes.',
@@ -427,6 +431,10 @@ const resources = {
     translation: {
       nav: { residency: 'Oturma İzni', wellness: 'Sağlık', corporate: 'Kurumsal', expeditions: 'Keşifler', getStarted: 'Başlayın' },
       trustBar: { secure: 'Güvenli süreç', noHidden: 'Gizli ücret yok', realHuman: 'Gerçek insan desteği' },
+      seo: {
+        homeTitle: 'Plan B Asya — Güneydoğu Asya için Egemen Hareketlilik',
+        homeDescription: 'Tayland ve Güneydoğu Asya için stratejik göç, vize ve yerleşim danışmanlığı. Bangkok\'ta yerleşik ekip, birebir insan hizmeti, WhatsApp\'ta 2 saat içinde dönüş. Tayland DTV vizesi 150 USD\'den başlar. Türk göçmenler ve uzaktan çalışanlar için özel.',
+      },
       hero: {
         title: 'Asya\'da Yasal Güvenceyle Yaşayın.\nBürokrasiyi Bize Bırakın.',
         subtitle: 'Tayland DTV vizesi, dil okulu ve yasal yerleşim süreçleriniz için profesyonel rehberlik.',
@@ -678,6 +686,10 @@ const resources = {
     translation: {
       nav: { residency: 'निवास', wellness: 'स्वास्थ्य', corporate: 'कॉर्पोरेट', expeditions: 'अभियान', getStarted: 'शुरू करें' },
       trustBar: { secure: 'सुरक्षित प्रक्रिया', noHidden: 'कोई छिपी फीस नहीं', realHuman: 'वास्तविक मानव सहायता' },
+      seo: {
+        homeTitle: 'Plan B Asia — दक्षिण-पूर्व एशिया के लिए संप्रभु गतिशीलता',
+        homeDescription: 'दक्षिण-पूर्व एशिया के लिए रणनीतिक गतिशीलता, वीज़ा और स्थानांतरण सलाह — थाईलैंड फोकस। बैंकॉक-निवासी टीम, मानव-नेतृत्व वाली सेवा, WhatsApp पर 2-घंटे की प्रतिक्रिया। थाईलैंड DTV वीज़ा $150 से। वैश्विक प्रवासियों और रिमोट कर्मचारियों के लिए।',
+      },
       hero: {
         title: 'Plan B Asia',
         subtitle: 'संस्थापकों और वैश्विक नागरिकों के लिए संप्रभु गतिशीलता वास्तुकला।',

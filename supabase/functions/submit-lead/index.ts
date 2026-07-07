@@ -28,6 +28,13 @@ function corsHeaders(origin: string) {
 
 const str200 = z.string().max(200).optional().nullable();
 
+// mcp_source enum — AI agent attribution. Any string permitted (agent
+// senders identify themselves), but common values are logged for audit:
+// "mcp_claude" | "mcp_chatgpt" | "mcp_perplexity" | "mcp_cursor" | "mcp_unknown"
+const mcpSourceStr = z.string().trim().max(50)
+  .regex(/^[a-z0-9_-]+$/i, "mcp_source must be alphanumeric+underscore")
+  .optional().nullable();
+
 const LeadSchema = z.object({
   email: z.string().trim().toLowerCase().email().max(200),
   name: str200,
@@ -54,6 +61,10 @@ const LeadSchema = z.object({
   utm_source_last: str200,
   utm_medium_last: str200,
   utm_campaign_last: str200,
+  // AI-agent attribution — set by MCP server when a lead comes from an LLM tool call
+  // instead of a human-filled web form. Enables funnel analysis: which LLM sends
+  // the highest-converting leads?
+  mcp_source: mcpSourceStr,
   submit_timestamp: z.number().int().optional().nullable(),
   quiz_answers: z
     .record(z.union([z.string().max(500), z.number(), z.boolean(), z.null()]))
@@ -91,6 +102,47 @@ function genericError(origin: string, status = 400) {
   });
 }
 
+// ── In-memory rate limiter (per-instance sliding window) ──
+// 5 requests / 60s per fingerprint (IP + user-agent hash prefix). Multi-
+// instance Vercel/Supabase edge means an attacker could rotate across
+// instances, but this stops naive spam without requiring a database write
+// on every submission. Postgres-backed rate limit is planned for Sprint 5
+// when we may see actual attack traffic. Keep the Map bounded so a memory
+// leak from unique fingerprints can't crash the function.
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAP_MAX = 5000;
+const rateLimitMap = new Map<string, { count: number; windowStart: number }>();
+
+function fingerprint(req: Request): string {
+  const ip = req.headers.get("cf-connecting-ip")
+    || req.headers.get("x-real-ip")
+    || (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim()
+    || "unknown";
+  const ua = req.headers.get("user-agent") || "";
+  return `${ip}|${ua.slice(0, 40)}`;
+}
+
+function checkRateLimit(fp: string): boolean {
+  const now = Date.now();
+
+  // Bound the map: if we ever grow beyond RATE_LIMIT_MAP_MAX, drop expired entries.
+  if (rateLimitMap.size >= RATE_LIMIT_MAP_MAX) {
+    for (const [key, entry] of rateLimitMap) {
+      if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) rateLimitMap.delete(key);
+    }
+  }
+
+  const entry = rateLimitMap.get(fp);
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+    rateLimitMap.set(fp, { count: 1, windowStart: now });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT_MAX) return false;
+  entry.count += 1;
+  return true;
+}
+
 Deno.serve(async (req) => {
   const origin = resolveOrigin(req);
 
@@ -105,6 +157,22 @@ Deno.serve(async (req) => {
   if (!origin) return new Response("Forbidden", { status: 403 });
   if (req.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405, headers: corsHeaders(origin) });
+  }
+
+  // Rate limit BEFORE JSON parse to protect against payload-flooding.
+  const fp = fingerprint(req);
+  if (!checkRateLimit(fp)) {
+    return new Response(
+      JSON.stringify({ ok: false, error: "Rate limit exceeded. Please try again in a minute." }),
+      {
+        status: 429,
+        headers: {
+          ...corsHeaders(origin),
+          "Content-Type": "application/json",
+          "Retry-After": "60",
+        },
+      },
+    );
   }
 
   let raw: unknown;
