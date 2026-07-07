@@ -18,7 +18,6 @@ import FocusedNavbar from "@/components/FocusedNavbar";
 import TrustBar from "@/components/TrustBar";
 import SEOHead from "@/components/SEOHead";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
-import PlanBForm from "@/components/PlanBForm";
 import ComparisonCrossSell from "@/components/service/ComparisonCrossSell";
 import ServiceWhoIsFor from "@/components/service/ServiceWhoIsFor";
 import ExpectationOutcome from "@/components/service/ExpectationOutcome";
@@ -88,7 +87,6 @@ const fullLifeItems = [
 ];
 
 export default function NomadIncubatorPageEN() {
-  const [formSubmitted, setFormSubmitted] = useState(false);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
