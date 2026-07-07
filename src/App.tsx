@@ -19,6 +19,7 @@ import CookieConsent from "./components/CookieConsent";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
 const Success = lazy(() => import("./pages/Success"));
+const CheckoutCanceled = lazy(() => import("./pages/CheckoutCanceled"));
 const MobilityAssessment = lazy(() => import("./pages/MobilityAssessment"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
@@ -120,6 +121,7 @@ const App = () => (
                 <Route path="/corporate-retreats/:slug" element={<ServicePage />} />
                 <Route path="/expeditions/:slug" element={<ServicePage />} />
                 <Route path="/success" element={<Success />} />
+                <Route path="/checkout/canceled" element={<CheckoutCanceled />} />
                 <Route path="/checkout/advisory" element={<MobilityAssessment />} />
                 <Route path="/tools/dtv-visa-calculator" element={<MobilityAssessment />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />

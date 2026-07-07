@@ -18,7 +18,7 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       <SEOHead
         title={t('seo.homeTitle', { defaultValue: 'Plan B Asia — Sovereign Mobility for Southeast Asia' })}
-        description={t('seo.homeDescription', { defaultValue: 'Strategic mobility, visa, and relocation advisory for Southeast Asia — Thailand focus. Bangkok-resident team, human-led delivery, 2-hour response on WhatsApp. Thailand DTV visa from $150.' })}
+        description={t('seo.homeDescription', { defaultValue: 'Strategic mobility, visa, and relocation advisory for Southeast Asia — Thailand focus. Thailand-resident advisor, human-led delivery, 2-hour response on WhatsApp. Thailand DTV visa from $150.' })}
         schemaType="Organization"
       />
       <FocusedNavbar />

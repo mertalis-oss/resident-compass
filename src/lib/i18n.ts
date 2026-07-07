@@ -242,7 +242,7 @@ const resources = {
       trustBar: { secure: 'Secure process', noHidden: 'No hidden fees', realHuman: 'Real human support' },
       seo: {
         homeTitle: 'Plan B Asia — Sovereign Mobility for Southeast Asia',
-        homeDescription: 'Strategic mobility, visa, and relocation advisory for Southeast Asia — Thailand focus. Bangkok-resident team, human-led delivery, 2-hour response on WhatsApp. Thailand DTV visa from $150. Serving global expats, remote workers, and Turkish nomads relocating to Southeast Asia.',
+        homeDescription: 'Strategic mobility, visa, and relocation advisory for Southeast Asia — Thailand focus. Thailand-resident advisor, human-led delivery, 2-hour response on WhatsApp. Thailand DTV visa from $150. Serving global expats, remote workers, and Turkish nomads relocating to Southeast Asia.',
       },
       hero: {
         title: 'Live Legally in Asia.\nLeave the Bureaucracy to Us.',
@@ -433,7 +433,7 @@ const resources = {
       trustBar: { secure: 'Güvenli süreç', noHidden: 'Gizli ücret yok', realHuman: 'Gerçek insan desteği' },
       seo: {
         homeTitle: 'Plan B Asya — Güneydoğu Asya için Egemen Hareketlilik',
-        homeDescription: 'Tayland ve Güneydoğu Asya için stratejik göç, vize ve yerleşim danışmanlığı. Bangkok\'ta yerleşik ekip, birebir insan hizmeti, WhatsApp\'ta 2 saat içinde dönüş. Tayland DTV vizesi 150 USD\'den başlar. Türk göçmenler ve uzaktan çalışanlar için özel.',
+        homeDescription: 'Tayland ve Güneydoğu Asya için stratejik göç, vize ve yerleşim danışmanlığı. Tayland\'da yerleşik danışman, birebir insan hizmeti, WhatsApp\'ta 2 saat içinde dönüş. Tayland DTV vizesi 150 USD\'den başlar. Türk göçmenler ve uzaktan çalışanlar için özel.',
       },
       hero: {
         title: 'Asya\'da Yasal Güvenceyle Yaşayın.\nBürokrasiyi Bize Bırakın.',

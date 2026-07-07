@@ -241,7 +241,10 @@ Deno.serve(async (req) => {
     const returnHost = resolveReturnHost(source_domain, req.headers.get("origin"));
     const baseReturnUrl = `https://${returnHost}`;
     const success_url = `${baseReturnUrl}/success?session_id={CHECKOUT_SESSION_ID}&service=${encodeURIComponent(service.title)}`;
-    const cancel_url = `${baseReturnUrl}/services/${service.slug}?canceled=true`;
+    // FIX: previous /services/{slug} route doesn't exist in the SPA (404).
+    // Route to dedicated /checkout/canceled page with service title in query
+    // for context and one-click retry / WhatsApp fallback.
+    const cancel_url = `${baseReturnUrl}/checkout/canceled?service=${encodeURIComponent(service.title)}`;
 
     const session = await stripe.checkout.sessions.create({
       customer_email: userEmail || undefined,
