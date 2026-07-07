@@ -24,7 +24,7 @@ import ServiceWhoIsFor from "@/components/service/ServiceWhoIsFor";
 import ExpectationOutcome from "@/components/service/ExpectationOutcome";
 import TrustBlock from "@/components/service/TrustBlock";
 import SocialProofMini from "@/components/service/SocialProofMini";
-import AdvisoryForm from "@/components/advisory/AdvisoryForm";
+import MultiStepWizard from "@/components/advisory/MultiStepWizard";
 import { Button } from "@/components/ui/button";
 
 const serviceItems = [
@@ -201,7 +201,7 @@ export default function NomadIncubatorPageEN() {
               <p className="caption-editorial text-accent mb-4">Begin Your Advisory</p>
               <h2 className="heading-section mb-4">Start Your Incubator Process</h2>
             </div>
-            <AdvisoryForm source_page="nomad_incubator" defaultDestination="thailand" />
+            <MultiStepWizard source_page="nomad_incubator" defaultDestination="thailand" content_name="nomad_incubator_wizard" />
           </div>
         </section>
       </div>
@@ -247,27 +247,10 @@ export default function NomadIncubatorPageEN() {
         </div>
       </section>
 
-      {/* PlanBForm */}
-      <section className="py-20 bg-card border-t border-border">
-        <div className="container max-w-2xl px-6">
-          <h2 className="heading-section text-center mb-4">Free Eligibility Check</h2>
-          {formSubmitted ? (
-            <div className="text-center py-10 space-y-6">
-              <p className="text-lg font-heading text-foreground">
-                Your eligibility looks strong. View advisory packages above to get started.
-              </p>
-              <Button
-                onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}
-                className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
-              >
-                View Advisory Packages ↑
-              </Button>
-            </div>
-          ) : (
-            <PlanBForm onSubmitSuccess={() => setFormSubmitted(true)} />
-          )}
-        </div>
-      </section>
+      {/* FIX 2026-07-07: Removed duplicate PlanBForm — form fatigue was
+          suppressing conversion. Advisory wizard above (#checkout) is the
+          single, high-signal intake path. Neuromarketing 2026: fewer choices,
+          clearer next step. */}
 
       {/* Cross-Bridge */}
       <section className="py-20 lg:py-28 bg-foreground text-background grain-overlay">

@@ -17,7 +17,7 @@ import FocusedNavbar from "@/components/FocusedNavbar";
 import TrustBar from "@/components/TrustBar";
 import SEOHead from "@/components/SEOHead";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
-import PlanBForm from "@/components/PlanBForm";
+import MultiStepWizard from "@/components/advisory/MultiStepWizard";
 import ComparisonCrossSell from "@/components/service/ComparisonCrossSell";
 import ServiceCheckout from "@/components/service/ServiceCheckout";
 import ServiceWhoIsFor from "@/components/service/ServiceWhoIsFor";
@@ -273,7 +273,7 @@ export default function NomadIncubatorPage() {
               </Button>
             </div>
           ) : (
-            <PlanBForm serviceId={services[0]?.id} onSubmitSuccess={() => setFormSubmitted(true)} />
+            <MultiStepWizard source_page="nomad_incubator_tr" defaultDestination="thailand" content_name="nomad_incubator_wizard" />
           )}
         </div>
       </section>
