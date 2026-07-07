@@ -18,7 +18,7 @@ import { CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 // Applies 2026 neuromarketing research (+42–87% conversion lift vs single-page)
 // by splitting a 6-field form across three sequential steps, each holding at
 // most two fields. Copy follows Plan B Asia's NVC-aligned brand voice: every
-// prompt is an invitation ("Let's meet you") rather than a command ("Enter
+// prompt is an invitation ('Say hi first') rather than a command ("Enter
 // your name"). Each step's subtitle explains why the ask exists, reducing
 // cognitive friction.
 //
@@ -136,7 +136,7 @@ export default function MultiStepWizard({ source_page, defaultDestination, conte
         <div className="text-center max-w-md mx-auto space-y-6 px-6">
           <CheckCircle className="w-16 h-16 text-accent mx-auto" />
           <h3 className="font-heading text-2xl text-foreground">
-            {t('wizard.successTitle', { defaultValue: 'Got it.' })}
+            {t('wizard.successTitle', { defaultValue: "Got it. You're in." })}
           </h3>
           <p className="text-muted-foreground">
             {t('wizard.successBody', {
@@ -186,10 +186,10 @@ export default function MultiStepWizard({ source_page, defaultDestination, conte
           >
             <div className="text-center space-y-2">
               <h3 className="font-heading text-2xl text-foreground">
-                {t('wizard.step1Title', { defaultValue: "Let's meet you" })}
+                {t('wizard.step1Title', { defaultValue: 'Say hi first' })}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {t('wizard.step1Sub', { defaultValue: 'Two fields. Just enough to reach you.' })}
+                {t('wizard.step1Sub', { defaultValue: 'Two fields. So we can reach you.' })}
               </p>
             </div>
             <div className="space-y-4">
@@ -239,7 +239,7 @@ export default function MultiStepWizard({ source_page, defaultDestination, conte
               </h3>
               <p className="text-sm text-muted-foreground">
                 {t('wizard.step2Sub', {
-                  defaultValue: 'A direction + when. The rest we figure out together.',
+                  defaultValue: 'A place and a time. The rest we figure out together.',
                 })}
               </p>
             </div>
@@ -305,11 +305,11 @@ export default function MultiStepWizard({ source_page, defaultDestination, conte
           >
             <div className="text-center space-y-2">
               <h3 className="font-heading text-2xl text-foreground">
-                {t('wizard.step3Title', { defaultValue: 'One last detail' })}
+                {t('wizard.step3Title', { defaultValue: 'One more thing' })}
               </h3>
               <p className="text-sm text-muted-foreground">
                 {t('wizard.step3Sub', {
-                  defaultValue: "A short note is enough. The full picture we'll build in conversation.",
+                  defaultValue: 'A short note is enough. The full picture we build in conversation.',
                 })}
               </p>
             </div>
