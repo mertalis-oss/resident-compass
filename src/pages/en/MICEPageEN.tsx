@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Building2, Users, Calendar, Globe } from "lucide-react";
 import FocusedNavbar from "@/components/FocusedNavbar";
@@ -11,11 +11,11 @@ import ExpectationOutcome from "@/components/service/ExpectationOutcome";
 import TrustBlock from "@/components/service/TrustBlock";
 import SocialProofMini from "@/components/service/SocialProofMini";
 import AdvisoryForm from "@/components/advisory/AdvisoryForm";
-import SimplifiedAssessmentModal from "@/components/home/SimplifiedAssessmentModal";
 import { trackPostHogEvent } from "@/lib/posthog";
 
-// FIX: No direct WhatsApp anywhere. All CTAs → assessment modal.
-// WhatsApp only surfaces inside SimplifiedAssessmentModal for isHighIntent === true.
+// MICE-specific inline AdvisoryForm (variant="mice") is the single intake path.
+// Do not wire this page to SimplifiedAssessmentModal — that is the individual
+// relocation quiz and produces the wrong lead qualification for corporate MICE.
 
 const faqs = [
   {
@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     q: "How fast is your RFP response?",
-    a: "With a short event brief and budget range, you get a preliminary proposal within 24 hours. Full scoped proposal in 3-5 business days.",
+    a: "With a short event brief and budget range, we deliver a preliminary proposal within 3 business days. Full scoped proposal in 5-7 business days. Urgent timelines are triaged into a priority queue.",
   },
   {
     q: "Is there something specific you offer Turkish companies?",
@@ -68,22 +68,20 @@ const features = [
 ];
 
 export default function MICEPageEN() {
-  const [assessmentOpen, setAssessmentOpen] = useState(false);
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const openAssessment = () => {
-    trackPostHogEvent("assessment_open", { source: "mice_en" }, true);
-    setAssessmentOpen(true);
+  const scrollToForm = () => {
+    trackPostHogEvent("mice_cta_click", { source: "mice_en" }, true);
+    document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
         title="MICE & Corporate Events — Plan B Asia"
-        description="Corporate events, conferences, retreats, and incentive tours in Thailand. 15+ years MICE industry experience, Bangkok-operating team, native Turkish + English support. Venue, catering, transport, presentation logistics from one team. RFP response within 24 hours."
+        description="Corporate events, conferences, retreats, and incentive tours in Thailand. 15+ years MICE industry experience, Thailand-based team, native Turkish + English support. Venue, catering, transport, presentation logistics from one team. Preliminary proposal within 3 business days."
         canonical="https://planbasia.com/corporate/mice"
         schemaType="Service"
         serviceName="MICE & Corporate Events"
@@ -118,7 +116,7 @@ export default function MICEPageEN() {
 
             <h1 className="heading-display text-background mb-6">
               Corporate events in your language.
-              <span className="block text-accent">Bangkok-based, Turkish + English support.</span>
+              <span className="block text-accent">Thailand-based, Turkish + English support.</span>
             </h1>
 
             <p className="text-lg text-background/80 max-w-xl mb-6">
@@ -126,11 +124,11 @@ export default function MICEPageEN() {
             </p>
 
             <div className="inline-flex items-center gap-3 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">
-              <span className="text-accent font-heading text-lg">Proposal in 24 hours</span>
+              <span className="text-accent font-heading text-lg">Preliminary proposal in 3 business days</span>
               <span className="text-background/70 text-sm">Short event brief + budget is enough.</span>
             </div>
 
-            <button onClick={openAssessment} className="btn-luxury-gold inline-flex items-center gap-2">
+            <button onClick={scrollToForm} className="btn-luxury-gold inline-flex items-center gap-2">
               Begin Your Inquiry
             </button>
           </motion.div>
@@ -197,7 +195,7 @@ export default function MICEPageEN() {
             <p className="body-editorial text-background/70 mb-8">
               Let us design the experience your organization deserves.
             </p>
-            <button onClick={openAssessment} className="btn-luxury-gold inline-flex items-center gap-2">
+            <button onClick={scrollToForm} className="btn-luxury-gold inline-flex items-center gap-2">
               Begin Your Inquiry
             </button>
           </div>
@@ -216,7 +214,6 @@ export default function MICEPageEN() {
       <StickyMobileCTA onClick={openAssessment} />
 
       {/* Modal — WhatsApp only for isHighIntent === true inside */}
-      <SimplifiedAssessmentModal open={assessmentOpen} onClose={() => setAssessmentOpen(false)} sourceSite="mice" />
     </div>
   );
 }

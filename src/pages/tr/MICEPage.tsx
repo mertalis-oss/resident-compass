@@ -4,7 +4,7 @@ import { Building2, Users, Calendar, Globe, MessageCircle, Loader } from "lucide
 import FocusedNavbar from "@/components/FocusedNavbar";
 import TrustBar from "@/components/TrustBar";
 import SEOHead from "@/components/SEOHead";
-import PlanBForm from "@/components/PlanBForm";
+import AdvisoryForm from "@/components/advisory/AdvisoryForm";
 import ComparisonCrossSell from "@/components/service/ComparisonCrossSell";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
 import ServiceCheckout from "@/components/service/ServiceCheckout";
@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     q: "RFP hazırlama süresi ne kadar?",
-    a: "Kısa etkinlik özeti ve bütçe aralığı ile 24 saat içinde ön teklif geliyor. Detaylı kapsam için 3-5 iş günü içinde tam proposal.",
+    a: "Kısa etkinlik özeti ve bütçe aralığı ile 3 iş günü içinde ön teklif geliyor. Detaylı kapsam için 5-7 iş günü içinde tam proposal. Acil ihtiyaçları öncelik listesine alıyoruz.",
   },
   {
     q: "Türk şirketlerine özel bir farkınız var mı?",
@@ -69,20 +69,9 @@ const features = [
 
 export default function MICEPage() {
   const { services, isLoading } = useServicesList("corporate-retreats", "tr");
-  const [formSubmitted, setFormSubmitted] = useState(false);
-
-  const whatsappUrl = buildWhatsAppUrl(
-    "Sayfa: MICE | Domain: " +
-      (typeof window !== "undefined" ? window.location.hostname : "") +
-      " | Merhaba, etkinliğimizi planlamak istiyoruz.",
-  );
-
-  const handleWhatsAppClick = () => {
-    trackPostHogEvent("whatsapp_click", { source: "mice_page" }, true);
-    setTimeout(() => window.open(whatsappUrl, "_blank"), 150);
-  };
 
   const scrollToForm = () => {
+    trackPostHogEvent("mice_cta_click", { source: "mice_tr" }, true);
     document.getElementById("mice-form")?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -99,7 +88,7 @@ export default function MICEPage() {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Kurumsal Etkinlik & MICE — Plan B Asya"
-        description="Tayland'da kurumsal etkinlik, konferans, incentive tur. 15+ yıl MICE deneyimi Bangkok merkezli. Türk şirketlerine özel destek. Mekan, catering, ulaşım, sunum bir yerden. 24 saatte teklif."
+        description="Tayland'da kurumsal etkinlik, konferans, incentive tur. 15+ yıl MICE deneyimi. Tayland'da yerleşik ekip, Türkçe destek. Mekan, catering, ulaşım, sunum bir yerden. 3 iş günü içinde ön teklif."
         schemaType="Service"
         serviceName="MICE & Kurumsal Etkinlik"
         faq={faqs.map(({ q, a }) => ({ question: q, answer: a }))}
@@ -131,13 +120,13 @@ export default function MICEPage() {
             </div>
             <h1 className="heading-display text-background mb-6">
               MICE senin dilinden.
-              <span className="block text-accent">Bangkok merkezli, Türkçe destek.</span>
+              <span className="block text-accent">Tayland'da yerleşik, Türkçe destek.</span>
             </h1>
             <p className="text-lg text-background/80 max-w-xl mb-6">
               Konferans, takım buluşması, incentive tur. Mekan, catering, ulaşım, sunum. Bir yerden yönetiriz. Ekibin deneyimi yaşar.
             </p>
             <div className="inline-flex items-center gap-3 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">
-              <span className="text-accent font-heading text-lg">24 saatte teklif</span>
+              <span className="text-accent font-heading text-lg">3 iş günü içinde ön teklif</span>
               <span className="text-background/70 text-sm">Kısa etkinlik özeti + bütçe yeter</span>
             </div>
             <button onClick={scrollToForm} className="btn-luxury-gold inline-flex items-center gap-2">
@@ -198,24 +187,15 @@ export default function MICEPage() {
         </div>
       </section>
 
-      {/* 8. PlanBForm */}
+      {/* 8. MICE-specific Advisory Form (variant="mice") — corporate MICE intake.
+          Uses the MICE branch of AdvisoryForm which collects company, event
+          type, group size, event destination, and dates instead of the
+          individual relocation fields. */}
       <section id="mice-form" className="py-20 bg-card border-t border-border scroll-mt-24">
         <div className="container max-w-2xl px-6">
-          <h2 className="heading-section text-center mb-4">Etkinlik Talebinizi Paylaşın</h2>
-          <p className="text-center text-muted-foreground mb-8">24 saat içinde size özel plan hazırlıyoruz.</p>
-          {formSubmitted ? (
-            <div className="text-center py-10 space-y-6">
-              <p className="text-lg font-heading text-foreground">Talebiniz alındı. En kısa sürede geri döneceğiz.</p>
-              <Button
-                onClick={handleWhatsAppClick}
-                className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
-              >
-                WhatsApp ile İletişime Geçin
-              </Button>
-            </div>
-          ) : (
-            <PlanBForm serviceId={services[0]?.id} onSubmitSuccess={() => setFormSubmitted(true)} />
-          )}
+          <h2 className="heading-section text-center mb-4">Etkinlik Talebini Paylaş</h2>
+          <p className="text-center text-muted-foreground mb-8">Kısa etkinlik özeti ve bütçe aralığı yeter. 3 iş günü içinde ilk teklif dönüşü yaparız.</p>
+          <AdvisoryForm variant="mice" source_page="mice_tr" />
         </div>
       </section>
 
