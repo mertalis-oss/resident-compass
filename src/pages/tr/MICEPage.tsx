@@ -21,22 +21,22 @@ const features = [
   {
     icon: Calendar,
     title: "Etkinlik Planlama",
-    desc: "Mekan seçiminden program akışına, ulaşımdan ekip koordinasyonuna — A'dan Z'ye sahaya koyarız.",
+    desc: "Mekan, program, ulaşım, koordinasyon. A'dan Z'ye sahaya koyarız.",
   },
   {
     icon: Users,
     title: "Takım Buluşmaları",
-    desc: "Remote ekibini bir araya getir. Güneydoğu Asya'nın en iyi mekanları, organizasyon yükü olmadan.",
+    desc: "Remote ekibi bir araya getir. Bangkok, Phuket, Phangan. Organizasyon yükü sende değil.",
   },
   {
     icon: Building2,
     title: "Konferans & Seminer",
-    desc: "Uluslararası ölçekte etkinlik kapasitesi. Asya rahatlığı ve fiyatıyla.",
+    desc: "Uluslararası ölçekte etkinlik kapasitesi. Asya rahatlığı, Türk müşteriye özel destek.",
   },
   {
     icon: Globe,
     title: "İncentive Turları",
-    desc: "Performans ödüllendirme seyahatleri. Ekibin hak ettiği deneyim, lojistik stres olmadan.",
+    desc: "Performans ödüllendirme seyahatleri. Ekibin hak ettiği deneyim, lojistik stres yok.",
   },
 ];
 
@@ -72,7 +72,7 @@ export default function MICEPage() {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Kurumsal Etkinlik & MICE — Plan B Asya"
-        description="Tayland'da liderlik retreatları, konferans ve incentive turları. Güneydoğu Asya'da uçtan uca etkinlik organizasyonu."
+        description="Tayland'da kurumsal etkinlik, konferans, incentive tur. 15+ yıl MICE deneyimi Bangkok merkezli. Türk şirketlerine özel destek. Mekan, catering, ulaşım, sunum bir yerden. 24 saatte teklif."
         schemaType="Service"
         serviceName="MICE & Kurumsal Etkinlik"
       />
@@ -99,17 +99,21 @@ export default function MICEPage() {
           >
             <div className="inline-flex items-center gap-2 bg-accent/20 backdrop-blur-sm border border-accent/30 px-4 py-2 mb-8">
               <Building2 className="w-4 h-4 text-accent" />
-              <span className="text-sm text-background/90 tracking-wide">Kurumsal Çözümler</span>
+              <span className="text-sm text-background/90 tracking-wide">15+ Yıl MICE Deneyimi</span>
             </div>
             <h1 className="heading-display text-background mb-6">
-              Liderlik Kamplarından Global Etkinliklere.
-              <span className="block text-accent">Güneydoğu Asya'da.</span>
+              MICE senin dilinden.
+              <span className="block text-accent">Bangkok merkezli, Türkçe destek.</span>
             </h1>
-            <p className="text-lg text-background/80 max-w-xl mb-10">
-              Konferans, takım buluşması, incentive tur. Organizasyonu biz hallederiz — ekibin deneyimi yaşar.
+            <p className="text-lg text-background/80 max-w-xl mb-6">
+              Konferans, takım buluşması, incentive tur. Mekan, catering, ulaşım, sunum. Bir yerden yönetiriz. Ekibin deneyimi yaşar.
             </p>
+            <div className="inline-flex items-center gap-3 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">
+              <span className="text-accent font-heading text-lg">24 saatte teklif</span>
+              <span className="text-background/70 text-sm">Kısa etkinlik özeti + bütçe yeter</span>
+            </div>
             <button onClick={scrollToForm} className="btn-luxury-gold inline-flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" /> Talebi Başlat
+              <MessageCircle className="w-4 h-4" /> Etkinliği Başlat
             </button>
           </motion.div>
         </div>

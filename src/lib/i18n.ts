@@ -52,7 +52,7 @@ const checkoutKeys = {
   stillProcessing: 'Still processing...',
   stillProcessingDesc: 'This can take a few seconds depending on your connection.',
   errorTitle: 'Something got stuck.',
-  errorDesc: 'The payment step hit a bump. Try again — usually the second attempt works.',
+  errorDesc: 'The payment step hit a bump. Try again. Usually the second attempt works.',
   connectionError: 'Connection Error',
   connectionErrorDesc: 'Please check your connection and try again.',
   mustAccept: 'You must accept the terms before proceeding.',
@@ -60,7 +60,7 @@ const checkoutKeys = {
   connectionSlow: 'Connection is slow. Please wait...',
   ctaLabel: 'Continue Consultation',
   redirecting: 'Redirecting...',
-  advisorySubtitle: 'Private advisory — no automated processing',
+  advisorySubtitle: 'Private advisory. No automated processing.',
   initializeLabel: 'Begin Advisory',
 };
 
@@ -133,7 +133,7 @@ const checkoutKeysTr: Record<string, string> = {
   stillProcessing: 'Hâlâ işleniyor...',
   stillProcessingDesc: 'Bağlantınıza bağlı olarak birkaç saniye sürebilir.',
   errorTitle: 'Bir yerde takıldık.',
-  errorDesc: 'Ödeme adımı takıldı. Bir daha deneyelim — çoğunlukla ikinci sefer geçer.',
+  errorDesc: 'Ödeme adımı takıldı. Bir daha deneyelim, çoğunlukla ikinci sefer geçer.',
   connectionError: 'Bağlantı Hatası',
   connectionErrorDesc: 'Lütfen bağlantınızı kontrol edin ve tekrar deneyin.',
   mustAccept: 'Devam etmek için şartları kabul etmelisiniz.',
@@ -141,7 +141,7 @@ const checkoutKeysTr: Record<string, string> = {
   connectionSlow: 'Bağlantı yavaş. Lütfen bekleyin...',
   ctaLabel: 'Danışmanlığa Devam Et',
   redirecting: 'Yönlendiriliyorsunuz...',
-  advisorySubtitle: 'Kişiye özel danışmanlık — otomatik işlem yok',
+  advisorySubtitle: 'Kişiye özel danışmanlık. Otomatik işlem yok.',
   initializeLabel: 'Danışmanlığı Başlat',
 };
 
@@ -216,7 +216,7 @@ const checkoutKeysHi: Record<string, string> = {
   connectionSlow: 'कनेक्शन धीमा है। कृपया प्रतीक्षा करें...',
   ctaLabel: 'परामर्श जारी रखें',
   redirecting: 'रीडायरेक्ट हो रहा है...',
-  advisorySubtitle: 'निजी सलाह — कोई स्वचालित प्रसंस्करण नहीं',
+  advisorySubtitle: 'निजी सलाह. कोई स्वचालित प्रसंस्करण नहीं.',
   initializeLabel: 'सलाह शुरू करें',
 };
 
@@ -262,7 +262,7 @@ const resources = {
       hero: {
         title: 'Live Legally in Asia.\nLeave the Bureaucracy to Us.',
         subtitle: 'Professional guidance for Thailand DTV visas, language schools, and legal residency processes.',
-        hook: 'Focus on your new life — our expert team handles all administrative and official details.',
+        hook: 'Focus on your new life. Our expert team handles all administrative and official details.',
         cta: 'Speak with Strategic Advisor',
         ctaSecondary: 'View Consulting Packages',
         ctaSub: 'Private consultation. Response within 24 hours.',
@@ -275,7 +275,7 @@ const resources = {
         label: 'Our Philosophy',
         headline1: 'In 2026, luxury is not expensive hotels;',
         headline2: 'it is time, freedom, and the right connections.',
-        body1: 'We don\'t sell tours — we design your \'Plan B\'.',
+        body1: 'We don\'t sell tours. We design your \'Plan B\'.',
         body2: 'A structured pathway to sovereignty, renewal, and opportunity in Southeast Asia.',
         locationLabel: 'Koh Phangan, Thailand',
         locationDesc: 'Next-generation work and life experience',
@@ -301,7 +301,7 @@ const resources = {
       cta: {
         label: 'Ready?',
         headline: 'Your new life in Asia starts with a single conversation',
-        body: 'Schedule a free consultation with our relocation experts. No commitment — just answers.',
+        body: 'Schedule a free consultation with our relocation experts. No commitment. Just answers.',
         primaryBtn: 'Schedule a Call',
         secondaryBtn: 'View Services',
         bgAlt: 'Luxury resort aerial view',
@@ -340,7 +340,7 @@ const resources = {
         items: [
           { quote: 'Plan B Asya transformed our relocation from a logistical nightmare into a structured, sovereign pathway. Their legal framework gave us complete confidence.', author: 'M.K.', role: 'Tech Founder, Berlin' },
           { quote: 'The level of discretion and professionalism is unmatched. They understand the needs of global founders navigating complex tax environments.', author: 'A.R.', role: 'Serial Entrepreneur, Dubai' },
-          { quote: 'From visa strategy to wellness integration — they designed a complete lifestyle architecture for our family\'s move to Thailand.', author: 'S.L.', role: 'Portfolio Manager, London' },
+          { quote: 'From visa strategy to wellness integration, they designed a complete lifestyle architecture for our family\'s move to Thailand.', author: 'S.L.', role: 'Portfolio Manager, London' },
           { quote: 'Their corporate retreat infrastructure in Southeast Asia is world-class. Every detail was handled with precision and confidentiality.', author: 'J.W.', role: 'CEO, Singapore' },
         ],
       },
@@ -481,7 +481,7 @@ const resources = {
         label: 'Felsefemiz',
         headline1: '2026 dünyasında lüks, pahalı oteller değil;',
         headline2: 'zaman, özgürlük ve doğru insanlarla kurulan bağdır.',
-        body1: 'Biz tur satmıyoruz — sizin \'B Planınızı\' tasarlıyoruz.',
+        body1: 'Biz tur satmıyoruz. Sizin \'B Planınızı\' tasarlıyoruz.',
         body2: 'Güneydoğu Asya\'da egemenlik, yenilenme ve fırsat için yapılandırılmış bir yol.',
         locationLabel: 'Koh Phangan, Tayland',
         locationDesc: 'Yeni nesil çalışma ve yaşam deneyimi',
@@ -616,7 +616,7 @@ const resources = {
         items: [
           { quote: 'Plan B Asia, yer değiştirme sürecimizi yapılandırılmış, egemen bir yola dönüştürdü.', author: 'M.K.', role: 'Teknoloji Kurucusu, Berlin' },
           { quote: 'Gizlilik ve profesyonellik seviyesi benzersiz.', author: 'A.R.', role: 'Seri Girişimci, Dubai' },
-          { quote: 'Vize stratejisinden sağlık entegrasyonuna — ailemiz için eksiksiz bir yaşam mimarisi tasarladılar.', author: 'S.L.', role: 'Portföy Yöneticisi, Londra' },
+          { quote: 'Vize stratejisinden sağlık entegrasyonuna kadar, ailemiz için eksiksiz bir yaşam mimarisi tasarladılar.', author: 'S.L.', role: 'Portföy Yöneticisi, Londra' },
           { quote: 'Güneydoğu Asya\'daki kurumsal toplantı altyapıları dünya standartlarında.', author: 'J.W.', role: 'CEO, Singapur' },
         ],
       },
@@ -733,7 +733,7 @@ const resources = {
         submitting: 'भेजा जा रहा…',
         optional: 'वैकल्पिक',
         successTitle: 'मिल गया।',
-        successBody: 'आपका संदेश हमें मिल गया है। 24 घंटों में हमसे जवाब आएगा — अक्सर उससे पहले।',
+        successBody: 'आपका संदेश हमें मिल गया है। 24 घंटों में हमसे जवाब आएगा। अक्सर उससे पहले।',
       },
       hero: {
         title: 'Plan B Asia',
@@ -748,7 +748,7 @@ const resources = {
         label: 'हमारा दर्शन',
         headline1: '2026 में लक्जरी महंगे होटल नहीं है;',
         headline2: 'यह समय, स्वतंत्रता और सही कनेक्शन है।',
-        body1: 'हम टूर नहीं बेचते — हम आपका \'प्लान बी\' डिज़ाइन करते हैं।',
+        body1: 'हम टूर नहीं बेचते. हम आपका \'प्लान बी\' डिज़ाइन करते हैं।',
         body2: 'दक्षिण पूर्व एशिया में संप्रभुता, नवीनीकरण और अवसर का एक संरचित मार्ग।',
         locationLabel: 'कोह फांगन, थाईलैंड',
         locationDesc: 'अगली पीढ़ी का काम और जीवन अनुभव',
