@@ -17,6 +17,33 @@ import { trackPostHogEvent } from "@/lib/posthog";
 import { buildWhatsAppUrl } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 
+const faqs = [
+  {
+    q: "Etkinliği kaç kişilik yapabiliyorsunuz?",
+    a: "10-15 kişilik yönetici toplantısından 200+ kişilik konferansa kadar. Bangkok, Phuket, Phangan ve Chiang Mai'de partner mekan ağımız var.",
+  },
+  {
+    q: "RFP hazırlama süresi ne kadar?",
+    a: "Kısa etkinlik özeti ve bütçe aralığı ile 24 saat içinde ön teklif geliyor. Detaylı kapsam için 3-5 iş günü içinde tam proposal.",
+  },
+  {
+    q: "Türk şirketlerine özel bir farkınız var mı?",
+    a: "Ana kurucumuz Mert Alis'in 15+ yıl Türk MICE sektöründe deneyimi var. Kurumsal muhasebe, tercih pattern'i, kültürel beklenti tanıdık zeminde. Türkçe dokümantasyon ve faturalama standart.",
+  },
+  {
+    q: "Ödeme koşulları nelerdir?",
+    a: "Standart yapı: %30 kapora sözleşme aşamasında, %60 etkinlik 30 gün öncesi, %10 etkinlik sonrası. Kurumsal fatura, banka havalesi ve Wise transfer kabul ediyoruz. KDV dahil şeffaf fiyatlama.",
+  },
+  {
+    q: "En yaygın etkinlik türleri hangileri?",
+    a: "Yıllık liderlik retreat (3-5 gün, Phangan veya Phuket), dealer ve partner konferansları (2-3 gün, Bangkok), incentive turları (5-7 gün, çoklu şehir kombine).",
+  },
+  {
+    q: "Sürdürülebilir veya karbon nötr etkinlik yapıyor musunuz?",
+    a: "Evet. Yerel tedarikçi tercih, plastik-free catering, karbon offset ana partnerimiz Wildlife Alliance Thailand üzerinden. İsteğe bağlı sürdürülebilirlik raporu ekleniyor.",
+  },
+];
+
 const features = [
   {
     icon: Calendar,
@@ -75,6 +102,7 @@ export default function MICEPage() {
         description="Tayland'da kurumsal etkinlik, konferans, incentive tur. 15+ yıl MICE deneyimi Bangkok merkezli. Türk şirketlerine özel destek. Mekan, catering, ulaşım, sunum bir yerden. 24 saatte teklif."
         schemaType="Service"
         serviceName="MICE & Kurumsal Etkinlik"
+        faq={faqs.map(({ q, a }) => ({ question: q, answer: a }))}
       />
       <FocusedNavbar />
       <TrustBar />

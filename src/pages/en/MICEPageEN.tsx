@@ -17,19 +17,54 @@ import { trackPostHogEvent } from "@/lib/posthog";
 // FIX: No direct WhatsApp anywhere. All CTAs → assessment modal.
 // WhatsApp only surfaces inside SimplifiedAssessmentModal for isHighIntent === true.
 
+const faqs = [
+  {
+    q: "What group sizes do you handle?",
+    a: "From 10-15 person executive retreats to 200+ person conferences. We have partner venue networks in Bangkok, Phuket, Phangan, and Chiang Mai.",
+  },
+  {
+    q: "How fast is your RFP response?",
+    a: "With a short event brief and budget range, you get a preliminary proposal within 24 hours. Full scoped proposal in 3-5 business days.",
+  },
+  {
+    q: "Is there something specific you offer Turkish companies?",
+    a: "Our founder Mert Alis brings 15+ years in the Turkish MICE industry. Corporate accounting, preference patterns, and cultural expectations are familiar ground. Turkish-language documentation and invoicing are standard.",
+  },
+  {
+    q: "What are your payment terms?",
+    a: "Standard structure: 30% deposit at contract, 60% due 30 days before the event, 10% post-event. We accept corporate invoicing, bank transfer, and Wise. VAT-inclusive transparent pricing.",
+  },
+  {
+    q: "What event types are most common?",
+    a: "Annual leadership retreats (3-5 days in Phangan or Phuket), dealer and partner conferences (2-3 days in Bangkok), and incentive tours (5-7 days combining multiple cities).",
+  },
+  {
+    q: "Do you run sustainable or carbon-neutral events?",
+    a: "Yes. Local supplier preference, plastic-free catering, and carbon offsetting through our partner Wildlife Alliance Thailand. Optional sustainability report attached on request.",
+  },
+];
+
 const features = [
-  { icon: Calendar, title: "Event Planning", desc: "End-to-end corporate event orchestration across Southeast Asia." },
+  {
+    icon: Calendar,
+    title: "Event Planning",
+    desc: "Venue, program, transport, coordination. Full stack, one team.",
+  },
   {
     icon: Users,
     title: "Team Retreats",
-    desc: "High-performance team reunions and leadership offsites across Thailand and Bali.",
+    desc: "Bring your remote team together. Bangkok, Phuket, Phangan. Zero logistics burden on you.",
   },
   {
     icon: Building2,
     title: "Conferences & Seminars",
-    desc: "International conferences and business summits in Bangkok and Phuket.",
+    desc: "International-scale event capacity. Asian comfort, dedicated Turkish + English support.",
   },
-  { icon: Globe, title: "Incentive Tours", desc: "Performance reward and motivation programs for exceptional teams." },
+  {
+    icon: Globe,
+    title: "Incentive Tours",
+    desc: "Performance reward travel. The experience your team earned, no logistics stress.",
+  },
 ];
 
 export default function MICEPageEN() {
@@ -47,11 +82,12 @@ export default function MICEPageEN() {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="MICE & Corporate Events — The Architecture of Influence | Plan B Asia"
-        description="Corporate event planning, conferences, leadership retreats, and incentive tours across Southeast Asia."
+        title="MICE & Corporate Events — Plan B Asia"
+        description="Corporate events, conferences, retreats, and incentive tours in Thailand. 15+ years MICE industry experience, Bangkok-operating team, native Turkish + English support. Venue, catering, transport, presentation logistics from one team. RFP response within 24 hours."
         canonical="https://planbasia.com/corporate/mice"
         schemaType="Service"
         serviceName="MICE & Corporate Events"
+        faq={faqs.map(({ q, a }) => ({ question: q, answer: a }))}
       />
       <FocusedNavbar />
       <TrustBar />
@@ -77,24 +113,23 @@ export default function MICEPageEN() {
           >
             <div className="inline-flex items-center gap-2 bg-accent/20 backdrop-blur-sm border border-accent/30 px-4 py-2 mb-8">
               <Building2 className="w-4 h-4 text-accent" />
-              <span className="text-sm text-background/90 tracking-wide">Corporate Solutions</span>
+              <span className="text-sm text-background/90 tracking-wide">15+ Years MICE Experience</span>
             </div>
 
             <h1 className="heading-display text-background mb-6">
-              From Leadership Retreats to Global Events.
-              <span className="block text-accent">Southeast Asia.</span>
+              Corporate events in your language.
+              <span className="block text-accent">Bangkok-based, Turkish + English support.</span>
             </h1>
 
-            <p className="text-lg text-background/80 max-w-xl mb-4">
-              Precision-engineered corporate events — press launches, dealer conventions, executive summits, and
-              incentive programs across Southeast Asia.
+            <p className="text-lg text-background/80 max-w-xl mb-6">
+              Conferences, team retreats, incentive tours. Venue, catering, transport, presentation logistics. One team, one point of contact. Your team lives the experience.
             </p>
 
-            <p className="text-background/60 text-sm mb-10">
-              Confidential inquiry. Direct strategist review within 24 hours.
-            </p>
+            <div className="inline-flex items-center gap-3 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">
+              <span className="text-accent font-heading text-lg">Proposal in 24 hours</span>
+              <span className="text-background/70 text-sm">Short event brief + budget is enough.</span>
+            </div>
 
-            {/* FIX: was handleWhatsAppClick → now assessment modal */}
             <button onClick={openAssessment} className="btn-luxury-gold inline-flex items-center gap-2">
               Begin Your Inquiry
             </button>
