@@ -10,7 +10,7 @@ import ServiceWhoIsFor from "@/components/service/ServiceWhoIsFor";
 import ExpectationOutcome from "@/components/service/ExpectationOutcome";
 import TrustBlock from "@/components/service/TrustBlock";
 import SocialProofMini from "@/components/service/SocialProofMini";
-import AdvisoryForm from "@/components/advisory/AdvisoryForm";
+import MICEWizard from "@/components/advisory/MICEWizard";
 import { trackPostHogEvent } from "@/lib/posthog";
 
 // MICE-specific inline AdvisoryForm (variant="mice") is the single intake path.
@@ -179,7 +179,7 @@ export default function MICEPageEN() {
               <p className="caption-editorial text-accent mb-4">Begin Your Advisory</p>
               <h2 className="heading-section mb-4">Initialize Your Event Blueprint</h2>
             </div>
-            <AdvisoryForm variant="mice" source_page="mice" />
+            <MICEWizard source_page="mice_en" />
           </div>
         </section>
       </div>

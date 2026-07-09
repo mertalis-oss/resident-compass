@@ -4,7 +4,7 @@ import { Building2, Users, Calendar, Globe, MessageCircle, Loader } from "lucide
 import FocusedNavbar from "@/components/FocusedNavbar";
 import TrustBar from "@/components/TrustBar";
 import SEOHead from "@/components/SEOHead";
-import AdvisoryForm from "@/components/advisory/AdvisoryForm";
+import MICEWizard from "@/components/advisory/MICEWizard";
 import ComparisonCrossSell from "@/components/service/ComparisonCrossSell";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
 import ServiceCheckout from "@/components/service/ServiceCheckout";
@@ -187,15 +187,15 @@ export default function MICEPage() {
         </div>
       </section>
 
-      {/* 8. MICE-specific Advisory Form (variant="mice") — corporate MICE intake.
-          Uses the MICE branch of AdvisoryForm which collects company, event
-          type, group size, event destination, and dates instead of the
-          individual relocation fields. */}
+      {/* 8. MICE RFP Wizard — 3-step progressive corporate intake.
+          Do NOT wire SimplifiedAssessmentModal here (that's individual
+          relocation qualification, wrong lead type). MICEWizard collects
+          company, contact, event brief, and budget in a 3-step wizard. */}
       <section id="mice-form" className="py-20 bg-card border-t border-border scroll-mt-24">
         <div className="container max-w-2xl px-6">
           <h2 className="heading-section text-center mb-4">Etkinlik Talebini Paylaş</h2>
           <p className="text-center text-muted-foreground mb-8">Kısa etkinlik özeti ve bütçe aralığı yeter. 3 iş günü içinde ilk teklif dönüşü yaparız.</p>
-          <AdvisoryForm variant="mice" source_page="mice_tr" />
+          <MICEWizard source_page="mice_tr" />
         </div>
       </section>
 
