@@ -131,11 +131,11 @@ export default function NomadIncubatorPage() {
             className="max-w-3xl"
           >
             <h1 className="heading-display text-background mb-6">
-              Nerede Yaşarsan Yaşa,
-              <span className="block text-accent">İşini Global Yap.</span>
+              Bilgisayarını al gel.
+              <span className="block text-accent">Kalanını biz kuralım.</span>
             </h1>
             <p className="text-lg text-background/70 max-w-xl mb-4">
-              3 aylık uçtan uca yerleşim programı — şirket kurulumu, uyumluluk denetimi, dosya yönetimi ve lojistik destek. Tayland'da yerleşik ekiple.
+              Ev, motor, workspace, community. 3 aylık uçtan uca yerleşim programı. Şirket kurulumu, uyumluluk denetimi, dosya yönetimi ve lojistik destek. Tayland'da yerleşik ekiple.
             </p>
             <div className="bg-accent/10 border border-accent/20 px-6 py-4 mb-10 max-w-xl">
               <p className="text-background font-heading text-lg">
