@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     q: "RFP hazırlama süresi ne kadar?",
-    a: "Kısa etkinlik özeti ve bütçe aralığı ile 3 iş günü içinde ön teklif geliyor. Detaylı kapsam için 5-7 iş günü içinde tam proposal. Acil ihtiyaçları öncelik listesine alıyoruz.",
+    a: "Kısa etkinlik özeti ve bütçe aralığı ile 3-5 iş günü içinde ön teklif geliyor. Detaylı kapsam için 7-10 iş günü içinde tam proposal. Acil ihtiyaçları öncelik listesine alıyoruz.",
   },
   {
     q: "Türk şirketlerine özel bir farkınız var mı?",
@@ -88,7 +88,7 @@ export default function MICEPage() {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Kurumsal Etkinlik & MICE — Plan B Asya"
-        description="Tayland'da kurumsal etkinlik, konferans, incentive tur. 15+ yıl MICE deneyimi. Tayland'da yerleşik ekip, Türkçe destek. Mekan, catering, ulaşım, sunum bir yerden. 3 iş günü içinde ön teklif."
+        description="Tayland'da kurumsal etkinlik, konferans, incentive tur. 15+ yıl MICE deneyimi. Tayland'da yerleşik ekip, Türkçe destek. Mekan, catering, ulaşım, sunum bir yerden. 3-5 iş günü içinde ön teklif."
         schemaType="Service"
         serviceName="MICE & Kurumsal Etkinlik"
         faq={faqs.map(({ q, a }) => ({ question: q, answer: a }))}
@@ -126,7 +126,7 @@ export default function MICEPage() {
               Konferans, takım buluşması, incentive tur. Mekan, catering, ulaşım, sunum. Bir yerden yönetiriz. Ekibin deneyimi yaşar.
             </p>
             <div className="inline-flex items-center gap-3 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">
-              <span className="text-accent font-heading text-lg">3 iş günü içinde ön teklif</span>
+              <span className="text-accent font-heading text-lg">3-5 iş günü içinde ön teklif</span>
               <span className="text-background/70 text-sm">Kısa etkinlik özeti + bütçe yeter</span>
             </div>
             <button onClick={scrollToForm} className="btn-luxury-gold inline-flex items-center gap-2">
@@ -194,7 +194,7 @@ export default function MICEPage() {
       <section id="mice-form" className="py-20 bg-card border-t border-border scroll-mt-24">
         <div className="container max-w-2xl px-6">
           <h2 className="heading-section text-center mb-4">Etkinlik Talebini Paylaş</h2>
-          <p className="text-center text-muted-foreground mb-8">Kısa etkinlik özeti ve bütçe aralığı yeter. 3 iş günü içinde ilk teklif dönüşü yaparız.</p>
+          <p className="text-center text-muted-foreground mb-8">Kısa etkinlik özeti ve bütçe aralığı yeter. 3-5 iş günü içinde ilk teklif dönüşü yaparız.</p>
           <MICEWizard source_page="mice_tr" />
         </div>
       </section>

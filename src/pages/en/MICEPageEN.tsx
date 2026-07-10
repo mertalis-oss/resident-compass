@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     q: "How fast is your RFP response?",
-    a: "With a short event brief and budget range, we deliver a preliminary proposal within 3 business days. Full scoped proposal in 5-7 business days. Urgent timelines are triaged into a priority queue.",
+    a: "With a short event brief and budget range, we deliver a preliminary proposal within 3-5 business days. Full scoped proposal in 7-10 business days. Urgent timelines are triaged into a priority queue.",
   },
   {
     q: "Is there something specific you offer Turkish companies?",
@@ -81,7 +81,7 @@ export default function MICEPageEN() {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="MICE & Corporate Events — Plan B Asia"
-        description="Corporate events, conferences, retreats, and incentive tours in Thailand. 15+ years MICE industry experience, Thailand-based team, native Turkish + English support. Venue, catering, transport, presentation logistics from one team. Preliminary proposal within 3 business days."
+        description="Corporate events, conferences, retreats, and incentive tours in Thailand. 15+ years MICE industry experience, Thailand-based team, native Turkish + English support. Venue, catering, transport, presentation logistics from one team. Preliminary proposal within 3-5 business days."
         canonical="https://planbasia.com/corporate/mice"
         schemaType="Service"
         serviceName="MICE & Corporate Events"
@@ -124,7 +124,7 @@ export default function MICEPageEN() {
             </p>
 
             <div className="inline-flex items-center gap-3 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">
-              <span className="text-accent font-heading text-lg">Preliminary proposal in 3 business days</span>
+              <span className="text-accent font-heading text-lg">Preliminary proposal in 3-5 business days</span>
               <span className="text-background/70 text-sm">Short event brief + budget is enough.</span>
             </div>
 

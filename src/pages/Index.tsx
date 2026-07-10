@@ -5,6 +5,7 @@ import TrustBar from '@/components/TrustBar';
 import ConciergeButton from '@/components/ConciergeButton';
 import PlanBForm from '@/components/PlanBForm';
 import Hero from '@/components/home/Hero';
+import HomeValueGrid from '@/components/home/HomeValueGrid';
 import Philosophy from '@/components/home/Philosophy';
 import Portals from '@/components/home/Portals';
 import TrustSignals from '@/components/home/TrustSignals';
@@ -24,6 +25,7 @@ export default function Index() {
       <FocusedNavbar />
       <TrustBar />
       <Hero />
+      <HomeValueGrid />
       <Philosophy />
       <Portals />
       <TrustSignals />

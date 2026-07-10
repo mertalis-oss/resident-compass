@@ -145,7 +145,7 @@ export default function MICEWizard({ source_page }: Props) {
           <p className="text-muted-foreground">
             {t('miceWizard.successBody', {
               defaultValue:
-                "Preliminary proposal within 3 business days. Full scope in 5-7. Urgent dates go into a priority queue.",
+                "Preliminary proposal within 3-5 business days. Full scope in 7-10. Urgent dates go into a priority queue.",
             })}
           </p>
         </div>
