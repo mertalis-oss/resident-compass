@@ -125,9 +125,9 @@ export default function MICEPage() {
             <p className="text-lg text-background/80 max-w-xl mb-6">
               Konferans, takım buluşması, incentive tur. Mekan, catering, ulaşım, sunum. Bir yerden yönetiriz. Ekibin deneyimi yaşar.
             </p>
-            <div className="inline-flex items-center gap-3 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">
-              <span className="text-accent font-heading text-lg">3-5 iş günü içinde ön teklif</span>
-              <span className="text-background/70 text-sm">Kısa etkinlik özeti + bütçe yeter</span>
+            <div className="inline-flex flex-col items-start gap-1 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">
+              <span className="text-accent font-heading text-lg">24-48 saat ilk yanıt</span>
+              <span className="text-background/80 text-sm">3-5 iş günü içinde ön teklif — kısa etkinlik özeti + bütçe yeter</span>
             </div>
             <button onClick={scrollToForm} className="btn-luxury-gold inline-flex items-center gap-2">
               <MessageCircle className="w-4 h-4" /> Etkinliği Başlat

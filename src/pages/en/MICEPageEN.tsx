@@ -123,9 +123,9 @@ export default function MICEPageEN() {
               Conferences, team retreats, incentive tours. Venue, catering, transport, presentation logistics. One team, one point of contact. Your team lives the experience.
             </p>
 
-            <div className="inline-flex items-center gap-3 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">
-              <span className="text-accent font-heading text-lg">Preliminary proposal in 3-5 business days</span>
-              <span className="text-background/70 text-sm">Short event brief + budget is enough.</span>
+            <div className="inline-flex flex-col items-start gap-1 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">
+              <span className="text-accent font-heading text-lg">First reply within 24-48 hours</span>
+              <span className="text-background/80 text-sm">Preliminary proposal in 3-5 business days. Short event brief + budget is enough.</span>
             </div>
 
             <button onClick={scrollToForm} className="btn-luxury-gold inline-flex items-center gap-2">

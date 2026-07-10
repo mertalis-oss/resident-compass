@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Shield, CreditCard, Building2, Home as HomeIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDomainScope } from '@/hooks/useDomainScope';
+import { trackPostHogEvent } from '@/lib/posthog';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HomeValueGrid — the four practical deliverables shown right after the hero.
@@ -58,16 +59,24 @@ export default function HomeValueGrid() {
           {items.map((item, i) => {
             const Icon = item.icon;
             const href = routes[item.key];
+            const handleClick = () => {
+              trackPostHogEvent(
+                'home_value_tile_click',
+                { tile: item.key, destination: href, scope },
+                true,
+              );
+              navigate(href);
+            };
             return (
               <motion.button
                 key={item.key}
-                onClick={() => navigate(href)}
+                onClick={handleClick}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ delay: i * 0.08, duration: 0.5 }}
                 className="text-left bg-card border border-border rounded-2xl p-6 md:p-7 hover:border-accent/40 hover:shadow-md transition-all duration-300 flex flex-col h-full"
-                aria-label={`${t(`homeValueGrid.${item.key}Title`)} — ${t(`homeValueGrid.${item.key}Desc`)}`}
+                aria-label={`${t(`homeValueGrid.${item.key}Title`)}: ${t(`homeValueGrid.${item.key}Desc`)}`}
               >
                 <div className="w-11 h-11 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
                   <Icon className="w-5 h-5 text-accent" aria-hidden="true" />
@@ -83,12 +92,17 @@ export default function HomeValueGrid() {
           })}
         </div>
 
-        <p className="text-center text-xs text-muted-foreground/70 mt-8 max-w-lg mx-auto">
-          {t('homeValueGrid.footnote', {
-            defaultValue:
-              'Ev bulma tekil hizmet olarak henüz sunulmuyor. Nomad Incubator paketi içindeki lokasyon eşleştirme ve kontrat rehberi kapsamında yer alıyor.',
-          })}
-        </p>
+        <div className="mt-10 max-w-2xl mx-auto">
+          <div className="inline-flex items-start gap-3 bg-accent/5 border border-accent/20 rounded-lg px-5 py-4 text-left w-full">
+            <span className="text-accent font-heading text-sm shrink-0 mt-0.5">Not:</span>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {t('homeValueGrid.footnote', {
+                defaultValue:
+                  'Ev bulma tekil hizmet olarak sunulmuyor. Nomad Incubator paketinin içinde: lokasyon eşleştirme, mahalle önerileri ve kontrat kontrolü.',
+              })}
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
