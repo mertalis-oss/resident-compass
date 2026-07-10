@@ -120,13 +120,12 @@ export default function DTVPageEN() {
             </div>
 
             <h1 className="heading-display text-background mb-6">
-              The 5-Year Freedom Protocol.
-              <span className="block text-accent">One Application.</span>
+              The 5-year Thailand visa.
+              <span className="block text-accent">One application, done right.</span>
             </h1>
 
             <p className="text-lg text-background/80 max-w-xl mb-4">
-              180-day stays, unlimited re-entries, and full remote work authorization — the most powerful long-term visa
-              in Southeast Asia.
+              180-day stays. Unlimited re-entries. No local tax on foreign income. Remote workers, freelancers, and digital nomads are eligible.
             </p>
 
             <div className="bg-accent/10 border border-accent/20 px-6 py-4 mb-6 max-w-xl">

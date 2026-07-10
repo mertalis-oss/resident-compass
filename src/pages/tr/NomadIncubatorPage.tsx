@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Building2,
@@ -26,7 +25,6 @@ import TrustBlock from "@/components/service/TrustBlock";
 import SocialProofMini from "@/components/service/SocialProofMini";
 import ServiceUpdateFallback from "@/components/tr/ServiceUpdateFallback";
 import { useServicesList } from "@/hooks/useServicesList";
-import { Button } from "@/components/ui/button";
 
 const serviceItems = [
   {
@@ -90,7 +88,6 @@ const fullLifeItems = [
 
 export default function NomadIncubatorPage() {
   const { services, isLoading, hasError } = useServicesList("residency", "tr");
-  const [formSubmitted, setFormSubmitted] = useState(false);
 
   if (isLoading) {
     return (
@@ -253,28 +250,17 @@ export default function NomadIncubatorPage() {
         </div>
       </section>
 
-      {/* 9. FORM */}
+      {/* 9. Advisory Wizard — single 3-step intake, replaces the earlier
+          "Ücretsiz Uygunluk Kontrolü" branded PlanBForm section. Wizard's
+          own success state handles the post-submit UI, so the outer
+          formSubmitted ternary that used to live here is gone. */}
       <section className="py-20 bg-card border-t border-border">
         <div className="container max-w-2xl px-6">
-          <h2 className="heading-section text-center mb-4">Ücretsiz Uygunluk Kontrolü</h2>
+          <h2 className="heading-section text-center mb-4">Danışmanlığa Başlayalım</h2>
           <p className="text-muted-foreground text-center mb-10 body-editorial">
-            Durumunuzu değerlendirelim. Hangi hizmetlerin size uygun olduğunu birlikte belirleyelim.
+            3 adım. 2 dakika. Sonra biz konuşuruz.
           </p>
-          {formSubmitted ? (
-            <div className="text-center py-10 space-y-6">
-              <p className="text-lg font-heading text-foreground">
-                Uygunluk ihtimaliniz yüksek. Süreci başlatmak için danışmanlık paketini seçin.
-              </p>
-              <Button
-                onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}
-                className="btn-luxury-gold text-xs tracking-[0.15em] uppercase px-10 py-6 h-auto"
-              >
-                Danışmanlık Paketini Seç ↑
-              </Button>
-            </div>
-          ) : (
-            <MultiStepWizard source_page="nomad_incubator_tr" defaultDestination="thailand" content_name="nomad_incubator_wizard" />
-          )}
+          <MultiStepWizard source_page="nomad_incubator_tr" defaultDestination="thailand" content_name="nomad_incubator_wizard" />
         </div>
       </section>
 

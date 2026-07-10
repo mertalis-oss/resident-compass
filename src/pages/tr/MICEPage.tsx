@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Building2, Users, Calendar, Globe, MessageCircle, Loader } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import FocusedNavbar from "@/components/FocusedNavbar";
 import TrustBar from "@/components/TrustBar";
 import SEOHead from "@/components/SEOHead";
@@ -183,6 +184,36 @@ export default function MICEPage() {
                 <p className="text-muted-foreground leading-relaxed">{feature.desc}</p>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7.5 FAQ — B2B buyers read before submitting an RFP. FAQ JSON-LD
+          is emitted by SEOHead separately for search engines; this section
+          renders the same answers visibly for the user. */}
+      <section className="py-20 lg:py-24 bg-background border-t border-border/40">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="text-center mb-12">
+            <p className="caption-editorial text-accent mb-4">Sık Sorulan Sorular</p>
+            <h2 className="heading-section">Merak edilenler</h2>
+          </div>
+          <div className="max-w-3xl mx-auto">
+            <Accordion type="single" collapsible className="space-y-4">
+              {faqs.map((faq, i) => (
+                <AccordionItem
+                  key={i}
+                  value={`mice-faq-${i}`}
+                  className="bg-card border border-border px-6 data-[state=open]:ring-1 data-[state=open]:ring-accent/30"
+                >
+                  <AccordionTrigger className="text-left font-heading text-lg hover:no-underline hover:text-accent transition-colors py-5">
+                    {faq.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed pb-6">
+                    {faq.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </div>
       </section>
