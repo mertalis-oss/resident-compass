@@ -241,10 +241,7 @@ export default function MICEPageEN() {
         </div>
       </footer>
 
-      {/* FIX: StickyMobileCTA → assessment modal */}
-      <StickyMobileCTA onClick={openAssessment} />
-
-      {/* Modal — WhatsApp only for isHighIntent === true inside */}
+      <StickyMobileCTA onClick={scrollToForm} />
     </div>
   );
 }
