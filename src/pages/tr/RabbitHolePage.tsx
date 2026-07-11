@@ -60,13 +60,13 @@ export default function RabbitHolePage() {
               <span className="text-cyan-400/80 text-sm uppercase tracking-[0.3em]">{t('rabbitHole.badge', { defaultValue: 'Private Wellness Experiences' })}</span>
             </div>
             <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-medium text-white mb-6 leading-tight">
-              {t('rabbitHole.heroTitle', { defaultValue: 'Derinlere Dalış' })}
+              {t('rabbitHole.heroTitle', { defaultValue: 'Özel program.' })}
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
-                {t('rabbitHole.heroSub', { defaultValue: 'İçsel Keşif Yolculuğu' })}
+                {t('rabbitHole.heroSub', { defaultValue: 'Davetli katılım.' })}
               </span>
             </h1>
             <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-12 leading-relaxed">
-              {t('rabbitHole.heroDesc', { defaultValue: 'Bilinçaltının katmanlarını keşfet. Binlerce yıllık geleneksel pratiklerin modern güvenlik standartlarıyla buluştuğu eşsiz deneyimler.' })}
+              {t('rabbitHole.heroDesc', { defaultValue: 'Küçük gruplar. Doğru insanlar. Konuştuğumuz zaman anlarsın.' })}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a href="#deneyimler" className="px-8 py-4 bg-gradient-to-r from-purple-600 to-cyan-600 text-white text-sm uppercase tracking-[0.15em] font-medium hover:from-purple-500 hover:to-cyan-500 transition-all">

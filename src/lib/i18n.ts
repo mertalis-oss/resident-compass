@@ -83,18 +83,18 @@ const successKeys = {
 };
 
 const serviceKeysTr: Record<string, string> = {
-  programme: 'Egemen Program',
+  programme: 'Sovereign Programme',
   priceOneTime: 'Tek seferlik ödeme. Tekrarlayan ücret yok. Gizli maliyet yok. Kayıp zaman yok.',
   priceAnchor: 'Bu süreçte yapılan hataların tipik maliyeti: $500–$5,000+',
   ctaStart: 'Danışmanlığı Başlat',
   whatYouGet: 'Neler alacaksınız:',
   featuresContext: 'Size netlik, hız ve ileriye dönük net bir yol sunmak için tasarlandı. Gerçek vakalara ve kanıtlanmış süreçlere dayanır.',
   whoForLabel: 'Kimler için',
-  whoForBody: 'Hızla ilerlemek isteyen insanlar. Sonsuz araştırma değil, netlik arayanlar.',
+  whoForBody: 'Google\'da 20 sekme açtın, cevap yok. Buradasın.',
   notForLabel: 'Kimler için değil',
-  notForBody: 'Ücretsiz genel tavsiye arayanlar. Harekete geçmeye hazır olmayanlar.',
+  notForBody: 'Sadece bilgi arıyorsan SSS bölümü daha uygun.',
   faqLabel: 'Sık Sorulan Sorular',
-  faqPush: 'Hâlâ emin değil misiniz? Sürecinizi başlatın, size adım adım rehberlik edelim.',
+  faqPush: 'Kafan karıştı mı? İlk mesajı at, gerisini beraber çözelim.',
   bundleLabel: 'Paket İçeriği',
   bundleContext: 'İhtiyacınız olan her şey tek bir yapılandırılmış süreçte.',
   upsellLabel: 'Bu hizmeti seçen müşteriler genellikle şunlara da ihtiyaç duydu:',

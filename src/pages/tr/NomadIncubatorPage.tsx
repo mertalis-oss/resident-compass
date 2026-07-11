@@ -132,18 +132,18 @@ export default function NomadIncubatorPage() {
               <span className="block text-accent">Kalanını biz kuralım.</span>
             </h1>
             <p className="text-lg text-background/70 max-w-xl mb-4">
-              Ev, motor, workspace, community. 3 aylık uçtan uca yerleşim programı. Şirket kurulumu, uyumluluk denetimi, dosya yönetimi ve lojistik destek. Tayland'da yerleşik ekiple.
+              Ev, scooter, şirket, banka. 3 ayda kurulum. Sen çalış, biz koşuşturalım.
             </p>
             <div className="bg-accent/10 border border-accent/20 px-6 py-4 mb-10 max-w-xl">
               <p className="text-background font-heading text-lg">
-                <span className="text-accent">€5.000</span> — 3 ay içinde tamamen kurulu bir hayat.
+                <span className="text-accent">€5.000</span> · 3 ayda kurulum.
               </p>
             </div>
             <button
               onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}
               className="btn-luxury-gold inline-flex items-center gap-2"
             >
-              Kuluçkaya Başla <ArrowRight className="w-4 h-4" />
+              Görüşelim <ArrowRight className="w-4 h-4" />
             </button>
           </motion.div>
         </div>

@@ -120,11 +120,11 @@ export default function MICEPage() {
               <span className="text-sm text-background/90 tracking-wide">15+ Yıl MICE Deneyimi</span>
             </div>
             <h1 className="heading-display text-background mb-6">
-              MICE senin dilinden.
-              <span className="block text-accent">Tayland'da yerleşik, Türkçe destek.</span>
+              Şirket etkinliği. Tayland'da.
+              <span className="block text-accent">Türkçe konuşuruz.</span>
             </h1>
             <p className="text-lg text-background/80 max-w-xl mb-6">
-              Konferans, takım buluşması, incentive tur. Mekan, catering, ulaşım, sunum. Bir yerden yönetiriz. Ekibin deneyimi yaşar.
+              Konferans, kurumsal offsite, incentive tur. Mekan bulur, ekibi taşır, tercümanı ayarlarız. Türk şirketlerine iş yapmayı biliyoruz.
             </p>
             <div className="inline-flex flex-col items-start gap-1 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">
               <span className="text-accent font-heading text-lg">24-48 saat ilk yanıt</span>

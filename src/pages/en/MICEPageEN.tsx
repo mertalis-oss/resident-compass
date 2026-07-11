@@ -121,7 +121,7 @@ export default function MICEPageEN() {
             </h1>
 
             <p className="text-lg text-background/80 max-w-xl mb-6">
-              Conferences, team retreats, incentive tours. Venue, catering, transport, presentation logistics. One team, one point of contact. Your team lives the experience.
+              Conferences, team retreats, incentive tours. Venue, catering, transport, presentation logistics. Your team walks in ready. Everything else is our problem.
             </p>
 
             <div className="inline-flex flex-col items-start gap-1 bg-accent/10 border border-accent/20 px-5 py-3 mb-8">

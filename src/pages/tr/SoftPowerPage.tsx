@@ -23,7 +23,7 @@ const courses = [
     duration: "1–6 Ay",
     visa: "ED Visa / DTV Visa",
     transition: "Eğitim vizesinden oturma iznine geçiş imkânı",
-    desc: "Kampın kokusu, disiplin ve Tayland'ın nabzı. Güreşmiyorsun — dönüşüyorsun. Vize süreci dahil, kalış planın hazır.",
+    desc: "Kampın kokusu, disiplin, Tayland'ın nabzı. Dövüşmüyorsun. Dönüşüyorsun. Vize dosyası dahil, kalışın planlı.",
   },
   {
     icon: Utensils,
@@ -112,8 +112,7 @@ export default function SoftPowerPage() {
               <span className="block text-accent">Sonra Kal.</span>
             </h1>
             <p className="text-lg text-background/80 max-w-xl mb-10">
-              Her program kendi vize yolu, fiyatı ve süresiyle bağımsız bir hizmettir. Muay Thai'den dil kursuna — kalış
-              hukuku dahil.
+              Muay Thai kampından dil okuluna. Vize dosyası dahil, kalışın planlı.
             </p>
             <button
               onClick={() => document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" })}
